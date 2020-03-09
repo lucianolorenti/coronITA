@@ -1,1 +1,1 @@
-web: gunicorn coronita:server
+web: gunicorn coronita:app
