@@ -7,14 +7,14 @@ import numpy as np
 CURR_DIR = Path(__file__).resolve().parent
 DATA_DIR = CURR_DIR.parent / 'data'
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def region_population():
      d = pd.read_csv(DATA_DIR / 'region_population.csv',  thousands=',')
      d.set_index('Region', inplace=True)
      return d
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def provinces_data():
      d = pd.read_csv(DATA_DIR / 'province_data.csv', encoding='utf8')     
      d['Population'] = d['Population'].str.replace('\xa0','')
@@ -24,19 +24,19 @@ def provinces_data():
      return d
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def region_list():
     data = read_data()
     return sorted(np.unique(data['denominazione_regione']))
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def provinces_list(region):
     data = read_data()
     return sorted(np.unique(data[data['denominazione_regione'] == region]['denominazione_provincia']))
     
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def read_data():
     data = pd.read_csv(DATA_DIR / 'dpc-covid19-ita-province.csv')
     data['data'] = pd.to_datetime(data['data'])
@@ -44,7 +44,7 @@ def read_data():
     return data
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def total_case_histogram(normalize=''):
     normalize_data = None
     if len(normalize) > 0:  
@@ -66,7 +66,7 @@ def total_case_histogram(normalize=''):
 
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def total_case_time_series():
     data = read_data()
     return (data[['day', 'totale_casi']]
@@ -77,7 +77,7 @@ def total_case_time_series():
         .copy())
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def fit_exponential():
     total_time_series = total_case_time_series()
     y = total_time_series['totale_casi'].values
@@ -88,7 +88,7 @@ def fit_exponential():
     return ((a, np.exp(b)), fitted_y)
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=32)
 def region_histogram(region, normalize=''):
     data = read_data()
     data = data[data['denominazione_regione'] == region]
