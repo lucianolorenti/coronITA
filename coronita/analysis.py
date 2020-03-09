@@ -7,6 +7,26 @@ import numpy as np
 CURR_DIR = Path(__file__).resolve().parent
 DATA_DIR = CURR_DIR.parent / 'data'
 
+
+@functools.lru_cache(maxsize=32)
+def data_andamento_nazionale():
+    d = pd.read_csv(DATA_DIR / 'dpc-covid19-ita-andamento-nazionale.csv')
+    d['data'] = pd.to_datetime(d['data'])
+    d['day'] = d['data'].dt.date
+    d.set_index('day', inplace=True)
+    return d
+
+
+@functools.lru_cache(maxsize=32)
+def tamponi_infected_ratio():
+    d = data_andamento_nazionale()
+    data = pd.DataFrame(d['totale_casi']/d['tamponi']*100, columns=['percentage'])
+    data['totale_casi'] = d['totale_casi']
+    data['tamponi'] = d['tamponi']
+    data['percentage'] = data['percentage'].round(decimals=2)
+    data.reset_index(inplace=True)
+    return data
+
 @functools.lru_cache(maxsize=32)
 def region_population():
      d = pd.read_csv(DATA_DIR / 'region_population.csv',  thousands=',')

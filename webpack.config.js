@@ -29,7 +29,7 @@ var path = require('path'); module.exports = {
         test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/, 
         loader: "file-loader",
         options: {
-          outputPath: 'static/'
+          outputPath: '/'
         }
       },
       {

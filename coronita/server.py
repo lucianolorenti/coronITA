@@ -20,7 +20,9 @@ def json_serial(obj):
     raise TypeError("Type %s not serializable" % type(obj))
 
 
-
+@app.route('/tamponi_infected_ratio')
+def tamponi_infected_ratio():
+    return json.dumps(analysis.tamponi_infected_ratio().to_dict(orient='records'), default=json_serial)
 
 
 @app.route('/cases_hist')

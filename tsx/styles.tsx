@@ -22,6 +22,12 @@ export const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
+  card: {
+    maxWidth: "35em",
+    marginBottom: "0.5em",
+    marginLeft:"auto",
+    marginRight:"auto"
+  },
   appBarShift: {
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
