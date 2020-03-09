@@ -6,7 +6,12 @@ setup(name='Coronita',
       version='1.0',
       description='Coronavirus Italy',
       author='Luciano Lorenti',
-
+      install_requires=[
+          'pandas',
+          'numpy',
+          'flask',
+	  'gunicorn'
+      ],
       author_email='lucianolorenti@gmail.com',      
       packages=['coronita'],
      )
