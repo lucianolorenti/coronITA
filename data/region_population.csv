@@ -1,0 +1,22 @@
+Flag,Region,Status,Population Number,Population %,Area,Area,Pop. density,HDI[4],Capital,President,President,Number of comuni[5],Prov. ormetrop. cities
+,Abruzzo,Ordinary,"1,311,580",2.17%,"10,832",3.59%,121,0.890,L'Aquila,,Marco MarsilioBrothers of Italy,305,4
+,Valle d'Aosta,Autonomous,"125,666",0.21%,"3,261",1.08%,39,0.878,Aosta,,Antonio FossonFor Our Valley,74,1
+,Puglia,Ordinary,"4,029,053",6.68%,"19,541",6.48%,206,0.852,Bari,,Michele EmilianoDemocratic Party,258,6
+,Basilicata,Ordinary,"562,869",0.93%,"10,073",3.34%,56,0.857,Potenza,,Vito BardiForza Italia,131,2
+,Calabria,Ordinary,"1,947,131",3.23%,"15,222",5.04%,128,0.850,Catanzaro,,Jole SantelliForza Italia,404,5
+,Campania,Ordinary,"5,801,692",9.61%,"13,671",4.53%,424,0.847,Naples,,Vincenzo De LucaDemocratic Party,550,5
+,Emilia Romagna,Ordinary,"4,459,477",7.39%,"22,453",7.44%,199,0.915,Bologna,,Stefano BonacciniDemocratic Party,328,9
+,Friuli Venezia Giulia,Autonomous,"1,215,220",2.01%,"7,924",2.63%,153,0.898,Trieste,,Massimiliano FedrigaLeague,215,4
+,Lazio,Ordinary,"5,879,082",9.74%,"17,232",5.71%,341,0.909,Rome,,Nicola ZingarettiDemocratic Party,378,5
+,Liguria,Ordinary,"1,550,640",2.57%,"5,416",1.79%,286,0.896,Genoa,,Giovanni TotiForza Italia,234,4
+,Lombardia,Ordinary,"10,060,574",16.67%,"23,864",7.91%,422,0.907,Milan,,Attilio FontanaLeague,"1,509",12
+,Marche,Ordinary,"1,525,271",2.53%,"9,401",3.12%,162,0.896,Ancona,,Luca CeriscioliDemocratic Party,228,5
+,Molise,Ordinary,"305,617",0.51%,"4,461",1.48%,69,0.867,Campobasso,,Donato TomaForza Italia,136,2
+,Piemonte,Ordinary,"4,356,406",7.22%,"25,387",8.41%,172,0.892,Turin,,Alberto CirioForza Italia,"1,182",8
+,Sardegna,Autonomous,"1,639,591",2.72%,"24,100",7.99%,68,0.863,Cagliari,,Christian SolinasSardinian Action Party,377,5
+,Sicilia,Autonomous,"4,999,891",8.28%,"25,832",8.56%,194,0.845,Palermo,,Nello MusumeciDiventerà Bellissima,390,9
+,Bolzano,Autonomous,"107,317 ",1.78%,"13,606",4.51%,79,0.919,Trento,,Arno KompatscherSouth Tyrolean People's Party,291,2
+,Toscana,Ordinary,"3,729,641",6.18%,"22,987",7.62%,162,0.903,Florence,,Enrico RossiDemocratic Party,273,10
+,Umbria,Ordinary,"882,015",1.46%,"8,464",2.81%,104,0.889,Perugia,,Donatella TeseiLeague,92,2
+,Veneto,Ordinary,"4,905,854",8.13%,"18,020",5.97%,267,0.896,Venice,,Luca ZaiaLeague,571,7
+,Trento,—,"541,098",,,,,,,,,,

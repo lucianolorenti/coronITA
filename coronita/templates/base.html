@@ -1,0 +1,13 @@
+<html lang="en">
+<head>
+<title>{% block title %}{% endblock %} - Flaskr</title>
+</head>
+<body>
+<div id="root">
+</div>
+<script>
+   const regions = {{ regions| tojson }}
+</script> 
+<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
