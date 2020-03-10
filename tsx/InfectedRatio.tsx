@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import { useStyles } from './styles';
 
 export const toolTipStyles = makeStyles(theme => ({

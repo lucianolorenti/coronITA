@@ -22,7 +22,7 @@ import { IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import Title from './Title';
 import Drawer from './Drawer';
-
+import DeadProportion from './DeadProportion'
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -58,6 +58,7 @@ export default function Dashboard() {
 
   const element: VizElement[] = [
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
+    { title: "Proportion of dead people", component: <DeadProportion />},
     { title: "Proportion of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
     { title: "Cases per province", component: <ProvincePlot /> }]
