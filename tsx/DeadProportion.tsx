@@ -72,7 +72,7 @@ export default function DeadProportion() {
                 getOptionLabel={function (option: string) { return option }}
                 style={{ width: 300 }}
                 value={currentRegion}
-                renderInput={params => <TextField {...params} label="Region" variant="outlined" />}
+                renderInput={params => <TextField {...params} label="Region" margin="none" />}
             />
 
             <ResponsiveContainer width="100%" height={400}>

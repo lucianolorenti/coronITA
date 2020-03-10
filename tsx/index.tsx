@@ -22,7 +22,12 @@ import { IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import Title from './Title';
 import Drawer from './Drawer';
-import DeadProportion from './DeadProportion'
+import DeadProportion from './DeadProportion';
+import StackedAreas from './StackedAreas';
+import GitHubIcon from '@material-ui/icons/GitHub';
+
+
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -58,6 +63,7 @@ export default function Dashboard() {
 
   const element: VizElement[] = [
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
+    { title: "Persons affected by the virus", component: <StackedAreas />},
     { title: "Proportion of dead people", component: <DeadProportion />},
     { title: "Proportion of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
@@ -89,6 +95,11 @@ export default function Dashboard() {
               aria-label="Italy"
             />
           </Typography>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.right}>
+          <Link href="https://github.com/lucianolorenti/coronITA" color="inherit"> 
+          <GitHubIcon /> Fork me on Github   
+          </Link>
+            </Typography> 
         </Toolbar>
       </AppBar>
       <main className={classes.content}>
@@ -105,11 +116,15 @@ export default function Dashboard() {
               {element.map((elem: VizElement, index: number) => {
                 return (
                   <Grid item xs={12} key={index}>
+                    <div className={classes.gridelement}>
                     <Title >
                       {elem.title}
                     </Title>
                     {elem.component}
-                  </Grid>)
+                    </div>
+                  </Grid>
+                  
+                  )
               })}
             </Grid>
             <Box pt={4}>

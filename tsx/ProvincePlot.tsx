@@ -149,7 +149,7 @@ export default function ProvincePlot() {
             getOptionLabel={function (option: string) { return option }}
             style={{ width: 300 }}
             value={currentRegion}
-            renderInput={params => <TextField {...params} label="Region" variant="outlined" />}
+            renderInput={params => <TextField {...params} label="Region" margin="none" />}
         />
         <FormControlLabel
             control={
@@ -165,7 +165,7 @@ export default function ProvincePlot() {
             <BarChart
                 data={regionTimeSerie}
                 margin={{
-                    top: 5, right: 30, left: 20, bottom: 5,
+                    top: 5, right: 0, left: 0, bottom: 5,
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" />

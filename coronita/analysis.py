@@ -60,7 +60,7 @@ def data_province(ttl_hash=None):
     data['day'] = data['data'].dt.date
     return data
 
-
+@functools.lru_cache(maxsize=32)
 def dead_proportion(region='All', ttl_hash=None):
 
     if region == 'All':
@@ -80,14 +80,19 @@ def dead_proportion(region='All', ttl_hash=None):
     d.dropna(inplace=True)
     return d
 
-
-def funnel(ttl_hash=None):
-    data = data_andamento_nazionale(ttl_hash=None)
-    d = data.iloc[-1, :].loc[["tamponi", "totale_casi", "deceduti"]].to_dict()
-    return [{"name": k, "value": int(d[k])} for k in d.keys()]
-
-
-
+@functools.lru_cache(maxsize=32)
+def stacked_area_data(region='All', ttl_hash=None):
+    if region == 'All':
+        data = data_andamento_nazionale(ttl_hash=ttl_hash)
+    else:
+        data = data_regioni(ttl_hash=ttl_hash)
+        if region not in data['denominazione_regione'].unique():
+            return pd.DataFrame()
+        data = data[data['denominazione_regione'] == region]
+    data = data[['ricoverati_con_sintomi','terapia_intensiva', 
+                 'isolamento_domiciliare', 'dimessi_guariti', 'deceduti']]
+    data.reset_index(inplace=True)
+    return data
 
 @functools.lru_cache(maxsize=32)
 def tamponi_infected_ratio(ttl_hash=None):

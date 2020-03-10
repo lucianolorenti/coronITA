@@ -40,12 +40,12 @@ export default function TotalCasesHistogram(props) {
                 }
                 label="Normalize by region population"
             />
-            <ResponsiveContainer width="90%" height={500}>
+            <ResponsiveContainer width="100%" height={500}>
                 <BarChart
 
                     data={histogramCases}
                     margin={{
-                        top: 5, right: 30, left: 30, bottom: 100,
+                        top: 5, right: 0, left: 0, bottom: 100,
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
