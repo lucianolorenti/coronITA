@@ -1,7 +1,5 @@
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -20,11 +18,10 @@ import { useStyles } from './styles';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
 import InfoIcon from '@material-ui/icons/Info';
-
-
-
-
-
+import { IconButton } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import Title from './Title';
+import Drawer from './Drawer';
 
 function Copyright() {
   return (
@@ -43,16 +40,44 @@ function Copyright() {
 
 
 
+interface VizElement {
+  title: string,
+  component: JSX.Element
+}
+
 export default function Dashboard() {
   const classes = useStyles();
+  const [drawer, setDrawer] = React.useState(false);
+  const toggleDrawer = (open: boolean) => event => {
+    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDrawer(open)
+  };
+  const [toc, setToc] = React.useState([]);
+
+  const element: VizElement[] = [
+    { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
+    { title: "Proportion of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
+    { title: "Cases per region", component: <TotalCasesHistogram /> },
+    { title: "Cases per province", component: <ProvincePlot /> }]
 
 
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar position="absolute" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer(true)}
+            edge="start"
+            className={clsx(classes.menuButton, drawer && classes.hide)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.pageTitle}>
             CoronaVirus       <ReactCountryFlag
               className="emojiFlag"
               countryCode="IT"
@@ -68,29 +93,23 @@ export default function Dashboard() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
- 
+          <Drawer drawer={drawer} toggleDrawer={toggleDrawer} toc={element} />
           <Paper className={classes.paper} >
-     
-          <Link href="https://github.com/pcm-dpc/COVID-19" >
-          <InfoIcon style={{"paddingTop":"0.5em"}} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
+
+            <Link href="https://github.com/pcm-dpc/COVID-19" >
+              <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
             </Link>
-    
+
             <Grid container spacing={3}>
-
-
-              <Grid item xs={12}>
-                <TotalCasesTimesSeriesTab />
-              </Grid>
-              <Grid item xs={12} >
-                <TamponiInfectedRatioSeries />
-              </Grid>
-              <Grid item xs={12} >
-                <TotalCasesHistogram />
-              </Grid>
-              <Grid item xs={12}>
-                <ProvincePlot />
-              </Grid>
-
+              {element.map((elem: VizElement, index: number) => {
+                return (
+                  <Grid item xs={12} key={index}>
+                    <Title >
+                      {elem.title}
+                    </Title>
+                    {elem.component}
+                  </Grid>)
+              })}
             </Grid>
             <Box pt={4}>
               <Copyright />

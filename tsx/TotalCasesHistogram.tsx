@@ -29,9 +29,7 @@ export default function TotalCasesHistogram(props) {
     const classes = useStyles()
     return (
         <React.Fragment>
-            <Typography variant="h3" align="center" className={classes.title}>
-                Cases per region
-            </Typography>
+
             <FormControlLabel
                 control={
                     <Checkbox

@@ -141,9 +141,7 @@ export default function ProvincePlot() {
 
 
     return (<React.Fragment>
-        <Typography variant="h3" className={classes.title} align="center">
-            Cases per province
-    </Typography>
+
         <Autocomplete
             id="combo-box-demo"
             options={regions}

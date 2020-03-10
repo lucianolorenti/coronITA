@@ -56,9 +56,6 @@ export default function TamponiInfectedRatioSeries() {
 
   return (
     <React.Fragment>
-      <Typography variant="h3" className={classes.title} align="center">
-        Proportion of infected person vs tests
-    </Typography>
 
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
