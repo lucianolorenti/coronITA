@@ -127,9 +127,6 @@ export default function TotalCasesTimesSeriesTab() {
 
 
   return (<React.Fragment>
-    <Typography variant="h3" className={classes.title} align="center">
-      Time series of infected persons
-    </Typography>
     <Tabs value={currentTab} onChange={handleCurrentTabChange} aria-label="wrapped label tabs example">
       <Tab label="Total cases" {...a11yProps(0)} />
       <Tab label="Growth Rate" {...a11yProps(1)} />
