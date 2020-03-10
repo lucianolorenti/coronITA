@@ -130,7 +130,7 @@ def fit_exponential(ttl_hash=None):
     growth_rate = np.exp(np.diff(np.log(y))) - 1
     (a, b) = np.polyfit(x, np.log(y + 0.000000000001), 1, w=np.sqrt(y+ 0.000000000001))
     fitted_y = np.exp(b) * np.exp(a*x) 
-    return ((a, np.exp(b)), fitted_y)
+    return ((np.exp(a), np.exp(b)), fitted_y)
 
 
 @functools.lru_cache(maxsize=32)

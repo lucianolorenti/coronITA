@@ -60,7 +60,7 @@ function TotalCasesTimeSeries() {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" tickCount={9} />
+            <XAxis dataKey="day"  />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -76,7 +76,7 @@ function TotalCasesTimeSeries() {
           Fitted curve
         </Typography>
         {expCoeffs !== null ? <InlineMath>
-          {`y=${parseFloat(expCoeffs[1]).toFixed(2)} e^{${parseFloat(expCoeffs[0]).toFixed(2)}x}`}
+          {`y=${parseFloat(expCoeffs[1]).toFixed(3)} ({${parseFloat(expCoeffs[0]).toFixed(3)}}^x)`}
         </InlineMath> : null}
       </Grid>
     </Grid>
@@ -107,7 +107,7 @@ function GrowthRateSeries() {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="day" tickCount={9} />
+      <XAxis dataKey="day"  interval={1}  />
       <YAxis />
       <ReferenceLine y={1} stroke="green" />
       <Tooltip />

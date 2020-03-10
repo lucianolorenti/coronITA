@@ -56,7 +56,7 @@ def growth_rate():
     y = total_time_series['totale_casi'].values
     growth_r = analysis.growth_rate(y[1:])
     growth_r = [{'day': d, 'gr': gr} for (d, gr) in zip(
-        total_time_series['day'].values[1:], growth_r)]
+        total_time_series['day'].values[2:], growth_r)]
     return json.dumps(growth_r, default=json_serial)
 
 
