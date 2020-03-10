@@ -1,16 +1,32 @@
-import pandas as pd
-from pathlib import Path
 import functools
-import numpy as np 
+import logging
+import time
+import urllib.request
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 CURR_DIR = Path(__file__).resolve().parent
 DATA_DIR = CURR_DIR.parent / 'data'
 
+def get_ttl_hash(seconds=60*60*12):
+    """Return the same value withing `seconds` time period"""
+    return round(time.time() / seconds)
+
 
 @functools.lru_cache(maxsize=32)
-def data_andamento_nazionale():
-    d = pd.read_csv(DATA_DIR / 'dpc-covid19-ita-andamento-nazionale.csv')
+def data_andamento_nazionale(ttl_hash=None):
+    FILE_PATH = DATA_DIR / 'dpc-covid19-ita-andamento-nazionale.csv'
+    logger.info('Removing old file dpc-covid19-ita-andamento-nazionale.csv')
+    FILE_PATH.unlink(missing_ok=True)
+    URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv"
+    logger.info('Downloading file dpc-covid19-ita-andamento-nazionale.csv')
+    urllib.request.urlretrieve(URL, str(FILE_PATH))
+    d = pd.read_csv(FILE_PATH)
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
     d.set_index('day', inplace=True)
@@ -18,7 +34,7 @@ def data_andamento_nazionale():
 
 
 @functools.lru_cache(maxsize=32)
-def tamponi_infected_ratio():
+def tamponi_infected_ratio(ttl_hash=None):
     d = data_andamento_nazionale()
     data = pd.DataFrame(d['totale_casi']/d['tamponi']*100, columns=['percentage'])
     data['totale_casi'] = d['totale_casi']
@@ -27,15 +43,16 @@ def tamponi_infected_ratio():
     data.reset_index(inplace=True)
     return data
 
+
 @functools.lru_cache(maxsize=32)
-def region_population():
+def region_population(ttl_hash=None):
      d = pd.read_csv(DATA_DIR / 'region_population.csv',  thousands=',')
      d.set_index('Region', inplace=True)
      return d
 
 
 @functools.lru_cache(maxsize=32)
-def provinces_data():
+def provinces_data(ttl_hash=None):
      d = pd.read_csv(DATA_DIR / 'province_data.csv', encoding='utf8')     
      d['Population'] = d['Population'].str.replace('\xa0','')
      d['Population'] = d['Population'].str.replace(' ','' )
@@ -45,27 +62,33 @@ def provinces_data():
 
 
 @functools.lru_cache(maxsize=32)
-def region_list():
+def region_list(ttl_hash=None):
     data = read_data()
     return sorted(np.unique(data['denominazione_regione']))
 
 
 @functools.lru_cache(maxsize=32)
-def provinces_list(region):
+def provinces_list(region, ttl_hash=None):
     data = read_data()
     return sorted(np.unique(data[data['denominazione_regione'] == region]['denominazione_provincia']))
     
 
 @functools.lru_cache(maxsize=32)
-def read_data():
-    data = pd.read_csv(DATA_DIR / 'dpc-covid19-ita-province.csv')
+def read_data(ttl_hash=None):
+    FILE_PATH = DATA_DIR / 'dpc-covid19-ita-province.csv'
+    URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province.csv"
+    logger.info('Removing old file dpc-covid19-ita-province.csv')
+    FILE_PATH.unlink(missing_ok=True)
+    logger.info('Downloading file dpc-covid19-ita-province.csv')
+    urllib.request.urlretrieve(URL, str(FILE_PATH))
+    data = pd.read_csv(FILE_PATH)
     data['data'] = pd.to_datetime(data['data'])
     data['day'] = data['data'].dt.date
     return data
 
 
 @functools.lru_cache(maxsize=32)
-def total_case_histogram(normalize=''):
+def total_case_histogram(normalize='', ttl_hash=None):
     normalize_data = None
     if len(normalize) > 0:  
         region_data = region_population()          
@@ -87,7 +110,7 @@ def total_case_histogram(normalize=''):
 
 
 @functools.lru_cache(maxsize=32)
-def total_case_time_series():
+def total_case_time_series(ttl_hash=None):
     data = read_data()
     return (data[['day', 'totale_casi']]
         .groupby('day')
@@ -98,7 +121,7 @@ def total_case_time_series():
 
 
 @functools.lru_cache(maxsize=32)
-def fit_exponential():
+def fit_exponential(ttl_hash=None):
     total_time_series = total_case_time_series()
     y = total_time_series['totale_casi'].values
     x = np.array(range(0, len(y)))
@@ -109,7 +132,7 @@ def fit_exponential():
 
 
 @functools.lru_cache(maxsize=32)
-def region_histogram(region, normalize=''):
+def region_histogram(region, normalize='', ttl_hash=None):
     data = read_data()
     data = data[data['denominazione_regione'] == region]
     if data.empty:
