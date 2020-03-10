@@ -67,7 +67,7 @@ export default function TamponiInfectedRatioSeries() {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="day" tickCount={9} />
-          <YAxis />
+          <YAxis unit="%" />
           <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
           <Legend />
           <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />
