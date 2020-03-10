@@ -49,6 +49,16 @@ def total_time_serie():
     }, default=json_serial)
 
 
+@app.route('/dead_proportion')
+def dead_proportion():
+    region = request.args.get('region', default='All', type=str)
+    return json.dumps(analysis.dead_proportion(region).to_dict(orient='records'), default=json_serial)
+
+
+@app.route('/stacked_area')
+def funnel():
+    return json.dumps(analysis.stacked_area_data(), default=json_serial)
+
 @app.route('/growth_rate')
 def growth_rate():
     total_time_series = analysis.total_case_time_series(

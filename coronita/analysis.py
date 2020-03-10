@@ -39,8 +39,59 @@ def data_andamento_nazionale(ttl_hash=None):
 
 
 @functools.lru_cache(maxsize=32)
+def data_regioni(ttl_hash=None):
+    URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni.csv"
+    FILE_PATH = DATA_DIR / 'dpc-covid19-ita-regioni.csv'
+    download_file(URL, FILE_PATH)
+    d = pd.read_csv(FILE_PATH)
+    d['data'] = pd.to_datetime(d['data'])
+    d['day'] = d['data'].dt.date
+    d.set_index('day', inplace=True)
+    return d
+
+
+@functools.lru_cache(maxsize=32)
+def data_province(ttl_hash=None):
+    FILE_PATH = DATA_DIR / 'dpc-covid19-ita-province.csv'
+    URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province.csv"
+    download_file(URL, FILE_PATH)    
+    data = pd.read_csv(FILE_PATH)
+    data['data'] = pd.to_datetime(data['data'])
+    data['day'] = data['data'].dt.date
+    return data
+
+
+def dead_proportion(region='All', ttl_hash=None):
+
+    if region == 'All':
+        data = data_andamento_nazionale(ttl_hash=ttl_hash)
+    else:
+        data = data_regioni(ttl_hash=ttl_hash)
+        if region not in data['denominazione_regione'].unique():
+            return pd.DataFrame()
+        data = data[data['denominazione_regione'] == region]
+    
+    
+    d = pd.DataFrame(data['deceduti']/data['totale_casi']*100, columns=['percentage'])
+    d['totale_casi'] = data['totale_casi']
+    d['deceduti'] = data['deceduti']
+    d['percentage'] = d['percentage'].round(decimals=2)
+    d.reset_index(inplace=True)
+    d.dropna(inplace=True)
+    return d
+
+
+def funnel(ttl_hash=None):
+    data = data_andamento_nazionale(ttl_hash=None)
+    d = data.iloc[-1, :].loc[["tamponi", "totale_casi", "deceduti"]].to_dict()
+    return [{"name": k, "value": int(d[k])} for k in d.keys()]
+
+
+
+
+@functools.lru_cache(maxsize=32)
 def tamponi_infected_ratio(ttl_hash=None):
-    d = data_andamento_nazionale()
+    d = data_andamento_nazionale(ttl_hash=ttl_hash)
     data = pd.DataFrame(d['totale_casi']/d['tamponi']*100, columns=['percentage'])
     data['totale_casi'] = d['totale_casi']
     data['tamponi'] = d['tamponi']
@@ -68,25 +119,17 @@ def provinces_data(ttl_hash=None):
 
 @functools.lru_cache(maxsize=32)
 def region_list(ttl_hash=None):
-    data = read_data()
+    data = data_province(ttl_hash=ttl_hash)
     return sorted(np.unique(data['denominazione_regione']))
 
 
 @functools.lru_cache(maxsize=32)
 def provinces_list(region, ttl_hash=None):
-    data = read_data()
+    data = data_province(ttl_hash=ttl_hash)
     return sorted(np.unique(data[data['denominazione_regione'] == region]['denominazione_provincia']))
     
 
-@functools.lru_cache(maxsize=32)
-def read_data(ttl_hash=None):
-    FILE_PATH = DATA_DIR / 'dpc-covid19-ita-province.csv'
-    URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province.csv"
-    download_file(URL, FILE_PATH)    
-    data = pd.read_csv(FILE_PATH)
-    data['data'] = pd.to_datetime(data['data'])
-    data['day'] = data['data'].dt.date
-    return data
+
 
 
 @functools.lru_cache(maxsize=32)
@@ -97,7 +140,7 @@ def total_case_histogram(normalize='', ttl_hash=None):
         if (normalize in region_data.columns):            
             normalize_data = region_data[normalize]
 
-    data = read_data()
+    data = data_province(ttl_hash=ttl_hash)
     hist = (data[['denominazione_regione', 'totale_casi']]
             .groupby('denominazione_regione')
             .agg('sum')
@@ -113,7 +156,7 @@ def total_case_histogram(normalize='', ttl_hash=None):
 
 @functools.lru_cache(maxsize=32)
 def total_case_time_series(ttl_hash=None):
-    data = read_data()
+    data = data_province(ttl_hash=ttl_hash)
     return (data[['day', 'totale_casi']]
         .groupby('day')
         .agg('sum')
@@ -135,7 +178,7 @@ def fit_exponential(ttl_hash=None):
 
 @functools.lru_cache(maxsize=32)
 def region_histogram(region, normalize='', ttl_hash=None):
-    data = read_data()
+    data = data_province(ttl_hash=ttl_hash)
     data = data[data['denominazione_regione'] == region]
     if data.empty:
         return []

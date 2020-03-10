@@ -74,4 +74,9 @@ export const useStyles = makeStyles(theme => ({
   fullList: {
     width: 'auto',
   },
+  gridelement: {
+    width: "90%"
+    marginLeft: "auto",
+    marginRight: "auto"
+  }
 }));
