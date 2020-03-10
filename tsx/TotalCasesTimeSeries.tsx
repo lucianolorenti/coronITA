@@ -103,7 +103,7 @@ function GrowthRateSeries() {
 
       data={growthRateSerie}
       margin={{
-        top: 5, right: 30, left: 30, bottom: 5,
+        top: 5, right: 0, left: 0, bottom: 5,
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
