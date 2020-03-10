@@ -18,14 +18,19 @@ def get_ttl_hash(seconds=60*60*12):
     return round(time.time() / seconds)
 
 
+def download_file(url, file):
+    logger.info(f'Removing old file {file.name}')
+    if file.is_file():
+        file.unlink()
+    logger.info(f'Downloading file {file.name}')
+    urllib.request.urlretrieve(url, str(file))
+
+
 @functools.lru_cache(maxsize=32)
 def data_andamento_nazionale(ttl_hash=None):
     FILE_PATH = DATA_DIR / 'dpc-covid19-ita-andamento-nazionale.csv'
-    logger.info('Removing old file dpc-covid19-ita-andamento-nazionale.csv')
-    FILE_PATH.unlink(missing_ok=True)
     URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv"
-    logger.info('Downloading file dpc-covid19-ita-andamento-nazionale.csv')
-    urllib.request.urlretrieve(URL, str(FILE_PATH))
+    download_file(URL, FILE_PATH)
     d = pd.read_csv(FILE_PATH)
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
@@ -77,10 +82,7 @@ def provinces_list(region, ttl_hash=None):
 def read_data(ttl_hash=None):
     FILE_PATH = DATA_DIR / 'dpc-covid19-ita-province.csv'
     URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province.csv"
-    logger.info('Removing old file dpc-covid19-ita-province.csv')
-    FILE_PATH.unlink(missing_ok=True)
-    logger.info('Downloading file dpc-covid19-ita-province.csv')
-    urllib.request.urlretrieve(URL, str(FILE_PATH))
+    download_file(URL, FILE_PATH)    
     data = pd.read_csv(FILE_PATH)
     data['data'] = pd.to_datetime(data['data'])
     data['day'] = data['data'].dt.date
