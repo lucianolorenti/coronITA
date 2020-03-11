@@ -3,7 +3,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { CustomizedAxisTick } from './chart';
 import { Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { useStyles } from './styles'
-
+declare var days: Array<any>;
 export default function TotalCasesHistogram(props) {
     const [histogramCases, setHistogramCases] = useState([]);
     const [normalized, setNormalized] = useState("");
@@ -16,9 +16,9 @@ export default function TotalCasesHistogram(props) {
         }
     };
 
-      
+
     useEffect(() => {
-        fetch('/cases_hist?normalized='+normalized)
+        fetch('/cases_hist?normalized=' + normalized)
             .then(function (response) {
                 return response.json();
             })
@@ -40,6 +40,9 @@ export default function TotalCasesHistogram(props) {
                 }
                 label="Normalize by region population"
             />
+                <Typography variant="h6">
+                Date {days[days.length - 1]}
+            </Typography>
             <ResponsiveContainer width="100%" height={500}>
                 <BarChart
 
@@ -53,7 +56,7 @@ export default function TotalCasesHistogram(props) {
                     <YAxis />
                     <Tooltip />
 
-                    <Bar dataKey="totale_casi" name="Cases" fill="#8884d8" />
+                    <Bar dataKey="totale_casi" name="Cases"  fill="#8884d8" />
                 </BarChart>
             </ResponsiveContainer>
         </React.Fragment>

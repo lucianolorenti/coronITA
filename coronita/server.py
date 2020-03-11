@@ -35,8 +35,9 @@ def tamponi_infected_ratio():
 @app.route('/cases_hist')
 def cases_hist():
     normalized = request.args.get('normalized', default='', type=str)
+    date = request.args.get('date', default=analysis.day_list( ttl_hash=get_ttl_hash())[-1], type=str)
     return json.dumps(
-        analysis.total_case_histogram(
+        analysis.total_case_histogram(date,
             normalized, ttl_hash=get_ttl_hash()).to_dict(orient='records'))
 
 
@@ -99,7 +100,8 @@ def growth_rate():
 def province_cases_hist():
     normalized = request.args.get('normalized', default='', type=str)
     region = request.args.get('region', default='Veneto', type=str)
-    return json.dumps(analysis.region_histogram(
+    date = request.args.get('date', default=analysis.day_list( ttl_hash=get_ttl_hash())[-1], type=str)
+    return json.dumps(analysis.region_histogram(date, 
         region, normalized, ttl_hash=get_ttl_hash()).to_dict(orient='records'),
                       default=json_serial)
 

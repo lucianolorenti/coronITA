@@ -28,9 +28,9 @@ def download_file(url, file):
 
 
 @functools.lru_cache(maxsize=32)
-def map_str(ttl_hash=None):
-    URL = "https://github.com/pcm-dpc/COVID-19/raw/master/aree/geojson/dpc-covid19-ita-aree.geojson"
-    FILE_PATH = DATA_DIR / 'dpc-covid19-ita-aree.geojson'
+def map_str():
+    URL = "https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson"
+    FILE_PATH = DATA_DIR / 'limits_IT_regions.geojson'
     #download_file(URL, FILE_PATH)
     with open(FILE_PATH, "r") as f:
         data = f.read()
@@ -43,6 +43,11 @@ def map_locations(date, ttl_hash=None):
     data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
     return data[['lat', 'long', 'totale_casi']].dropna()
 
+def process_df(d):
+    d['data'] = pd.to_datetime(d['data'])
+    d['day'] = d['data'].dt.date
+    d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Bolzano', 'Bolzano')
+    d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Trento', 'Trento')
 
 @functools.lru_cache(maxsize=32)
 def data_andamento_nazionale(ttl_hash=None):
@@ -62,8 +67,7 @@ def data_regioni(ttl_hash=None):
     FILE_PATH = DATA_DIR / 'dpc-covid19-ita-regioni.csv'
     download_file(URL, FILE_PATH)
     d = pd.read_csv(FILE_PATH)
-    d['data'] = pd.to_datetime(d['data'])
-    d['day'] = d['data'].dt.date
+    process_df(d)
     return d
 
 
@@ -73,8 +77,7 @@ def data_province(ttl_hash=None):
     URL = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-province/dpc-covid19-ita-province.csv"
     download_file(URL, FILE_PATH)
     data = pd.read_csv(FILE_PATH)
-    data['data'] = pd.to_datetime(data['data'])
-    data['day'] = data['data'].dt.date
+    process_df(data)
     return data
 
 
@@ -168,7 +171,7 @@ def provinces_list(region, ttl_hash=None):
 
 
 @functools.lru_cache(maxsize=32)
-def total_case_histogram(normalize='', ttl_hash=None):
+def total_case_histogram(date, normalize='', ttl_hash=None):
     normalize_data = None
     if len(normalize) > 0:
         region_data = region_population()
@@ -176,6 +179,7 @@ def total_case_histogram(normalize='', ttl_hash=None):
             normalize_data = region_data[normalize]
 
     data = data_province(ttl_hash=ttl_hash)
+    data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
     hist = (data[[
         'denominazione_regione', 'totale_casi'
     ]].groupby('denominazione_regione').agg('sum').sort_values(
@@ -183,6 +187,7 @@ def total_case_histogram(normalize='', ttl_hash=None):
     if normalize_data is not None:
         hist['totale_casi'] = hist['totale_casi'] / normalize_data
     hist.reset_index(inplace=True)
+    hist.dropna(inplace=True)
     return hist
 
 
@@ -208,7 +213,7 @@ def fit_exponential(ttl_hash=None):
 
 
 @functools.lru_cache(maxsize=32)
-def region_histogram(region, normalize='', ttl_hash=None):
+def region_histogram(date, region, normalize='', ttl_hash=None):
     data = data_province(ttl_hash=ttl_hash)
     data = data[data['denominazione_regione'] == region]
     if data.empty:
@@ -218,6 +223,7 @@ def region_histogram(region, normalize='', ttl_hash=None):
         province_data = provinces_data()
         if (normalize in province_data.columns):
             normalize_data = province_data[normalize]
+    data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
     data = (data[[
         'denominazione_provincia', 'totale_casi'
     ]].groupby('denominazione_provincia').agg('sum').sort_values(
