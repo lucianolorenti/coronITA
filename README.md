@@ -3,7 +3,11 @@
 
 ## Description 
 The [Civil Protection Department is publishing reliable data about the incidence of this virus in the Italian Population](https://github.com/pcm-dpc/COVID-19).
-This dashboard show the developing of the disease in Italy and its provinces. Every 12 hours tries to re-download the data from the Civil Protection Department repository.
+This dashboard shows the developing of the disease in Italy and its provinces. Every 12 hours tries to re-download the data from the Civil Protection Department repository.
+
+## Screenshot
+
+![Screenshot](/doc/screenshot.png)
 
 ## Tools
 ### Frontend 
@@ -17,7 +21,3 @@ This dashboard show the developing of the disease in Italy and its provinces. Ev
   * Flask
   * Pandas
   * numpy
-
-# Screenshot
-
-![Screenshot](/doc/screenshot.png)
