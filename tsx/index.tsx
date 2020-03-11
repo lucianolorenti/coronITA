@@ -25,7 +25,9 @@ import Drawer from './Drawer';
 import DeadProportion from './DeadProportion';
 import StackedAreas from './StackedAreas';
 import GitHubIcon from '@material-ui/icons/GitHub';
+
 import MapTab from './Map'
+
 
 
 function Copyright() {
