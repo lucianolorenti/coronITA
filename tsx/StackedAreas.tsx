@@ -68,7 +68,6 @@ export default function StackedAreas() {
     };
     useEffect(() => {
         fetchData(currentRegion)
-        console.log('a')
     }, [currentRegion])
     const regions_all = ['All'].concat(regions)
     const classes = useStyles()

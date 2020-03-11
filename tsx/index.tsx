@@ -25,7 +25,7 @@ import Drawer from './Drawer';
 import DeadProportion from './DeadProportion';
 import StackedAreas from './StackedAreas';
 import GitHubIcon from '@material-ui/icons/GitHub';
-
+import ItalyMap from './Map'
 
 
 function Copyright() {
@@ -64,7 +64,8 @@ export default function Dashboard() {
   const element: VizElement[] = [
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
     { title: "Persons affected by the virus", component: <StackedAreas />},
-    { title: "Proportion of dead people", component: <DeadProportion />},
+    { title: "Map of infected people", component: <ItalyMap />},
+    { title: "Proportion of deceased people vs positive cases", component: <DeadProportion />},
     { title: "Proportion of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
     { title: "Cases per province", component: <ProvincePlot /> }]
