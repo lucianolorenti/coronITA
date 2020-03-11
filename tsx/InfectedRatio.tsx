@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { useStyles } from './styles';
+import { Typography, Grid, Switch} from '@material-ui/core';
 
 export const toolTipStyles = makeStyles(theme => ({
   tooltip: {
@@ -15,6 +16,7 @@ export const toolTipStyles = makeStyles(theme => ({
 
 const CustomTooltip = ({ active, payload, label }) => {
   const classes = toolTipStyles()
+ 
   if (active) {
     return (
       <div className={classes.tooltip}>
@@ -42,6 +44,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function TamponiInfectedRatioSeries() {
   const [data, setData] = useState(null);
   const classes = useStyles();
+  const [zoom, setZoom] = useState(false);
   useEffect(() => {
 
     fetch('/tamponi_infected_ratio')
@@ -52,10 +55,23 @@ export default function TamponiInfectedRatioSeries() {
         setData(data)
       });
   }, [])
-
+  const handleZoomChange = (event : React.ChangeEvent<HTMLInputElement>) => {
+    setZoom(event.target.checked)
+  }
   return (
     <React.Fragment>
-
+            <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Full scale</Grid>
+          <Grid item>
+            <Switch
+              checked={zoom}
+              onChange={handleZoomChange}
+            />
+          </Grid>
+          <Grid item>Zoom</Grid>
+        </Grid>
+        </Typography>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
 
@@ -66,7 +82,7 @@ export default function TamponiInfectedRatioSeries() {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="day" tickCount={9} />
-          <YAxis unit="%" />
+          <YAxis unit="%" domain={[0, (zoom ? 'dataMax': 100)]} />
           <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
           <Legend />
           <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />

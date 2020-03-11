@@ -1,10 +1,12 @@
 
-import { TextField } from '@material-ui/core';
+import { TextField, Typography, Grid } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
 import { CartesianGrid, LineChart, ResponsiveContainer, Tooltip, Legend, Line, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { useStyles } from './styles';
+import Switch, { SwitchClassKey, SwitchProps } from '@material-ui/core/Switch';
+
 declare var regions: any;
 export const toolTipStyles = makeStyles(theme => ({
     tooltip: {
@@ -43,6 +45,7 @@ export const toolTipStyles = makeStyles(theme => ({
   };
 export default function DeadProportion() {
     const [data, setData] = useState(null);
+    const [zoom, setZoom] = useState(false);
 
     const [currentRegion, setCurrentRegion] = React.useState("All");
     const fetchData = (newRegion) => {
@@ -57,6 +60,9 @@ export default function DeadProportion() {
     const handleCurrentRegionChange = (event, newRegion) => {
         setCurrentRegion(newRegion)
     };
+    const handleZoomChange = (event : React.ChangeEvent<HTMLInputElement>) => {
+      setZoom(event.target.checked)
+    }
     useEffect(() => {
         fetchData(currentRegion)
     }, [currentRegion])
@@ -73,7 +79,18 @@ export default function DeadProportion() {
                 value={currentRegion}
                 renderInput={params => <TextField {...params} label="Region" margin="none" />}
             />
-
+      <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Full scale</Grid>
+          <Grid item>
+            <Switch
+              checked={zoom}
+              onChange={handleZoomChange}
+            />
+          </Grid>
+          <Grid item>Zoom</Grid>
+        </Grid>
+      </Typography>
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart
 
@@ -84,7 +101,7 @@ export default function DeadProportion() {
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="day" tickCount={9} />
-                    <YAxis unit="%" />
+                    <YAxis unit="%" domain={[0, (zoom ? 'dataMax': 100)]} />
                     <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
                     <Legend />
                     <Line type="linear" dataKey="percentage" name="Dead / Positive" stroke="#8884d8" activeDot={{ r: 8 }} />
