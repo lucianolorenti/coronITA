@@ -26,7 +26,7 @@ var path = require('path'); module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/, 
+        test: /\.(eot|woff|woff2|svg|png|ttf)([\?]?.*)$/, 
         loader: "file-loader",
         options: {
           outputPath: '/'
