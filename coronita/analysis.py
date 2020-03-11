@@ -41,7 +41,7 @@ def map_str(ttl_hash=None):
 def map_locations(date, ttl_hash=None):
     data = data_province(ttl_hash=ttl_hash)
     data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
-    return data[['lat', 'long', 'totale_casi']]
+    return data[['lat', 'long', 'totale_casi']].dropna()
 
 
 @functools.lru_cache(maxsize=32)

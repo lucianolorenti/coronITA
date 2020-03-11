@@ -108,6 +108,7 @@ const ItalyMap = () => {
                 return response.json();
             })
             .then(function (data) {
+                console.log(data)
                 setMarkers(data)
 
             });
@@ -152,7 +153,7 @@ const ItalyMap = () => {
                             icon={NewIcon}
                             position={{ lat: elem.lat, lng: elem.long }}
                             options={{ cases: elem.totale_casi}}
-                            key={makeid(10) + idx.toString()} />
+                            key={makeid(30) + "_" +  idx.toString()} />
                     )})}
                 </MarkerClusterGroup>
 

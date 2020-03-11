@@ -47,7 +47,7 @@ def map():
 
 @app.route('/map_markers')
 def map_markers():
-    date = request.args.get('date', default='2020-03-10', type=str)
+    date = request.args.get('date', default='2020-03-11', type=str)
     return json.dumps(
         analysis.map_locations(date, ttl_hash=get_ttl_hash()).to_dict(
             orient='records'))
