@@ -16,3 +16,12 @@
    
     
 }
+.leaf-icon{
+    background-color: #FF7F50CC;
+    border-radius: 25%;
+    position: relative;
+    text-align:center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

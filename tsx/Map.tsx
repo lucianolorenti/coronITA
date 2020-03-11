@@ -36,11 +36,11 @@ function iconCreateFunction(cluster: MarkerCluster) {
         const cases = value.options.options.cases
         return total + cases;
     }, 0)
-    const size = Math.log(total_cases)*10
+    const size = Math.log(total_cases) * 10
     return L.divIcon({
         html: '<div class="circle">' + total_cases + '</div>',
         className: "icon",
-        iconSize: L.point(size,size, true),
+        iconSize: L.point(size, size, true),
     });
 
 }
@@ -75,6 +75,7 @@ function makeid(length) {
     }
     return result;
 }
+
 
 
 const ItalyMap = () => {
@@ -142,12 +143,17 @@ const ItalyMap = () => {
 
                     iconCreateFunction={iconCreateFunction}>
                     {markers.map((elem, idx) => {
+                         const NewIcon = L.divIcon({
+                            className: 'leaf-icon',
+                            iconSize: L.point(18, 18, true),
+                            html: elem.totale_casi
+                        });
                         return (<Marker
-
+                            icon={NewIcon}
                             position={{ lat: elem.lat, lng: elem.long }}
-                            options={{ cases: elem.totale_casi }}
-                            key={makeid(10) + idx.toString()} />)
-                    })}
+                            options={{ cases: elem.totale_casi}}
+                            key={makeid(10) + idx.toString()} />
+                    )})}
                 </MarkerClusterGroup>
 
 
