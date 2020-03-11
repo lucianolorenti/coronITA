@@ -25,7 +25,7 @@ import Drawer from './Drawer';
 import DeadProportion from './DeadProportion';
 import StackedAreas from './StackedAreas';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import ItalyMap from './Map'
+import MapTab from './Map'
 
 
 function Copyright() {
@@ -64,7 +64,7 @@ export default function Dashboard() {
   const element: VizElement[] = [
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
     { title: "Persons affected by the virus", component: <StackedAreas />},
-    { title: "Map of infected people", component: <ItalyMap />},
+    { title: "Map of infected people", component: <MapTab />},
     { title: "Proportion of deceased people vs positive cases", component: <DeadProportion />},
     { title: "Proportion of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
@@ -85,8 +85,8 @@ export default function Dashboard() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.pageTitle}>
-            CoronaVirus       <ReactCountryFlag
+          <Typography variant="h6" color="inherit" noWrap className={classes.pageTitle}>
+            COVID-19       <ReactCountryFlag
               className="emojiFlag"
               countryCode="IT"
               style={{
@@ -96,9 +96,9 @@ export default function Dashboard() {
               aria-label="Italy"
             />
           </Typography>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.right}>
+          <Typography variant="subtitle1" color="inherit" noWrap className={classes.right}>
           <Link href="https://github.com/lucianolorenti/coronITA" color="inherit"> 
-          <GitHubIcon /> Fork me on Github   
+          <GitHubIcon style={{top: "5px", position:"relative"}} /> Fork me on Github   
           </Link>
             </Typography> 
         </Toolbar>

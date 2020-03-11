@@ -8,7 +8,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceLine, R
 import { CustomizedAxisTick } from './chart';
 import { useStyles } from './styles';
 declare var regions: any;
-
+declare var days: Array<any>;
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
@@ -161,19 +161,22 @@ export default function ProvincePlot() {
             }
             label="Normalize by province population"
         />
+        <Typography variant="h6">
+                Date {days[days.length - 1]}
+            </Typography>
         <ResponsiveContainer width="100%" height={400}>
             <BarChart
                 data={regionTimeSerie}
                 margin={{
-                    top: 5, right: 0, left: 0, bottom: 5,
+                    top: 5, right: 0, left: 0, bottom: 19,
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="category" interval={0} tick={<CustomizedAxisTick />} dataKey="denominazione_provincia" />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="totale_casi" fill="#8884d8" />
+              
+                <Bar dataKey="totale_casi" name="Total cases" fill="#8884d8" />
             </BarChart>
         </ResponsiveContainer>
     </React.Fragment>

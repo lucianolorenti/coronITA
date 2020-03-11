@@ -21,6 +21,8 @@
     "react-dom": "^16.13.0",
     "react-katex": "^2.0.2",
     "react-leaflet": "^2.6.1",
+    "react-leaflet-choropleth": "^2.0.1",
+    "react-leaflet-control": "^2.1.2",
     "react-leaflet-markercluster": "^2.0.0-rc3",
     "react-mathjax": "^1.0.1",
     "recharts": "^2.0.0-beta.1",

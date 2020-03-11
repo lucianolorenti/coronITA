@@ -9,6 +9,6 @@
         "esModuleInterop": true,
     },
     "files": [
-	"tsx/index.tsx"
+	"tsx/index.tsx", "./tsx/Chroropleth.tsx", "./tsx/ItalyMap.tsx"
     ]
 }

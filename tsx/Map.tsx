@@ -1,15 +1,17 @@
 
-import { makeStyles, withStyles } from '@material-ui/core';
-import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useState } from 'react';
-import { GeoJSON, Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import MarkerClusterGroup from 'react-leaflet-markercluster';
-import MarkerCluster from 'leaflet.markercluster';
-import 'react-leaflet-markercluster/dist/styles.min.css'
+import { makeStyles, Tabs, Tab, Typography, Box } from '@material-ui/core';
 import Slider from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
-import "./mapicon.css"
+import L from 'leaflet';
+import MarkerCluster from 'leaflet.markercluster';
+import 'leaflet/dist/leaflet.css';
+import React, { useState } from 'react';
+import { GeoJSON } from 'react-leaflet';
+import 'react-leaflet-markercluster/dist/styles.min.css';
+import "./mapicon.css";
+import  ItalyMap  from './ItalyMap';
+import { Chroropleth } from './Chroropleth';
+
 declare function require(name: string);
 declare var days: Array<any>;
 // @ts-ignore
@@ -21,8 +23,11 @@ L.Icon.Default.mergeOptions({
     shadowUrl: "static" + require('leaflet/dist/images/marker-shadow.png').default,
     className: ""
 });
-const marks = days.map((elem, index) => { return { 'value': index, 'label': elem } })
-const mapStyles = makeStyles(theme => ({
+var day_list = days.map((elem, index) => { return { 'value': index, 'label': elem } })
+var marks = day_list.map((elem) => { return { 'value': elem.value, 'label': (elem.value%2==0? "" : elem.label) } })
+
+
+export const mapStyles = makeStyles(theme => ({
     map: {
         height: "400px"
     },
@@ -30,7 +35,7 @@ const mapStyles = makeStyles(theme => ({
         backgroundColor: "#EEAA22"
     }
 }))
-function iconCreateFunction(cluster: MarkerCluster) {
+export function iconCreateFunction(cluster: MarkerCluster) {
     const markers = cluster.getAllChildMarkers()
     const total_cases = markers.reduce((total: number, value: any) => {
         const cases = value.options.options.cases
@@ -53,8 +58,9 @@ interface Props {
     value: number;
 }
 const sliderLabel = (i: number) => {
-    return marks[i].label
+    return day_list[i].label
 }
+
 
 function ValueLabelComponent(props: Props) {
     const { children, open, value } = props;
@@ -66,7 +72,7 @@ function ValueLabelComponent(props: Props) {
     );
 }
 
-function makeid(length) {
+export function makeid(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
@@ -75,101 +81,76 @@ function makeid(length) {
     }
     return result;
 }
+export interface MapProps {
+    currentDate: String
+}
 
+function a11yProps(index: any) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+  }
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
 
+    return (
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && <Box p={3}>{children}</Box>}
+        </Typography>
+    );
+}
+const MapTab = () => {
+    const [value, setValue] = React.useState(0);
 
-const ItalyMap = () => {
-
-    const [data, setData] = useState(null);
-    const [keyMap, setKeyMap] = useState(0);
-    const [markers, setMarkers] = useState([])
-    const [currentDate, setCurrentDate] = useState(marks[marks.length - 1].label)
+    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setValue(newValue);
+    };
+    const [currentDate, setCurrentDate] = useState(day_list[day_list.length - 1].label)
 
     const handleDateChange = (event: any, newValue: number) => {
         setCurrentDate(sliderLabel(newValue));
     };
-    var markerCluster = React.createRef();;
-    const choro = false
-    const fetchData = () => {
-        if (choro) {
-            fetch("/map")
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    setData(data)
-                    setKeyMap(keyMap + 1)
-                });
-        }
-    }
-    const fetchMarkers = () => {
-        fetch("/map_markers?date=" + currentDate)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                console.log(data)
-                setMarkers(data)
-
-            });
-    }
-    useEffect(() => {
-        fetchData()
-        fetchMarkers()
-
-
-    }, [])
-    useEffect(() => {
-        fetchMarkers()
-
-    }, [currentDate])
-
-    const classes = mapStyles()
-
     return (
-        <div >
-            <Map center={{
-                lat: 41.29246,
-                lng: 12.5736108,
-            }} zoom={5}
-                className={classes.map}
-                maxZoom={15}>
-                <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {choro ? <GeoJSON key={keyMap} data={data} /> : null}
-
-                <MarkerClusterGroup
-
-                    iconCreateFunction={iconCreateFunction}>
-                    {markers.map((elem, idx) => {
-                         const NewIcon = L.divIcon({
-                            className: 'leaf-icon',
-                            iconSize: L.point(18, 18, true),
-                            html: elem.totale_casi
-                        });
-                        return (<Marker
-                            icon={NewIcon}
-                            position={{ lat: elem.lat, lng: elem.long }}
-                            options={{ cases: elem.totale_casi}}
-                            key={makeid(30) + "_" +  idx.toString()} />
-                    )})}
-                </MarkerClusterGroup>
-
-
-            </Map>
-            <Slider min={0}
+        <React.Fragment>
+            
+            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                <Tab label="Infected cases" {...a11yProps(0)} />
+                <Tab label="Choropleth" {...a11yProps(1)} />                
+            </Tabs>
+            <Typography variant="h6">
+            Selected date {currentDate}
+                </Typography>
+            <TabPanel value={value} index={0}>
+                <ItalyMap currentDate={currentDate }/>
+ </TabPanel>
+            <TabPanel value={value} index={1}>
+                <Chroropleth  currentDate={currentDate }/>
+ </TabPanel>
+ <Typography id="discrete-slider" gutterBottom>
+        Select the date
+      </Typography>
+ <Slider min={0}
                 onChangeCommitted={handleDateChange}
                 track={false}
                 ValueLabelComponent={ValueLabelComponent}
-                defaultValue={marks.length - 1}
-                aria-labelledby="range-slider"
-                max={marks.length - 1}
-                getAriaValueText={sliderLabel}
-                getAriaLabel={sliderLabel}
-                marks />
-        </div>
+                defaultValue={day_list.length - 1}
+                max={day_list.length - 1}
+                step={0}
+                marks={marks} />
+        </React.Fragment>
     )
 }
-export default ItalyMap;
+export default MapTab;
