@@ -67,8 +67,8 @@ export default function Dashboard() {
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
     { title: "Persons affected by the virus", component: <StackedAreas />},
     { title: "Map of infected people", component: <MapTab />},
-    { title: "Proportion of deceased people vs positive cases", component: <DeadProportion />},
-    { title: "Proportion of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
+    { title: "Percetange of deceased people vs positive cases", component: <DeadProportion />},
+    { title: "Percetange of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
     { title: "Cases per province", component: <ProvincePlot /> }]
 
