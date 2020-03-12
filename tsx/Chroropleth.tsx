@@ -170,7 +170,7 @@ export function Chroropleth(props: MapProps) {
                             display: 'inline-block',
                             marginRight:"15px" }}> </div>
                             <span style={{display: 'inline-block'}}>
-                                {elem.lower} > x >= {elem.upper}
+                                {elem.lower} &lt; x  	&lt;= {elem.upper}
                             </span> 
                             
                         </div>)
