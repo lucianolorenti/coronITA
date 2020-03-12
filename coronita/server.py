@@ -27,7 +27,8 @@ def json_serial(obj):
 
 @app.route('/tamponi_infected_ratio')
 def tamponi_infected_ratio():
-    return json.dumps(analysis.tamponi_infected_ratio(
+    region = request.args.get('region', default='All', type=str)
+    return json.dumps(analysis.tamponi_infected_ratio(region,
         ttl_hash=get_ttl_hash()).to_dict(orient='records'),
                       default=json_serial)
 
