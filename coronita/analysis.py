@@ -43,11 +43,15 @@ def map_locations(date, ttl_hash=None):
     data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
     return data[['lat', 'long', 'totale_casi']].dropna()
 
+
 def process_df(d):
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
     d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Bolzano', 'Bolzano')
     d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Trento', 'Trento')
+    d.loc[d['denominazione_regione'] == 'Bolzano', 'denominazione_regione'] = 'Trentino'
+    d.loc[d['denominazione_regione'] == 'Trento', 'denominazione_regione'] = 'Trentino'
+
 
 @functools.lru_cache(maxsize=32)
 def data_andamento_nazionale(ttl_hash=None):
