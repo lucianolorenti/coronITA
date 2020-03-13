@@ -52,8 +52,8 @@ def process_df(d):
         'P.A. Bolzano', 'Bolzano')
     d['denominazione_regione'] = d['denominazione_regione'].str.replace(
         'P.A. Trento', 'Trento')
-    d.loc[d['denominazione_regione'] == 'Bolzano',
-          'denominazione_regione'] = 'Trentino'
+
+
 
 
 
@@ -65,6 +65,7 @@ def data_andamento_nazionale(ttl_hash=None):
     d = pd.read_csv(FILE_PATH)
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
+
     d.set_index('day', inplace=True)
     return d
 
@@ -82,13 +83,15 @@ def data_regioni(ttl_hash=None):
         'totale_attualmente_positivi', 'nuovi_attualmente_positivi',
         'dimessi_guariti', 'deceduti', 'totale_casi', 'tamponi'
     ]
+    d.loc[d['denominazione_regione'] == 'Bolzano',
+          'denominazione_regione'] = 'Trentino'
     for day in np.unique(d['day']):        
         s = d[(d['denominazione_regione'] == 'Trento')
               & (d['day'] == day)][feats]
         for f in feats:
             d.loc[(d['denominazione_regione'] == 'Trentino') &
                   (d['day'] == day), f] += s[f].values[0]
-        d = d[~((d['denominazione_regione'] == 'Trento') & (d['day'] == day))]
+    d.drop(d[d['denominazione_regione'] == 'Trento'].index, inplace=True)
     return d
 
 
@@ -99,6 +102,10 @@ def data_province(ttl_hash=None):
     download_file(URL, FILE_PATH)
     data = pd.read_csv(FILE_PATH)
     process_df(data)
+    data.loc[data['denominazione_regione'] == 'Bolzano',
+              'denominazione_regione'] = 'Trentino'
+    data.loc[data['denominazione_regione'] == 'Trento',
+              'denominazione_regione'] = 'Trentino'
     return data
 
 
@@ -154,7 +161,6 @@ def region_stacked_area(regions, what='terapia_intensiva', ttl_hash=None):
         regions = regions.split(',')
     data = data_regioni(ttl_hash=ttl_hash)
     data = data[data['denominazione_regione'].isin(regions)]    
-    print(data.columns)
     data = data[['day', 'denominazione_regione', what]].copy()
     data = data[['day','denominazione_regione', what]].pivot(index='day', columns='denominazione_regione', values=what)
     data.rename({what: 'data'}, inplace=True)
