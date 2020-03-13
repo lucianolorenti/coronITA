@@ -25,7 +25,7 @@ import Drawer from './Drawer';
 import DeadProportion from './DeadProportion';
 import StackedAreas from './StackedAreas';
 import GitHubIcon from '@material-ui/icons/GitHub';
-
+import StackedRegions from './StackedRegions'
 import MapTab from './Map'
 
 
@@ -66,6 +66,7 @@ export default function Dashboard() {
   const element: VizElement[] = [
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
     { title: "Persons affected by the virus", component: <StackedAreas />},
+    { title: "Affected by region", component: <StackedRegions />},
     { title: "Map of infected people", component: <MapTab />},
     { title: "Percetange of deceased people vs positive cases", component: <DeadProportion />},
     { title: "Percetange of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
