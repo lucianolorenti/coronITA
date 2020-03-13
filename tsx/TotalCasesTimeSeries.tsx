@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { InlineMath } from 'react-katex';
 import { CartesianGrid, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
-import { Grid } from '@material-ui/core';
+import { Grid, FormControlLabel, Checkbox } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 
 
@@ -33,10 +33,36 @@ function TabPanel(props) {
     </Typography>
   );
 }
+const renderColorfulLegendText = (coeffs) => (value, entry) => {
+  const { color } = entry;
+  if (coeffs == null) {
+    return null
+  }
+  if (entry['value'] == 'Fitted curve') {
+    return (
+      <React.Fragment>
+        <span>{value}</span>
+        <span style={{ fontSize: "12px", marginLeft: "1em" }}>
+          <InlineMath >
+            {`y=${parseFloat(coeffs[1]).toFixed(3)} ({${parseFloat(coeffs[0]).toFixed(3)}}^x)`}
+          </InlineMath>
+        </span>
+
+      </React.Fragment>)
+  } else {
+    return <span>{value}</span>;
+  }
+
+}
 
 function TotalCasesTimeSeries() {
   const [totalTimeSerie, setTotalTimeSerie] = useState(null);
   const [expCoeffs, setExpCoeffs] = useState(null);
+  const [showFittedLine, setShowFittedLine] = useState(true);
+  const handleChangeShowFittedLine = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShowFittedLine(event.target.checked);
+  };
+
   useEffect(() => {
 
     fetch('/total_time_serie')
@@ -50,42 +76,48 @@ function TotalCasesTimeSeries() {
   }, [])
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={10}>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart
-            data={totalTimeSerie}
-            margin={{
-              top: 5, right: 15, left: 30, bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day"  />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="linear" dataKey="totale_casi" name="Total cases" stroke="#8884d8" activeDot={{ r: 8 }} />
-            <Line type="linear" dataKey="fitted" name="Fitted curve" stroke="#AA84d8" activeDot={{ r: 8 }} />
+    <React.Fragment>
+      <FormControlLabel
+        control={
+          <Checkbox checked={showFittedLine} onChange={handleChangeShowFittedLine} />
+        }
+        label="Show fitted line"
+      />
 
-          </LineChart>
+      <ResponsiveContainer width="100%" height={400} >
+        <LineChart
 
-        </ResponsiveContainer>
-      </Grid>
-      <Grid item xs={2}>
-        <Typography variant="h6">
-          Fitted curve
-        </Typography>
-        {expCoeffs !== null ? <InlineMath>
-          {`y=${parseFloat(expCoeffs[1]).toFixed(3)} ({${parseFloat(expCoeffs[0]).toFixed(3)}}^x)`}
-        </InlineMath> : null}
-      </Grid>
-    </Grid>
+          data={totalTimeSerie}
+          margin={{
+            top: 5, right: 15, left: 30, bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="day" interval={2} />
+          <YAxis />
+          <Tooltip />
+          <Legend formatter={renderColorfulLegendText(expCoeffs)} />
+          <Line isAnimationActive={false} type="linear" dataKey="totale_casi" name="Total cases" stroke="#8884d8" activeDot={{ r: 8 }} />
+          {showFittedLine ? <Line isAnimationActive={false}
+            type="linear"
+            dataKey="fitted"
+            name="Fitted curve"
+            stroke="#AA84d8"
+
+            activeDot={{ r: 8 }} /> : null}
+
+        </LineChart>
+
+      </ResponsiveContainer>
+
+    </React.Fragment>
   )
-    
+
 }
 
 function GrowthRateSeries() {
   const [growthRateSerie, setGrowthRateSerie] = useState(null);
+
 
   useEffect(() => {
 
@@ -98,24 +130,35 @@ function GrowthRateSeries() {
       });
   }, [])
 
-  return (<ResponsiveContainer width="100%" height={400}>
-    <LineChart
+  return (
 
-      data={growthRateSerie}
-      margin={{
-        top: 5, right: 0, left: 0, bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="day"  interval={1}  />
-      <YAxis />
-      <ReferenceLine y={1} stroke="green" />
-      <Tooltip />
-      <Legend />
-      <Line type="linear" dataKey="gr" name="Growth rate" stroke="#8884d8" activeDot={{ r: 8 }} />
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart
 
-    </LineChart>
-  </ResponsiveContainer>)
+        data={growthRateSerie}
+        margin={{
+          top: 5, right: 0, left: 0, bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="day" interval={1} />
+        <YAxis />
+        <ReferenceLine y={1} stroke="green" />
+        <Tooltip />
+        <Legend />
+        <Line isAnimationActive={false}
+          type="linear"
+          dataKey="gr"
+          name="Growth rate"
+          stroke="#8884d8"
+          activeDot={{ r: 8 }} />
+
+      </LineChart>
+    </ResponsiveContainer>
+
+  )
+
+
 }
 export default function TotalCasesTimesSeriesTab() {
   const classes = useStyles();
