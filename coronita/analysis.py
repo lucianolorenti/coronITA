@@ -43,11 +43,15 @@ def map_locations(date, ttl_hash=None):
     data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
     return data[['lat', 'long', 'totale_casi']].dropna()
 
+
 def process_df(d):
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
     d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Bolzano', 'Bolzano')
     d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Trento', 'Trento')
+    d.loc[d['denominazione_regione'] == 'Bolzano', 'denominazione_regione'] = 'Trentino'
+    d.loc[d['denominazione_regione'] == 'Trento', 'denominazione_regione'] = 'Trentino'
+
 
 @functools.lru_cache(maxsize=32)
 def data_andamento_nazionale(ttl_hash=None):
@@ -128,8 +132,17 @@ def stacked_area_data(region='All', ttl_hash=None):
 
 
 @functools.lru_cache(maxsize=32)
-def tamponi_infected_ratio(ttl_hash=None):
-    d = data_andamento_nazionale(ttl_hash=ttl_hash)
+def tamponi_infected_ratio(region, ttl_hash=None):
+    if region == 'All':
+        d = data_andamento_nazionale(ttl_hash=ttl_hash)
+    else:
+        d = data_regioni(ttl_hash=ttl_hash)
+        if region not in d['denominazione_regione'].unique():
+            return pd.DataFrame()
+        d = d[d['denominazione_regione'] == region]
+        d.set_index('day', inplace=True)
+        if d.empty:
+            return pd.DataFrame()
     data = pd.DataFrame(d['totale_casi'] / d['tamponi'] * 100,
                         columns=['percentage'])
     data['totale_casi'] = d['totale_casi']
