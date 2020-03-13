@@ -106,7 +106,7 @@ export default function StackedAreas() {
                     <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
                     <Area type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi" stackId="1" stroke="#ea701e" fill="#ea701e" />
                     <Area type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
-                    <Area type="monotone" name="Death" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
+                    <Area type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
                     <Legend />
                 </AreaChart>
             </ResponsiveContainer>
