@@ -84,6 +84,15 @@ def stacked_area():
                       default=json_serial)
 
 
+@app.route('/stacked_area_regions')
+def region_stacked_area():
+    regions = request.args.get('regions', default='Lombardia,Veneto', type=str)
+    regions = regions.split(',')
+    what = request.args.get('what', default='totale_casi', type=str)
+    return json.dumps(analysis.region_stacked_area(
+        ','.join(regions), what, ttl_hash=get_ttl_hash()).to_dict(orient='records'),
+                      default=json_serial)
+
 @app.route('/growth_rate')
 def growth_rate():
     total_time_series = analysis.total_case_time_series(

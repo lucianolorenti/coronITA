@@ -40,17 +40,21 @@ def map_str():
 @functools.lru_cache(maxsize=32)
 def map_locations(date, ttl_hash=None):
     data = data_province(ttl_hash=ttl_hash)
-    data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
+    data = data[data['day'] == pd.to_datetime(
+        date, format='%Y-%m-%d', errors='coerce')]
     return data[['lat', 'long', 'totale_casi']].dropna()
 
 
 def process_df(d):
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
-    d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Bolzano', 'Bolzano')
-    d['denominazione_regione'] = d['denominazione_regione'].str.replace('P.A. Trento', 'Trento')
-    d.loc[d['denominazione_regione'] == 'Bolzano', 'denominazione_regione'] = 'Trentino'
-    d.loc[d['denominazione_regione'] == 'Trento', 'denominazione_regione'] = 'Trentino'
+    d['denominazione_regione'] = d['denominazione_regione'].str.replace(
+        'P.A. Bolzano', 'Bolzano')
+    d['denominazione_regione'] = d['denominazione_regione'].str.replace(
+        'P.A. Trento', 'Trento')
+
+
+
 
 
 @functools.lru_cache(maxsize=32)
@@ -61,6 +65,7 @@ def data_andamento_nazionale(ttl_hash=None):
     d = pd.read_csv(FILE_PATH)
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
+
     d.set_index('day', inplace=True)
     return d
 
@@ -72,6 +77,21 @@ def data_regioni(ttl_hash=None):
     download_file(URL, FILE_PATH)
     d = pd.read_csv(FILE_PATH)
     process_df(d)
+    feats = [
+        'ricoverati_con_sintomi', 'terapia_intensiva',
+        'totale_ospedalizzati', 'isolamento_domiciliare',
+        'totale_attualmente_positivi', 'nuovi_attualmente_positivi',
+        'dimessi_guariti', 'deceduti', 'totale_casi', 'tamponi'
+    ]
+    d.loc[d['denominazione_regione'] == 'Bolzano',
+          'denominazione_regione'] = 'Trentino'
+    for day in np.unique(d['day']):        
+        s = d[(d['denominazione_regione'] == 'Trento')
+              & (d['day'] == day)][feats]
+        for f in feats:
+            d.loc[(d['denominazione_regione'] == 'Trentino') &
+                  (d['day'] == day), f] += s[f].values[0]
+    d.drop(d[d['denominazione_regione'] == 'Trento'].index, inplace=True)
     return d
 
 
@@ -82,6 +102,10 @@ def data_province(ttl_hash=None):
     download_file(URL, FILE_PATH)
     data = pd.read_csv(FILE_PATH)
     process_df(data)
+    data.loc[data['denominazione_regione'] == 'Bolzano',
+              'denominazione_regione'] = 'Trentino'
+    data.loc[data['denominazione_regione'] == 'Trento',
+              'denominazione_regione'] = 'Trentino'
     return data
 
 
@@ -107,9 +131,9 @@ def dead_proportion(region='All', ttl_hash=None):
                      columns=['percentage'])
     d['totale_casi'] = data['totale_casi']
     d['deceduti'] = data['deceduti']
-    d['percentage'] = d['percentage'].round(decimals=2)    
+    d['percentage'] = d['percentage'].round(decimals=2)
     d.dropna(inplace=True)
-    d.reset_index(inplace=True) 
+    d.reset_index(inplace=True)
     return d
 
 
@@ -126,8 +150,21 @@ def stacked_area_data(region='All', ttl_hash=None):
     data = data[[
         'ricoverati_con_sintomi', 'terapia_intensiva',
         'isolamento_domiciliare', 'dimessi_guariti', 'deceduti'
-    ]]   
-    data.reset_index(inplace=True) 
+    ]]
+    data.reset_index(inplace=True)
+    return data
+
+
+@functools.lru_cache(maxsize=32)
+def region_stacked_area(regions, what='terapia_intensiva', ttl_hash=None):
+    if isinstance(regions, str):
+        regions = regions.split(',')
+    data = data_regioni(ttl_hash=ttl_hash)
+    data = data[data['denominazione_regione'].isin(regions)]    
+    data = data[['day', 'denominazione_regione', what]].copy()
+    data = data[['day','denominazione_regione', what]].pivot(index='day', columns='denominazione_regione', values=what)
+    data.rename({what: 'data'}, inplace=True)
+    data.reset_index('day', inplace=True)
     return data
 
 
@@ -192,7 +229,8 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
             normalize_data = region_data[normalize]
 
     data = data_province(ttl_hash=ttl_hash)
-    data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
+    data = data[data['day'] == pd.to_datetime(
+        date, format='%Y-%m-%d', errors='coerce')]
     hist = (data[[
         'denominazione_regione', 'totale_casi'
     ]].groupby('denominazione_regione').agg('sum').sort_values(
@@ -236,7 +274,8 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
         province_data = provinces_data()
         if (normalize in province_data.columns):
             normalize_data = province_data[normalize]
-    data = data[data['day'] == pd.to_datetime(date, format='%Y-%m-%d', errors='coerce')]
+    data = data[data['day'] == pd.to_datetime(
+        date, format='%Y-%m-%d', errors='coerce')]
     data = (data[[
         'denominazione_provincia', 'totale_casi'
     ]].groupby('denominazione_provincia').agg('sum').sort_values(
