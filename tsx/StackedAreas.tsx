@@ -2,7 +2,7 @@
 import { TextField, FormControlLabel, Checkbox } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, LineChart, ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { useStyles } from './styles';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -107,6 +107,7 @@ export default function StackedAreas() {
                     <Area type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi" stackId="1" stroke="#ea701e" fill="#ea701e" />
                     <Area type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
                     <Area type="monotone" name="Death" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
+                    <Legend />
                 </AreaChart>
             </ResponsiveContainer>
         </React.Fragment>)
