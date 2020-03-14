@@ -97,14 +97,19 @@ function TotalCasesTimeSeries() {
           <YAxis />
           <Tooltip />
           <Legend formatter={renderColorfulLegendText(expCoeffs)} />
-          <Line isAnimationActive={false} type="linear" dataKey="totale_casi" name="Total cases" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line isAnimationActive={false} type="linear" 
+                                          dataKey="totale_casi" 
+                                          name="Total cases" 
+                                          strokeWidth={2}
+                                          stroke="#4668ff" activeDot={{ r: 2 }} />
           {showFittedLine ? <Line isAnimationActive={false}
             type="linear"
             dataKey="fitted"
             name="Fitted curve"
-            stroke="#AA84d8"
-
-            activeDot={{ r: 8 }} /> : null}
+            stroke="#777777"
+            strokeWidth={2}
+            dot={false}
+            strokeDasharray="5 5" /> : null}
 
         </LineChart>
 
