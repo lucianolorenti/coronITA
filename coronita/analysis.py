@@ -283,10 +283,10 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
         'totale_casi').reset_index())
     if normalize_data is not None:
         for i in data.index:
-            province = data.get_value(i, 'denominazione_provincia')
-            curr_value = data.get_value(i, 'totale_casi')
+            province = data.at[i, 'denominazione_provincia']
+            curr_value = data.at[i, 'totale_casi']
             normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
-            data.set_value(i, 'totale_casi',  (curr_value / normalize_val))    
+            data.at[i, 'totale_casi'] = (curr_value / normalize_val)
         data.dropna(inplace=True)
 
     data.reset_index(inplace=True)
@@ -308,10 +308,10 @@ def provinces_time_series(region, normalize='', ttl_hash=None):
         'totale_casi').reset_index())
     if normalize_data is not None:
         for i in data.index:
-            province = data.get_value(i, 'denominazione_provincia')
-            curr_value = data.get_value(i, 'totale_casi')
+            province = data.at[i, 'denominazione_provincia']
+            curr_value = data.at[i, 'totale_casi']
             normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
-            data.set_value(i, 'totale_casi', 1000 *( curr_value / normalize_val)       )
+            data.at[i, 'totale_casi'] = 1000 *( curr_value / normalize_val)   
         data.dropna(inplace=True)
 
     data.reset_index(inplace=True)
