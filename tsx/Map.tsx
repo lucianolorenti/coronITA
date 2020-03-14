@@ -24,7 +24,7 @@ L.Icon.Default.mergeOptions({
     className: ""
 });
 var day_list = days.map((elem, index) => { return { 'value': index, 'label': elem } })
-var marks = day_list.map((elem) => { return { 'value': elem.value, 'label': (elem.value%2==0? "" : elem.label) } })
+
 
 
 export const mapStyles = makeStyles(theme => ({
@@ -112,9 +112,14 @@ function TabPanel(props: TabPanelProps) {
         </Typography>
     );
 }
-const MapTab = () => {
+const MapTab = (props) => {
     const [value, setValue] = React.useState(0);
-
+    const nMarks = props.isMobile ? Math.round(day_list.length / 3) : Math.round(day_list.length / 9)
+    console.log(nMarks)
+    const marks = day_list.map((elem, idx) => { return { 
+        'value': elem.value, 
+        'label': ((idx%nMarks)==1? elem.label : "") } })
+    console.log(marks.length)
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
     };

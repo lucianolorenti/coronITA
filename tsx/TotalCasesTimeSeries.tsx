@@ -93,7 +93,7 @@ function TotalCasesTimeSeries() {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day" interval={2} />
+          <XAxis dataKey="day" tickCount={9} />
           <YAxis />
           <Tooltip />
           <Legend formatter={renderColorfulLegendText(expCoeffs)} />
@@ -141,7 +141,7 @@ function GrowthRateSeries() {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="day" interval={1} />
+        <XAxis dataKey="day" tickCount={9} />
         <YAxis />
         <ReferenceLine y={1} stroke="green" />
         <Tooltip />
@@ -174,7 +174,7 @@ export default function TotalCasesTimesSeriesTab() {
       <Tab label="Total cases" {...a11yProps(0)} />
       <Tab label="Growth Rate" {...a11yProps(1)} />
     </Tabs>
-    <TabPanel value={currentTab} index={0}>
+    <TabPanel value={currentTab} style={{padding:"0"}} index={0}>
       <TotalCasesTimeSeries />
     </TabPanel>
     <TabPanel value={currentTab} index={1}>

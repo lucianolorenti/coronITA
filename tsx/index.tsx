@@ -27,8 +27,7 @@ import StackedAreas from './StackedAreas';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import StackedRegions from './StackedRegions'
 import MapTab from './Map'
-
-
+import withSizes from 'react-sizes'
 
 function Copyright() {
   return (
@@ -51,9 +50,13 @@ interface VizElement {
   title: string,
   component: JSX.Element
 }
-
-export default function Dashboard() {
+interface DashboardProps {
+  isMobile: boolean
+}
+function DashboardWithSizes(props: DashboardProps) {
+  const {isMobile} = props;
   const classes = useStyles();
+
   const [drawer, setDrawer] = React.useState(false);
   const toggleDrawer = (open: boolean) => event => {
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -65,10 +68,10 @@ export default function Dashboard() {
 
   const element: VizElement[] = [
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
-    { title: "Persons affected by the virus", component: <StackedAreas />},
-    { title: "Affected by region", component: <StackedRegions />},
-    { title: "Map of infected people", component: <MapTab />},
-    { title: "Percetange of deceased people vs positive cases", component: <DeadProportion />},
+    { title: "Persons affected by the virus", component: <StackedAreas /> },
+    { title: "Affected by region", component: <StackedRegions /> },
+    { title: "Map of infected people", component: <MapTab isMobile={isMobile} /> },
+    { title: "Percetange of deceased people vs positive cases", component: <DeadProportion /> },
     { title: "Percetange of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
     { title: "Cases per province", component: <ProvincePlot /> }]
@@ -99,36 +102,37 @@ export default function Dashboard() {
               aria-label="Italy"
             />
           </Typography>
+
           <Typography variant="subtitle1" color="inherit" noWrap className={classes.right}>
-          <Link href="https://github.com/lucianolorenti/coronITA" color="inherit"> 
-          <GitHubIcon style={{top: "5px", position:"relative"}} /> Fork me on Github   
-          </Link>
-            </Typography> 
+            <Link href="https://github.com/lucianolorenti/coronITA" color="inherit">
+              <GitHubIcon style={{ top: "5px", position: "relative" }} /> {props.isMobile ? null : "Fork me on Github"}
+            </Link>
+          </Typography>
         </Toolbar>
       </AppBar>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="lg" className={isMobile? classes.containerMobile   : classes.container}>
           <Drawer drawer={drawer} toggleDrawer={toggleDrawer} toc={element} />
-          <Paper className={classes.paper} >
+          <Paper className={isMobile?classes.paperMobile :classes.paper} >
 
             <Link href="https://github.com/pcm-dpc/COVID-19" >
               <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
             </Link>
 
-            <Grid container spacing={3}>
+            <Grid container >
               {element.map((elem: VizElement, index: number) => {
                 return (
-                  <Grid item xs={12} key={index}>
-                    <div className={classes.gridelement}>
-                    <Title >
-                      {elem.title}
-                    </Title>
-                    {elem.component}
-                    </div>
+                  <Grid item   className={isMobile? classes.gridItemMobile   : classes.gridItem} key={index}>
+                    
+                      <Title isMobile={isMobile} >
+                        {elem.title}
+                      </Title>
+                      {elem.component}
+                    
                   </Grid>
-                  
-                  )
+
+                )
               })}
             </Grid>
             <Box pt={4}>
@@ -140,7 +144,12 @@ export default function Dashboard() {
     </div>
   );
 }
-
+const mapSizesToProps = ({ width }) => {
+  return {
+    isMobile: width < 480,
+  }
+}
+const Dashboard = withSizes(mapSizesToProps)(DashboardWithSizes)
 ReactDOM.render(
   <Dashboard />,
   document.getElementById('root')

@@ -69,7 +69,7 @@ export default function DeadProportion() {
     const regions_all = ['All'].concat(regions)
     const classes = useStyles()
     return (
-        <div className={classes.gridelement}>
+        <React.Fragment>
             <Autocomplete
                 id="combo-box-demo"
                 options={regions_all}
@@ -108,5 +108,5 @@ export default function DeadProportion() {
 
                 </LineChart>
             </ResponsiveContainer>
-        </div>)
+            </React.Fragment>)
 }

@@ -59,8 +59,20 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
+  containerMobile: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(0),
+    paddingRight: theme.spacing(0)
+  },
   paper: {
     padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  paperMobile: {
+    padding: theme.spacing(0),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -74,10 +86,16 @@ export const useStyles = makeStyles(theme => ({
   fullList: {
     width: 'auto',
   },
-  gridelement: {
+  gridItem: {
     width: "90%",
     marginLeft: "auto",
     marginRight: "auto"
+  },
+  gridItemMobile: {
+    width: "100%",
+    paddingLeft: theme.spacing(0.5),
+    paddingRight: theme.spacing(0.5),
+    
   },
   right: {
     margintLeft: "auto"
