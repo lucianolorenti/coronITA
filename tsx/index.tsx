@@ -1,3 +1,4 @@
+import { IconButton } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -7,27 +8,29 @@ import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import InfoIcon from '@material-ui/icons/Info';
+import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
 import 'katex/dist/katex.min.css';
 import React from 'react';
 import ReactCountryFlag from "react-country-flag";
 import ReactDOM from 'react-dom';
+import withSizes from 'react-sizes';
+import DeadProportion from './DeadProportion';
+import Drawer from './Drawer';
 import TamponiInfectedRatioSeries from './InfectedRatio';
+import MapTab from './Map';
 import ProvincePlot from './ProvincePlot';
+import ProvinceTimeSeriesPlot from './ProvinceTimeSeries';
+import StackedAreas from './StackedAreas';
+import StackedRegions from './StackedRegions';
 import { useStyles } from './styles';
+import Title from './Title';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
-import InfoIcon from '@material-ui/icons/Info';
-import { IconButton } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import Title from './Title';
-import Drawer from './Drawer';
-import DeadProportion from './DeadProportion';
-import StackedAreas from './StackedAreas';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import StackedRegions from './StackedRegions'
-import MapTab from './Map'
-import withSizes from 'react-sizes'
+import SankeyCases from './SankeyCases'
+
 
 function Copyright() {
   return (
@@ -67,6 +70,7 @@ function DashboardWithSizes(props: DashboardProps) {
   const [toc, setToc] = React.useState([]);
 
   const element: VizElement[] = [
+   // { title: "Cases", component: <SankeyCases /> },
     { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
     { title: "Persons affected by the virus", component: <StackedAreas /> },
     { title: "Affected by region", component: <StackedRegions /> },
@@ -74,6 +78,7 @@ function DashboardWithSizes(props: DashboardProps) {
     { title: "Percetange of deceased people vs positive cases", component: <DeadProportion /> },
     { title: "Percetange of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
+    { title: "Evolution of cases per province", component: <ProvinceTimeSeriesPlot /> },
     { title: "Cases per province", component: <ProvincePlot /> }]
 
 

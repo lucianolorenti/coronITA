@@ -28,18 +28,22 @@ def json_serial(obj):
 @app.route('/tamponi_infected_ratio')
 def tamponi_infected_ratio():
     region = request.args.get('region', default='All', type=str)
-    return json.dumps(analysis.tamponi_infected_ratio(region,
-        ttl_hash=get_ttl_hash()).to_dict(orient='records'),
+    return json.dumps(analysis.tamponi_infected_ratio(
+        region, ttl_hash=get_ttl_hash()).to_dict(orient='records'),
                       default=json_serial)
 
 
 @app.route('/cases_hist')
 def cases_hist():
     normalized = request.args.get('normalized', default='', type=str)
-    date = request.args.get('date', default=analysis.day_list( ttl_hash=get_ttl_hash())[-1], type=str)
+    date = request.args.get(
+        'date',
+        default=analysis.day_list(ttl_hash=get_ttl_hash())[-1],
+        type=str)
     return json.dumps(
-        analysis.total_case_histogram(date,
-            normalized, ttl_hash=get_ttl_hash()).to_dict(orient='records'))
+        analysis.total_case_histogram(
+            date, normalized,
+            ttl_hash=get_ttl_hash()).to_dict(orient='records'))
 
 
 @app.route('/map')
@@ -51,8 +55,8 @@ def map():
 def map_markers():
     date = request.args.get('date', default='2020-03-11', type=str)
     return json.dumps(
-        analysis.map_locations(date, ttl_hash=get_ttl_hash()).to_dict(
-            orient='records'))
+        analysis.map_locations(
+            date, ttl_hash=get_ttl_hash()).to_dict(orient='records'))
 
 
 @app.route('/total_time_serie')
@@ -90,8 +94,10 @@ def region_stacked_area():
     regions = regions.split(',')
     what = request.args.get('what', default='totale_casi', type=str)
     return json.dumps(analysis.region_stacked_area(
-        ','.join(regions), what, ttl_hash=get_ttl_hash()).to_dict(orient='records'),
+        ','.join(regions), what,
+        ttl_hash=get_ttl_hash()).to_dict(orient='records'),
                       default=json_serial)
+
 
 @app.route('/growth_rate')
 def growth_rate():
@@ -110,17 +116,44 @@ def growth_rate():
 def province_cases_hist():
     normalized = request.args.get('normalized', default='', type=str)
     region = request.args.get('region', default='Veneto', type=str)
-    date = request.args.get('date', default=analysis.day_list( ttl_hash=get_ttl_hash())[-1], type=str)
-    return json.dumps(analysis.region_histogram(date, 
-        region, normalized, ttl_hash=get_ttl_hash()).to_dict(orient='records'),
+    date = request.args.get(
+        'date',
+        default=analysis.day_list(ttl_hash=get_ttl_hash())[-1],
+        type=str)
+    return json.dumps(analysis.region_histogram(
+        date, region, normalized,
+        ttl_hash=get_ttl_hash()).to_dict(orient='records'),
                       default=json_serial)
+
+@app.route('/last_data')
+def last_data():
+    data = analysis.data_andamento_nazionale(ttl_hash=get_ttl_hash())
+    return json.dumps(data.tail(1).to_dict(orient='records'),
+                      default=json_serial)
+
+
+@app.route('/province_cases')
+def province_cases():
+    normalized = request.args.get('normalized', default='', type=str)
+    region = request.args.get('region', default='Veneto', type=str)
+    return json.dumps(
+        {
+            'data':
+            analysis.provinces_time_series(
+                region, normalized,
+                ttl_hash=get_ttl_hash()).to_dict(orient='records'),
+            'provinces':
+            analysis.provinces_list(region, ttl_hash=get_ttl_hash())
+        },
+        default=json_serial)
 
 
 @app.route('/')
 def hello():
-    name = request.args.get("name", "World")    
+    name = request.args.get("name", "World")
     return render_template(
         'base.html',
         regions=analysis.region_list(ttl_hash=get_ttl_hash()),
-        days=json.loads(json.dumps(analysis.day_list(ttl_hash=get_ttl_hash()).tolist(),
-                        default=json_serial)))
+        days=json.loads(
+            json.dumps(analysis.day_list(ttl_hash=get_ttl_hash()).tolist(),
+                       default=json_serial)))

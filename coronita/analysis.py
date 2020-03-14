@@ -54,9 +54,6 @@ def process_df(d):
         'P.A. Trento', 'Trento')
 
 
-
-
-
 @functools.lru_cache(maxsize=32)
 def data_andamento_nazionale(ttl_hash=None):
     FILE_PATH = DATA_DIR / 'dpc-covid19-ita-andamento-nazionale.csv'
@@ -203,8 +200,14 @@ def provinces_data(ttl_hash=None):
     d['Population'] = d['Population'].str.replace(' ', '')
     d['Population'] = pd.to_numeric(d['Population'])
     d.set_index('Province', inplace=True)
-    return d
+    return d.to_dict(orient='index')
 
+
+@functools.lru_cache(maxsize=32)
+def provinces_list(region, ttl_hash=None):
+    data = data_province(ttl_hash=ttl_hash)
+    data = data[data['denominazione_regione'] == region]
+    return data['denominazione_provincia'].unique().values
 
 @functools.lru_cache(maxsize=32)
 def region_list(ttl_hash=None):
@@ -271,21 +274,51 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
         return []
     normalize_data = None
     if len(normalize) > 0:
-        province_data = provinces_data()
-        if (normalize in province_data.columns):
-            normalize_data = province_data[normalize]
+        normalize_data = provinces_data()        
     data = data[data['day'] == pd.to_datetime(
         date, format='%Y-%m-%d', errors='coerce')]
     data = (data[[
         'denominazione_provincia', 'totale_casi'
     ]].groupby('denominazione_provincia').agg('sum').sort_values(
-        'totale_casi').reset_index().set_index('denominazione_provincia'))
+        'totale_casi').reset_index())
     if normalize_data is not None:
-        data['totale_casi'] = data['totale_casi'] / normalize_data
+        for i in data.index:
+            province = data.get_value(i, 'denominazione_provincia')
+            curr_value = data.get_value(i, 'totale_casi')
+            normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
+            data.set_value(i, 'totale_casi',  (curr_value / normalize_val))    
         data.dropna(inplace=True)
 
     data.reset_index(inplace=True)
     return data
+
+
+@functools.lru_cache(maxsize=32)
+def provinces_time_series(region, normalize='', ttl_hash=None):
+    data = data_province(ttl_hash=ttl_hash)
+    data = data[data['denominazione_regione'] == region]
+    if data.empty:
+        return []
+    normalize_data = None
+    if len(normalize) > 0:
+        normalize_data = provinces_data()        
+    data = (data[[
+        'day',  'denominazione_provincia', 'totale_casi'
+    ]].groupby(['day', 'denominazione_provincia']).agg('sum').sort_values(
+        'totale_casi').reset_index())
+    if normalize_data is not None:
+        for i in data.index:
+            province = data.get_value(i, 'denominazione_provincia')
+            curr_value = data.get_value(i, 'totale_casi')
+            normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
+            data.set_value(i, 'totale_casi', 1000 *( curr_value / normalize_val)       )
+        data.dropna(inplace=True)
+
+    data.reset_index(inplace=True)
+    data = data.pivot(index='day', columns='denominazione_provincia', values='totale_casi')
+    data.reset_index(inplace=True)
+    return data
+
 
 
 def growth_rate(d):
