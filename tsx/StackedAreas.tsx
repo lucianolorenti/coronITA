@@ -1,11 +1,10 @@
 
-import { TextField, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, Legend, ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis } from 'recharts';
-import { makeStyles } from '@material-ui/core/styles';
+import { Area, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
-import FormGroup from '@material-ui/core/FormGroup';
 
 declare var regions: any;
 export const toolTipStyles = makeStyles(theme => ({
@@ -108,6 +107,7 @@ export default function StackedAreas() {
                     <Area type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
                     <Area type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
                     <Legend />
+                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
                 </AreaChart>
             </ResponsiveContainer>
         </React.Fragment>)

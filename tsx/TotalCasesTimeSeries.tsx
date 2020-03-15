@@ -110,7 +110,7 @@ function TotalCasesTimeSeries() {
             strokeWidth={2}
             dot={false}
             strokeDasharray="5 5" /> : null}
-
+              <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
         </LineChart>
 
       </ResponsiveContainer>
@@ -157,7 +157,7 @@ function GrowthRateSeries() {
           name="Growth rate"
           stroke="#8884d8"
           activeDot={{ r: 8 }} />
-
+        <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
       </LineChart>
     </ResponsiveContainer>
 

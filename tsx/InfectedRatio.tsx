@@ -101,7 +101,7 @@ export default function TamponiInfectedRatioSeries() {
           <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
           <Legend />
           <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />
-
+          <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>

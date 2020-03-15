@@ -1,11 +1,11 @@
 
-import { TextField, Typography, Grid } from '@material-ui/core';
+import { Grid, TextField, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import Switch from '@material-ui/core/Switch';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, LineChart, ResponsiveContainer, Tooltip, Legend, Line, XAxis, YAxis } from 'recharts';
-import { makeStyles } from '@material-ui/core/styles';
+import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
-import Switch, { SwitchClassKey, SwitchProps } from '@material-ui/core/Switch';
 
 declare var regions: any;
 export const toolTipStyles = makeStyles(theme => ({
@@ -105,7 +105,7 @@ export default function DeadProportion() {
                     <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
                     <Legend />
                     <Line type="linear" dataKey="percentage" name="Dead / Positive" stroke="#8884d8" activeDot={{ r: 8 }} />
-
+                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
                 </LineChart>
             </ResponsiveContainer>
             </React.Fragment>)
