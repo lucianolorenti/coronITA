@@ -247,24 +247,39 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
 
 @functools.lru_cache(maxsize=32)
 def total_case_time_series(ttl_hash=None):
-    data = data_province(ttl_hash=ttl_hash)
-    return (data[['day', 'totale_casi']].groupby('day').agg('sum').sort_values(
-        'totale_casi').reset_index().copy())
+    data = data_andamento_nazionale(ttl_hash=ttl_hash).reset_index()
+    return data[['day', 'totale_casi']]
 
 
-@functools.lru_cache(maxsize=32)
-def fit_exponential(ttl_hash=None):
-    total_time_series = total_case_time_series()
-    y = total_time_series['totale_casi'].values
+def fit_curve(y, n=None):
     x = np.array(range(0, len(y)))
-    growth_rate = np.exp(np.diff(np.log(y))) - 1
     (a, b) = np.polyfit(x,
                         np.log(y + 0.000000000001),
                         1,
                         w=np.sqrt(y + 0.000000000001))
+    if n is not None:
+        x = np.array(range(0, n))    
     fitted_y = np.exp(b) * np.exp(a * x)
     return ((np.exp(a), np.exp(b)), fitted_y)
 
+
+
+def total_time_series_data(ttl_hash=None):
+    total_time_series = total_case_time_series(ttl_hash=ttl_hash).copy()
+    y = total_time_series['totale_casi'].values
+    
+    ((a, b), fitted_y) = fit_curve(y)
+    ((_, _), fitted_y_2) = fit_curve(y[:-2], n=len(y))
+    ((_, _), fitted_y_7) = fit_curve(y[:-7], n=len(y))
+    total_time_series['fitted'] = np.round(fitted_y, decimals=2)
+    total_time_series['fitted_2'] = np.round(fitted_y_2, decimals=2)
+    total_time_series['fitted_7'] = np.round(fitted_y_7, decimals=2)
+    data = total_time_series.to_dict(orient='records')
+    return {'data': data, 'coeffs': [a, b]}
+    
+
+
+  
 
 @functools.lru_cache(maxsize=32)
 def region_histogram(date, region, normalize='', ttl_hash=None):

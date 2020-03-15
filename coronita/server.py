@@ -61,15 +61,8 @@ def map_markers():
 
 @app.route('/total_time_serie')
 def total_time_serie():
-    data = analysis.total_case_time_series(ttl_hash=get_ttl_hash()).to_dict(
-        orient='records')
-    total_time_series = analysis.total_case_time_series(
-        ttl_hash=get_ttl_hash())
-    ((a, b), fitted_y) = analysis.fit_exponential(ttl_hash=get_ttl_hash())
-    for raw_point, fitted_point_y in zip(data, fitted_y):
-        raw_point['fitted'] = fitted_point_y
-
-    return json.dumps({'data': data, 'coeffs': [a, b]}, default=json_serial)
+    return json.dumps(analysis.total_time_series_data(ttl_hash=get_ttl_hash()),
+                      default=json_serial)
 
 
 @app.route('/dead_proportion')
@@ -124,6 +117,7 @@ def province_cases_hist():
         date, region, normalized,
         ttl_hash=get_ttl_hash()).to_dict(orient='records'),
                       default=json_serial)
+
 
 @app.route('/last_data')
 def last_data():

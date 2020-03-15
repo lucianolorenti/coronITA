@@ -4,7 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 
 import React, { useEffect, useState } from 'react';
 import { InlineMath } from 'react-katex';
-import { CartesianGrid, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, ResponsiveContainer, Line,Brush, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
 import { Grid, FormControlLabel, Checkbox } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -71,6 +71,7 @@ function TotalCasesTimeSeries() {
       })
       .then(function (data) {
         setTotalTimeSerie(data.data)
+        console.log(data.data)
         setExpCoeffs(data.coeffs)
       });
   }, [])
@@ -94,23 +95,42 @@ function TotalCasesTimeSeries() {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="day" tickCount={9} />
-          <YAxis />
+          <YAxis domain={[0, 'dataMax']} />
           <Tooltip />
           <Legend formatter={renderColorfulLegendText(expCoeffs)} />
-          <Line isAnimationActive={false} type="linear" 
-                                          dataKey="totale_casi" 
-                                          name="Total cases" 
-                                          strokeWidth={2}
-                                          stroke="#4668ff" activeDot={{ r: 2 }} />
+          <Line isAnimationActive={false} type="linear"
+            dataKey="totale_casi"
+            name="Total cases"
+            strokeWidth={2}
+            stroke="#4668ff" activeDot={{ r: 2 }} />
+          {showFittedLine ?
+            <Line isAnimationActive={false}
+              type="linear"
+              dataKey="fitted"
+              name="Fitted curve"
+              stroke="#449944"
+              strokeWidth={2}
+              dot={false}
+              strokeDasharray="5 5" /> : null}
           {showFittedLine ? <Line isAnimationActive={false}
             type="linear"
-            dataKey="fitted"
-            name="Fitted curve"
-            stroke="#777777"
+            dataKey="fitted_2"
+            name="Fitted curve two days ago"
+            stroke="#99BB99"
             strokeWidth={2}
             dot={false}
             strokeDasharray="5 5" /> : null}
-              <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+          {showFittedLine ? <Line isAnimationActive={false}
+            type="linear"
+            dataKey="fitted_7"
+            name="Fitted curve one week ago"
+            stroke="#999999"
+            strokeWidth={2}
+            dot={false}
+            strokeDasharray="5 5" /> : null}
+          : null}
+          <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+          <Brush height={20} dataKey={'day'}/>
         </LineChart>
 
       </ResponsiveContainer>
@@ -179,7 +199,7 @@ export default function TotalCasesTimesSeriesTab() {
       <Tab label="Total cases" {...a11yProps(0)} />
       <Tab label="Growth Rate" {...a11yProps(1)} />
     </Tabs>
-    <TabPanel value={currentTab} style={{padding:"0"}} index={0}>
+    <TabPanel value={currentTab} style={{ padding: "0" }} index={0}>
       <TotalCasesTimeSeries />
     </TabPanel>
     <TabPanel value={currentTab} index={1}>

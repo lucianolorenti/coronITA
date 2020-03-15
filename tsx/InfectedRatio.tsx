@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Brush, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { useStyles } from './styles';
 import { Typography, Grid, Switch, TextField } from '@material-ui/core';
@@ -102,6 +102,7 @@ export default function TamponiInfectedRatioSeries() {
           <Legend />
           <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />
           <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+          <Brush height={20} dataKey={'day'}/>
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>

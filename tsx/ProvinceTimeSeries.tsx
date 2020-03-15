@@ -2,7 +2,7 @@ import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid,Brush, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomizedAxisTick } from './chart';
 import { useStyles } from './styles';
 declare var regions: any;
@@ -84,17 +84,17 @@ export default function ProvinceTimeSeriesPlot() {
             Date {days[days.length - 1]}
         </Typography>
         {normalized ? "Every province is normalized according to its population. Data obtained from wikipedia": null}
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={500}>
       
             <LineChart
                 data={regionTimeSerie.data}
                 margin={{
-                    top: 5, right: 0, left: 0, bottom: 45,
+                    top: 5, right: 0, left: 0, bottom: 150,
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-                <XAxis type="category" interval={1} tick={<CustomizedAxisTick />} dataKey="day" />
+                <XAxis type="category" interval={1}  dataKey="day" />
                 <YAxis label={<Text
                     x={0}
                     y={0}
@@ -114,7 +114,7 @@ export default function ProvinceTimeSeriesPlot() {
                         activeDot={{ r: 11 }} />
                 })}
                 <Legend verticalAlign="top" />
-                
+                <Brush  height={20} dataKey={'day'}/>
             </LineChart>
         </ResponsiveContainer>
     </React.Fragment>

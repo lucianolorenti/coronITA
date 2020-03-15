@@ -71,12 +71,12 @@ function DashboardWithSizes(props: DashboardProps) {
 
   const element: VizElement[] = [
    // { title: "Cases", component: <SankeyCases /> },
-    { title: "Time series of infected persons", component: <TotalCasesTimesSeriesTab /> },
+    { title: "Time series of infected people", component: <TotalCasesTimesSeriesTab /> },
     { title: "People affected by the virus", component: <StackedAreas /> },
     { title: "Affected by region", component: <StackedRegions /> },
     { title: "Map of infected people", component: <MapTab isMobile={isMobile} /> },
     { title: "Percetange of deceased people vs positive cases", component: <DeadProportion /> },
-    { title: "Percetange of infected person vs tests", component: <TamponiInfectedRatioSeries /> },
+    { title: "Percetange of infected people vs tests", component: <TamponiInfectedRatioSeries /> },
     { title: "Cases per region", component: <TotalCasesHistogram /> },
     { title: "Evolution of cases per province", component: <ProvinceTimeSeriesPlot /> },
     { title: "Cases per province", component: <ProvincePlot /> }]

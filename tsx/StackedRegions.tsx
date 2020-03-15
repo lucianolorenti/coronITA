@@ -3,7 +3,7 @@ import { Checkbox, Chip, FormControlLabel, FormLabel, Input, InputLabel, ListIte
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { Area, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Brush, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 declare var regions: any;
 
 const useStylesSelect = makeStyles((theme: Theme) =>
@@ -215,7 +215,7 @@ export default function StackedRegions() {
 
 
                     <Legend />
-                    
+                    <Brush height={20} dataKey={'day'} />
                 </AreaChart>
             </ResponsiveContainer>
         </React.Fragment>)
