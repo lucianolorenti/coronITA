@@ -238,6 +238,7 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
         'denominazione_regione', 'totale_casi'
     ]].groupby('denominazione_regione').agg('sum').sort_values(
         'totale_casi').reset_index().set_index('denominazione_regione'))
+    hist['totale_casi'] = hist['totale_casi'].astype(float)
     if normalize_data is not None:
         hist['totale_casi'] = hist['totale_casi'] / normalize_data
     hist.reset_index(inplace=True)
@@ -296,6 +297,7 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
         'denominazione_provincia', 'totale_casi'
     ]].groupby('denominazione_provincia').agg('sum').sort_values(
         'totale_casi').reset_index())
+    data['totale_casi'] = data['totale_casi'].astype('float')
     if normalize_data is not None:
         for i in data.index:
             province = data.at[i, 'denominazione_provincia']
