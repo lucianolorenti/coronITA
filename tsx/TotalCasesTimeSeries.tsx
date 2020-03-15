@@ -29,7 +29,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && children}
     </Typography>
   );
 }
@@ -198,7 +198,7 @@ export default function TotalCasesTimesSeriesTab() {
       <Tab label="Total cases" {...a11yProps(0)} />
       <Tab label="Growth Rate" {...a11yProps(1)} />
     </Tabs>
-    <TabPanel value={currentTab} style={{ padding: "0" }} index={0}>
+    <TabPanel value={currentTab} index={0}>
       <TotalCasesTimeSeries />
     </TabPanel>
     <TabPanel value={currentTab} index={1}>
