@@ -97,6 +97,7 @@ export default function StackedAreas() {
                         top: 10, right: 0, left: 0, bottom: 0,
                     }}
                 >
+                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="day" />
                     <YAxis />
@@ -107,7 +108,7 @@ export default function StackedAreas() {
                     <Area type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
                     <Area type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
                     <Legend />
-                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+                    
                 </AreaChart>
             </ResponsiveContainer>
         </React.Fragment>)
