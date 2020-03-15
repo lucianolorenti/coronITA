@@ -321,6 +321,7 @@ def provinces_time_series(region, normalize='', ttl_hash=None):
         'day',  'denominazione_provincia', 'totale_casi'
     ]].groupby(['day', 'denominazione_provincia']).agg('sum').sort_values(
         'totale_casi').reset_index())
+    data['totale_casi'] = data['totale_casi'].astype(float)
     if normalize_data is not None:
         for i in data.index:
             province = data.at[i, 'denominazione_provincia']
