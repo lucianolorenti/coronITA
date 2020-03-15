@@ -71,7 +71,6 @@ function TotalCasesTimeSeries() {
       })
       .then(function (data) {
         setTotalTimeSerie(data.data)
-        console.log(data.data)
         setExpCoeffs(data.coeffs)
       });
   }, [])
