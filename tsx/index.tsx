@@ -1,6 +1,8 @@
 import { IconButton } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -29,7 +31,7 @@ import { useStyles } from './styles';
 import Title from './Title';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
-import SankeyCases from './SankeyCases'
+
 
 
 function Copyright() {
