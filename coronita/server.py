@@ -61,7 +61,9 @@ def map_markers():
 
 @app.route('/total_time_serie')
 def total_time_serie():
-    return json.dumps(analysis.total_time_series_data(ttl_hash=get_ttl_hash()),
+    regions = request.args.get('regions', default='All', type=str)
+    return json.dumps(analysis.total_time_series_data(regions,
+                                                      ttl_hash=get_ttl_hash()),
                       default=json_serial)
 
 
@@ -94,15 +96,9 @@ def region_stacked_area():
 
 @app.route('/growth_rate')
 def growth_rate():
-    total_time_series = analysis.total_case_time_series(
-        ttl_hash=get_ttl_hash())
-    y = total_time_series['totale_casi'].values
-    growth_r = analysis.growth_rate(y[1:])
-    growth_r = [{
-        'day': d,
-        'gr': gr
-    } for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
-    return json.dumps(growth_r, default=json_serial)
+    regions = request.args.get('regions', default='All', type=str)
+    return json.dumps(analysis.growth_rate_data(regions,
+        ttl_hash=get_ttl_hash()), default=json_serial)
 
 
 @app.route('/province_cases_hist')
