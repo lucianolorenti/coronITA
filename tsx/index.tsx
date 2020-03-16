@@ -31,7 +31,7 @@ import { useStyles } from './styles';
 import Title from './Title';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
-import SankeyCases from './SankeyCases'
+
 
 
 function Copyright() {
