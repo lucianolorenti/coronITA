@@ -247,9 +247,17 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
 
 
 @functools.lru_cache(maxsize=32)
-def total_case_time_series(ttl_hash=None):
+def total_case_time_series_country(ttl_hash=None):
     data = data_andamento_nazionale(ttl_hash=ttl_hash).reset_index()
     return data[['day', 'totale_casi']]
+
+
+@functools.lru_cache(maxsize=32)
+def total_case_time_series_region(region, ttl_hash=None):
+    data = data_regioni(ttl_hash=ttl_hash).reset_index()
+    data = data[data['denominazione_regione'] == region]
+    return data[['day', 'totale_casi']]
+
 
 
 def fit_curve(y, n=None):
@@ -264,9 +272,9 @@ def fit_curve(y, n=None):
     return ((np.exp(a), np.exp(b)), fitted_y)
 
 
-
-def total_time_series_data(ttl_hash=None):
-    total_time_series = total_case_time_series(ttl_hash=ttl_hash).copy()
+@functools.lru_cache(maxsize=32)
+def total_time_series_data_country(ttl_hash=None):
+    total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
     y = total_time_series['totale_casi'].values
     
     ((a, b), fitted_y) = fit_curve(y)
@@ -275,9 +283,60 @@ def total_time_series_data(ttl_hash=None):
     total_time_series['fitted'] = np.round(fitted_y, decimals=2)
     total_time_series['fitted_2'] = np.round(fitted_y_2, decimals=2)
     total_time_series['fitted_7'] = np.round(fitted_y_7, decimals=2)
-    data = total_time_series.to_dict(orient='records')
-    return {'data': data, 'coeffs': [a, b]}
+    return {'data': total_time_series, 'coeffs': [a, b]}
     
+@functools.lru_cache(maxsize=32)
+def growth_rate_data(regions, ttl_hash=None):
+    if isinstance(regions, str):
+        regions = regions.split(',')
+    data = None
+    coeffs = None
+    if 'All' in regions:
+        total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
+        y = total_time_series['totale_casi'].values
+        growth_r = growth_rate(y[1:])
+        data = [{'day': d, 'gr': gr} 
+                     for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
+        regions.remove('All')
+    for region in regions:
+        total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash)
+        y = total_time_series['totale_casi'].values
+        growth_r = growth_rate(y[1:])
+        if data is None:
+            data = [{'day': d, f'gr_{region}': gr if gr < 3 else None  } 
+                     for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
+        else:
+            for elem, gr in zip(data, growth_r):
+                elem[f'gr_{region}'] = gr if gr < 3 else None             
+    return data
+
+@functools.lru_cache(maxsize=32)
+def total_time_series_data(regions, ttl_hash=None):
+    if isinstance(regions, str):
+        regions = regions.split(',')
+    data = None
+    coeffs = None
+    if 'All' in regions:
+        data = total_time_series_data_country(ttl_hash=ttl_hash)
+        coeffs = data['coeffs']
+        data = data['data']
+        regions.remove('All')
+    for region in regions:
+        total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash).copy().reset_index()
+        if data is None:
+            data = total_time_series
+            data.rename(columns={'totale_casi': f'totale_casi_{region}'}, inplace=True)
+        else:
+            data[f'totale_casi_{region}'] = total_time_series['totale_casi']
+    if data is None:
+        data = pd.DataFrame()     
+    if 'index' in data.columns:
+        data.drop(columns=['index'], inplace=True)
+    data = {'data': data.to_dict(orient='records')}
+    
+    if coeffs is not None:
+        data['coeffs'] = coeffs
+    return data
 
 
   
