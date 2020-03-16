@@ -72,6 +72,25 @@ def test_total_time_serie(client):
     assert np.isscalar(data['coeffs'][1]) == True
 
 
+def test_dead_proportion(client):
+    def validate_result(rv):
+        data = json.loads(rv.data)
+        keys = ['day', 'percentage', 'totale_casi', 'deceduti']
+        assert isinstance(data, list)
+        assert len(data) > 0
+        assert set(data[0].keys()) == set(keys)
+    validate_result(client.get('/dead_proportion'))    
+    validate_result(client.get('/dead_proportion?region=All'))
+    validate_result(client.get('/dead_proportion?region=Abruzzo'))
+
+    rv = client.get('/dead_proportion?region=Pirulo')
+    data = json.loads(rv.data)
+    assert isinstance(data, list)
+    assert len(data) == 0
+
+    
+
+
 
 
     
