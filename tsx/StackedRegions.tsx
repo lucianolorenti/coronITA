@@ -103,14 +103,14 @@ export default function StackedRegions() {
             .then(function (response) {
                 return response.json();
             })
-            .then(function (data) {                
+            .then(function (data) {
                 setData(data)
             });
     }
     const handleChangeNormalize = (event, newValue) => {
         setNormalize(newValue)
     }
-    const handleRegionsChange = (event: React.ChangeEvent<{ value: unknown }>) => {        
+    const handleRegionsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setSelectedRegions(event.target.value as string[])
     };
     const handleWhatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,17 +120,17 @@ export default function StackedRegions() {
         fetchData(selectedRegions)
     }, [selectedRegions, what])
     const colors = [
-            '#ff0000', '#733f1d', '#ffaa00', '#234010', '#60bfac', '#3385cc', '#5a5673',
-            '#d580ff', '#ff408c', '#330000', '#ffb380', '#736039', '#44ff00', '#264d45',
-            '#accbe6', '#3600cc', '#392040', '#b38698', '#594343', '#bfa38f', '#b2982d',
-            '#497339', '#00eeff', '#335ccc', '#bbace6', '#cc00a3', '#ff0044', '#ff9180', '#a65800',
-            '#e2e6ac', '#00a62c', '#005c73', '#000f73', '#aa00ff', '#73004d', '#73000f', '#b2502d',
-            '#33210d', '#ccff00', '#00ffaa', '#00294d', '#000033', '#602080', '#a60042']
+        '#ff0000', '#733f1d', '#ffaa00', '#234010', '#60bfac', '#3385cc', '#5a5673',
+        '#d580ff', '#ff408c', '#330000', '#ffb380', '#736039', '#44ff00', '#264d45',
+        '#accbe6', '#3600cc', '#392040', '#b38698', '#594343', '#bfa38f', '#b2982d',
+        '#497339', '#00eeff', '#335ccc', '#bbace6', '#cc00a3', '#ff0044', '#ff9180', '#a65800',
+        '#e2e6ac', '#00a62c', '#005c73', '#000f73', '#aa00ff', '#73004d', '#73000f', '#b2502d',
+        '#33210d', '#ccff00', '#00ffaa', '#00294d', '#000033', '#602080', '#a60042']
     const stylesSelect = useStylesSelect()
     return (
         <React.Fragment>
             <FormControl className={stylesSelect.formControl}>
-                <InputLabel id="demo-mutiple-chip-label">Chip</InputLabel>
+                <InputLabel id="demo-mutiple-chip-label">Region</InputLabel>
                 <Select
                     labelId="demo-mutiple-chip-label"
                     id="demo-mutiple-chip"
@@ -187,9 +187,9 @@ export default function StackedRegions() {
 
                 </RadioGroup>
             </FormControl>
-            <Typography variant="h5" color="inherit" style={{textAlign: "center"}}>
+            <Typography variant="h5" color="inherit" style={{ textAlign: "center" }}>
                 {options[what]}
-                </Typography>
+            </Typography>
             <ResponsiveContainer width="100%" height={400}>
                 <AreaChart
                     width={500}

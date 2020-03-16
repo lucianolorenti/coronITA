@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomizedAxisTick } from './chart';
-import { Typography, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Typography, FormControlLabel, Checkbox, FormControl, InputLabel } from '@material-ui/core';
 import { useStyles } from './styles'
 declare var days: Array<any>;
 export default function TotalCasesHistogram(props) {
@@ -29,7 +29,7 @@ export default function TotalCasesHistogram(props) {
     const classes = useStyles()
     return (
         <React.Fragment>
-
+            
             <FormControlLabel
                 control={
                     <Checkbox
@@ -40,7 +40,7 @@ export default function TotalCasesHistogram(props) {
                 }
                 label="Normalize by region population"
             />
-                <Typography variant="h6">
+            <Typography variant="h6">
                 Date {days[days.length - 1]}
             </Typography>
             <ResponsiveContainer width="100%" height={500}>
@@ -56,7 +56,7 @@ export default function TotalCasesHistogram(props) {
                     <YAxis />
                     <Tooltip />
 
-                    <Bar dataKey="totale_casi" name="Cases"  fill="#8884d8" />
+                    <Bar dataKey="totale_casi" name="Cases" fill="#8884d8" />
                 </BarChart>
             </ResponsiveContainer>
         </React.Fragment>
