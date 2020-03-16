@@ -8,106 +8,9 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceLine, R
 import { CustomizedAxisTick } from './chart';
 import { useStyles } from './styles';
 declare var regions: any;
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
-
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <Typography
-            component="div"
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box p={3}>{children}</Box>}
-        </Typography>
-    );
-}
-
-function TotalCasesTimeSeries() {
-    const [totalTimeSerie, setTotalTimeSerie] = useState(null);
-    const [expCoeffs, setExpCoeffs] = useState(null);
-    useEffect(() => {
-
-        fetch('/total_time_serie')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                setTotalTimeSerie(data.data)
-                setExpCoeffs(data.coeffs)
-            });
-    }, [])
-
-    return (<React.Fragment>
-        <LineChart
-            width={800}
-            height={300}
-            data={totalTimeSerie}
-            margin={{
-                top: 5, right: 30, left: 20, bottom: 5,
-            }}
-        >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" tickCount={9} />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="linear" dataKey="totale_casi" stroke="#8884d8" activeDot={{ r: 8 }} />
-            <Line type="linear" dataKey="fitted" stroke="#AA84d8" activeDot={{ r: 8 }} />
-
-        </LineChart>
+declare var days: Array<any>;
 
 
-        {expCoeffs !== null ? <InlineMath>
-            {`y=${parseFloat(expCoeffs[1]).toFixed(2)} e^{${parseFloat(expCoeffs[0]).toFixed(2)}x}`}
-        </InlineMath> : null}
-    </React.Fragment>)
-}
-
-function GrowthRateSeries() {
-    const [growthRateSerie, setGrowthRateSerie] = useState(null);
-
-    useEffect(() => {
-
-        fetch('/growth_rate')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                setGrowthRateSerie(data)
-            });
-    }, [])
-
-    return (<React.Fragment>
-        <LineChart
-            width={800}
-            height={300}
-            data={growthRateSerie}
-            margin={{
-                top: 5, right: 30, left: 20, bottom: 5,
-            }}
-        >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" tickCount={9} />
-            <YAxis />
-            <ReferenceLine y={1} stroke="green" />
-            <Tooltip />
-            <Legend />
-            <Line type="linear" dataKey="gr" stroke="#8884d8" activeDot={{ r: 8 }} />
-
-        </LineChart>
-    </React.Fragment>)
-}
 export default function ProvincePlot() {
     const classes = useStyles();
     const [regionTimeSerie, setRegionTimeSerie] = useState(null);
@@ -141,9 +44,7 @@ export default function ProvincePlot() {
 
 
     return (<React.Fragment>
-        <Typography variant="h3" className={classes.title} align="center">
-            Cases per province
-    </Typography>
+
         <Autocomplete
             id="combo-box-demo"
             options={regions}
@@ -151,7 +52,7 @@ export default function ProvincePlot() {
             getOptionLabel={function (option: string) { return option }}
             style={{ width: 300 }}
             value={currentRegion}
-            renderInput={params => <TextField {...params} label="Region" variant="outlined" />}
+            renderInput={params => <TextField {...params} label="Region" margin="none" />}
         />
         <FormControlLabel
             control={
@@ -163,19 +64,22 @@ export default function ProvincePlot() {
             }
             label="Normalize by province population"
         />
+        <Typography variant="h6">
+                Date {days[days.length - 1]}
+            </Typography>
         <ResponsiveContainer width="100%" height={400}>
             <BarChart
                 data={regionTimeSerie}
                 margin={{
-                    top: 5, right: 30, left: 20, bottom: 5,
+                    top: 5, right: 0, left: 0, bottom: 19,
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="category" interval={0} tick={<CustomizedAxisTick />} dataKey="denominazione_provincia" />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="totale_casi" fill="#8884d8" />
+              
+                <Bar dataKey="totale_casi" name="Total cases" fill="#8884d8" />
             </BarChart>
         </ResponsiveContainer>
     </React.Fragment>

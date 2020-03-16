@@ -1,5 +1,7 @@
 <html lang="en">
 <head>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="image_src" href="https://github.com/lucianolorenti/coronITA/raw/master/doc/screenshot.png">
 <title>Coronavirus in Italy</title>
 </head>
 <body>
@@ -7,6 +9,7 @@
 </div>
 <script>
    const regions = {{ regions| tojson }}
+   const days = {{ days | tojson }}
 </script> 
 <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
 </body>

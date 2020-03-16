@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomizedAxisTick } from './chart';
-import { Typography, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Typography, FormControlLabel, Checkbox, FormControl, InputLabel } from '@material-ui/core';
 import { useStyles } from './styles'
-
+declare var days: Array<any>;
 export default function TotalCasesHistogram(props) {
     const [histogramCases, setHistogramCases] = useState([]);
     const [normalized, setNormalized] = useState("");
@@ -16,9 +16,9 @@ export default function TotalCasesHistogram(props) {
         }
     };
 
-      
+
     useEffect(() => {
-        fetch('/cases_hist?normalized='+normalized)
+        fetch('/cases_hist?normalized=' + normalized)
             .then(function (response) {
                 return response.json();
             })
@@ -29,9 +29,7 @@ export default function TotalCasesHistogram(props) {
     const classes = useStyles()
     return (
         <React.Fragment>
-            <Typography variant="h3" align="center" className={classes.title}>
-                Cases per region
-            </Typography>
+            
             <FormControlLabel
                 control={
                     <Checkbox
@@ -42,12 +40,15 @@ export default function TotalCasesHistogram(props) {
                 }
                 label="Normalize by region population"
             />
-            <ResponsiveContainer width="90%" height={500}>
+            <Typography variant="h6">
+                Date {days[days.length - 1]}
+            </Typography>
+            <ResponsiveContainer width="100%" height={500}>
                 <BarChart
 
                     data={histogramCases}
                     margin={{
-                        top: 5, right: 30, left: 30, bottom: 100,
+                        top: 5, right: 0, left: 0, bottom: 100,
                     }}
                 >
                     <CartesianGrid strokeDasharray="3 3" />

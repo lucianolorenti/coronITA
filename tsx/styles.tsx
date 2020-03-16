@@ -13,6 +13,7 @@ export const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '0 8px',
+
     ...theme.mixins.toolbar,
   },
   appBar: {
@@ -28,21 +29,25 @@ export const useStyles = makeStyles(theme => ({
     marginLeft:"auto",
     marginRight:"auto"
   },
-  appBarShift: {
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
   menuButton: {
     marginRight: 36,
   },
-  menuButtonHidden: {
+  hide: {
     display: 'none',
   },
   title: {
-    flexGrow: 1,
+
     marginBottom: "0.5em"
+  },
+  anchor: {
+    position: "relative",
+    left: "0px",
+    top: "-5em",
+    width: "1px",
+    height: "1px"
+  },
+  pageTitle: {
+    flexGrow: 1,
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -54,8 +59,20 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
+  containerMobile: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(0),
+    paddingRight: theme.spacing(0)
+  },
   paper: {
     padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  paperMobile: {
+    padding: theme.spacing(0),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -63,4 +80,24 @@ export const useStyles = makeStyles(theme => ({
   fixedHeight: {
     height: 240,
   },
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: 'auto',
+  },
+  gridItem: {
+    width: "90%",
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+  gridItemMobile: {
+    width: "100%",
+    paddingLeft: theme.spacing(0.5),
+    paddingRight: theme.spacing(0.5),
+    
+  },
+  right: {
+    margintLeft: "auto"
+  }
 }));
