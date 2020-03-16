@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "12.16.x"
+  },
   "scripts": {
     "build": "webpack",
     "heroku-prebuild": "npm install",
