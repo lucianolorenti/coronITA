@@ -1,10 +1,11 @@
 
-import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
+import { Checkbox, FormControlLabel, TextField, FormGroup, Grid, Typography, Switch } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { Area, Brush, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Brush, LineChart, Line, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
+
 
 declare var regions: any;
 export const toolTipStyles = makeStyles(theme => ({
@@ -46,9 +47,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function StackedAreas() {
     const [data, setData] = useState(null);
-
+    const [useAreas, setUseAreas] = useState(true)
     const [normalize, setNormalize] = useState(false);
-
     const [currentRegion, setCurrentRegion] = React.useState("All");
     const fetchData = (newRegion) => {
         fetch('/stacked_area?region=' + newRegion)
@@ -59,6 +59,9 @@ export default function StackedAreas() {
                 setData(data)
             });
     }
+    const handleuseAreaChange = (event) => {
+        setUseAreas(event.target.checked)
+    }
     const handleChangeNormalize = (event, newValue) => {
         setNormalize(newValue)
     }
@@ -68,10 +71,56 @@ export default function StackedAreas() {
     useEffect(() => {
         fetchData(currentRegion)
     }, [currentRegion])
+
+    const TrendsAreaChart = () => {
+        return (<AreaChart
+            data={data}
+            stackOffset={normalize ? "expand" : "none"}
+            margin={{
+                top: 10, right: 0, left: 0, bottom: 0,
+            }}
+        >
+            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="day" />
+            <YAxis />
+            <Tooltip />
+            <Area type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
+            <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
+            <Area type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi" stackId="1" stroke="#ea701e" fill="#ea701e" />
+            <Area type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
+            <Area type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
+            <Legend />
+            <Brush height={20} dataKey={'day'} />
+        </AreaChart>)
+    }
+
+    const TrendsLineChart = () => {
+        return (<LineChart
+            data={data}
+            margin={{
+                top: 10, right: 0, left: 0, bottom: 0,
+            }}
+        >
+            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="day" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
+            <Line type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
+            <Line type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi" stackId="1" stroke="#ea701e" fill="#ea701e" />
+            <Line type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
+            <Line type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
+            <Legend />
+            <Brush height={20} dataKey={'day'} />
+        </LineChart>)
+    }
     const regions_all = ['All'].concat(regions)
     const classes = useStyles()
     return (
-            <React.Fragment>
+        <React.Fragment>
+            <FormGroup>
             <Autocomplete
                 id="combo-box-demo"
                 options={regions_all}
@@ -81,35 +130,27 @@ export default function StackedAreas() {
                 value={currentRegion}
                 renderInput={params => <TextField {...params} label="Region" margin="none" />}
             />
-            <FormControlLabel
+                  <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Curves</Grid>
+          <Grid item>
+            <Switch
+              checked={useAreas}
+              onChange={handleuseAreaChange}
+            />
+          </Grid>
+          <Grid item>Areas</Grid>
+        </Grid>
+      </Typography>
+            {useAreas ? <FormControlLabel
                 control={
-                    <Checkbox checked={normalize} onChange={handleChangeNormalize}  />
+                    <Checkbox checked={normalize} onChange={handleChangeNormalize} />
                 }
                 label="Normalize"
-            />
+            /> : null}
+                </FormGroup>
             <ResponsiveContainer width="100%" height={400}>
-                <AreaChart
-                    width={500}
-                    height={400}
-                    data={data}
-                    stackOffset={normalize ? "expand" : "none"}
-                    margin={{
-                        top: 10, right: 0, left: 0, bottom: 0,
-                    }}
-                >
-                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
-                    <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
-                    <Area type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi" stackId="1" stroke="#ea701e" fill="#ea701e" />
-                    <Area type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
-                    <Area type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
-                    <Legend />
-                    <Brush height={20} dataKey={'day'} />
-                </AreaChart>
+               {useAreas?  TrendsAreaChart() : TrendsLineChart() }
             </ResponsiveContainer>
         </React.Fragment>)
 }
