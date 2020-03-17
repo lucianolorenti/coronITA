@@ -1,9 +1,9 @@
 
-import { Checkbox, Chip, FormControlLabel, FormLabel, Input, InputLabel, ListItemText, MenuItem, RadioGroup, Select, FormHelperText, Radio, Divider, Grid, Typography } from '@material-ui/core';
+import { Checkbox, Chip, FormControlLabel, FormLabel, Input, InputLabel, ListItemText, MenuItem, RadioGroup, Select, FormHelperText, Radio, Divider, Grid, Typography, Switch } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { Area, Brush, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 declare var regions: any;
 
 const useStylesSelect = makeStyles((theme: Theme) =>
@@ -90,8 +90,8 @@ const options = {
     'tamponi': 'Tamponi'
 }
 export default function StackedRegions() {
-    const theme = useTheme();
 
+    const [useAreas, setUseAreas] = useState(true)
     const [data, setData] = useState(null);
 
     const [normalize, setNormalize] = useState(false);
@@ -107,6 +107,9 @@ export default function StackedRegions() {
                 setData(data)
             });
     }
+    const handleuseAreaChange = (event) => {
+        setUseAreas(event.target.checked)
+    }
     const handleChangeNormalize = (event, newValue) => {
         setNormalize(newValue)
     }
@@ -115,6 +118,59 @@ export default function StackedRegions() {
     };
     const handleWhatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWhat((event.target as HTMLInputElement).value)
+    }
+    const TrendsAreaChart = () => {
+        return (<AreaChart
+            data={data}
+            stackOffset={normalize ? "expand" : "none"}
+            margin={{
+                top: 10, right: 0, left: 0, bottom: 0,
+            }}
+        >
+            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="day" />
+            <YAxis />
+            <Tooltip />
+
+            {selectedRegions.map((elem) => {
+                return <Area type="monotone"
+                    key={elem}
+                    name={elem}
+                    dataKey={elem} stackId="1" stroke={colors[regions.indexOf(elem)]} fill={colors[regions.indexOf(elem)]} />
+            })}
+
+
+            <Legend />
+            <Brush height={20} dataKey={'day'} />
+        </AreaChart>)
+    }
+    const TrendsLineChart = () => {
+
+        return (<LineChart
+            data={data}
+            margin={{
+                top: 10, right: 0, left: 0, bottom: 0,
+            }}
+        >
+            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="day" />
+            <YAxis />
+            <Tooltip />
+
+            {selectedRegions.map((elem) => {
+                return <Line type="monotone"
+                    key={elem}
+                    name={elem}
+                    dataKey={elem} stroke={colors[regions.indexOf(elem)]} fill={colors[regions.indexOf(elem)]} />
+            })}
+
+
+            <Legend />
+            <Brush height={20} dataKey={'day'} />
+        </LineChart>)
+
     }
     useEffect(() => {
         fetchData(selectedRegions)
@@ -154,15 +210,26 @@ export default function StackedRegions() {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl> <br />
-            <FormControl className={stylesSelect.formControl}>
+            </FormControl>
+            <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>Curves</Grid>
+                <Grid item>
+                    <Switch
+                        checked={useAreas}
+                        onChange={handleuseAreaChange}
+                    />
+                </Grid>
+                <Grid item>Areas</Grid>
+            </Grid>
+            <br />
+            {useAreas ? <FormControl className={stylesSelect.formControl}>
                 <FormControlLabel
                     control={
                         <Checkbox checked={normalize} onChange={handleChangeNormalize} />
                     }
                     label="Normalize"
-                />
-            </FormControl>
+                /> 
+            </FormControl> : null }
             <FormControl component="fieldset" className={stylesSelect.formControl}>
                 <FormLabel component="legend">What to visualize</FormLabel>
                 <RadioGroup row aria-label="what" name="what" value={what} onChange={handleWhatChange}>
@@ -191,32 +258,7 @@ export default function StackedRegions() {
                 {options[what]}
             </Typography>
             <ResponsiveContainer width="100%" height={400}>
-                <AreaChart
-                    width={500}
-                    height={400}
-                    data={data}
-                    stackOffset={normalize ? "expand" : "none"}
-                    margin={{
-                        top: 10, right: 0, left: 0, bottom: 0,
-                    }}
-                >
-                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-
-                    {selectedRegions.map((elem) => {
-                        return <Area type="monotone"
-                            key={elem}
-                            name={elem}
-                            dataKey={elem} stackId="1" stroke={colors[regions.indexOf(elem)]} fill={colors[regions.indexOf(elem)]} />
-                    })}
-
-
-                    <Legend />
-                    <Brush height={20} dataKey={'day'} />
-                </AreaChart>
+                {useAreas ? TrendsAreaChart() : TrendsLineChart()}
             </ResponsiveContainer>
         </React.Fragment>)
 }
