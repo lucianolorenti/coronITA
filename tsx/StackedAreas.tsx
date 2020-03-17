@@ -50,6 +50,7 @@ export default function StackedAreas() {
     const [useAreas, setUseAreas] = useState(true)
     const [normalize, setNormalize] = useState(false);
     const [currentRegion, setCurrentRegion] = React.useState("All");
+    const keys = ['dimessi_guariti', 'isolamento_domiciliare', 'ricoverati_con_sintomi', 'terapia_intensiva', 'deceduti']
     const fetchData = (newRegion) => {
         fetch('/stacked_area?region=' + newRegion)
             .then(function (response) {
@@ -57,6 +58,7 @@ export default function StackedAreas() {
             })
             .then(function (data) {
                 setData(data)
+ 
             });
     }
     const handleuseAreaChange = (event) => {
@@ -80,10 +82,11 @@ export default function StackedAreas() {
                 top: 10, right: 0, left: 0, bottom: 0,
             }}
         >
+            
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis />
+            <YAxis yAxisid={1}    />
             <Tooltip />
             <Area type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
             <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
@@ -102,17 +105,20 @@ export default function StackedAreas() {
                 top: 10, right: 0, left: 0, bottom: 0,
             }}
         >
-            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+            
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis />
+   
+           
             <Tooltip />
-            <Line type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
-            <Line type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
-            <Line type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi" stackId="1" stroke="#ea701e" fill="#ea701e" />
-            <Line type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
-            <Line type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
+            <Line type="monotone" name="Discharged healed" dataKey="dimessi_guariti"  stroke="#62f442" fill="#62f442" />
+            <Line type="monotone" name="Home isolation" dataKey="isolamento_domiciliare"  stroke="#e2c622" fill="#e2c622" />
+            <Line type="monotone" name="Hospitalized with symptoms" dataKey="ricoverati_con_sintomi"  stroke="#ea701e" fill="#ea701e" />
+            <Line type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stroke="#ea2b1f" fill="#ea2b1f" />
+            <Line type="monotone" name="Dead" dataKey="deceduti"  stroke="#474747" fill="#474747" />
             <Legend />
+            <YAxis type="number" domain={[0, dataMax => (dataMax + dataMax*0.1)]}  />
+            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <Brush height={20} dataKey={'day'} />
         </LineChart>)
     }
@@ -150,7 +156,7 @@ export default function StackedAreas() {
             /> : null}
                 </FormGroup>
             <ResponsiveContainer width="100%" height={400}>
-               {useAreas?  TrendsAreaChart() : TrendsLineChart() }
+              { useAreas ? TrendsAreaChart() : TrendsLineChart() }
             </ResponsiveContainer>
         </React.Fragment>)
 }
