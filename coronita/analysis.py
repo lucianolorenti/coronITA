@@ -6,6 +6,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import curve_fit
+from datetime import timedelta 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -259,8 +261,22 @@ def total_case_time_series_region(region, ttl_hash=None):
     return data[['day', 'totale_casi']]
 
 
+def sigmoid(x, L ,x0, k, b):
+    y = (L / (1 + np.exp(-k*(x-x0))))+b
+    return (y)
+
 
 def fit_curve(y, n=None):
+    x = np.array(range(0, len(y)))
+    p0 = [max(y), np.median(x),1,min(y)]
+    popt, pcov = curve_fit(sigmoid, x, y, p0, method='dogbox')
+    if n is not None:
+        x = np.array(range(0, n))    
+    fitted_y = sigmoid(x, *popt)
+    return (popt, fitted_y)
+
+
+def fit_curve1(y, n=None):
     x = np.array(range(0, len(y)))
     (a, b) = np.polyfit(x,
                         np.log(y + 0.000000000001),
@@ -273,17 +289,23 @@ def fit_curve(y, n=None):
 
 
 @functools.lru_cache(maxsize=32)
-def total_time_series_data_country(ttl_hash=None):
+def total_time_series_data_country(additional_days=0, ttl_hash=None):
     total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
+    
     y = total_time_series['totale_casi'].values
     
-    ((a, b), fitted_y) = fit_curve(y)
-    ((_, _), fitted_y_2) = fit_curve(y[:-2], n=len(y))
-    ((_, _), fitted_y_7) = fit_curve(y[:-7], n=len(y))
+    (params, fitted_y) = fit_curve(y, n=len(y)+additional_days)
+    (params, fitted_y_2) = fit_curve(y[:-2], n=len(y)+additional_days)
+    (params, fitted_y_7) = fit_curve(y[:-5], n=len(y)+additional_days)
+    last_day = total_time_series.iloc[-1, :]['day']
+    for i in range(additional_days):
+        next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
+        total_time_series = total_time_series.append({'day': next_day, 'totale_casi': None},  ignore_index=True)
+    
     total_time_series['fitted'] = np.round(fitted_y, decimals=2)
     total_time_series['fitted_2'] = np.round(fitted_y_2, decimals=2)
     total_time_series['fitted_7'] = np.round(fitted_y_7, decimals=2)
-    return {'data': total_time_series, 'coeffs': [a, b]}
+    return {'data': total_time_series, 'coeffs': params.tolist()}
     
 @functools.lru_cache(maxsize=32)
 def growth_rate_data(regions, ttl_hash=None):
@@ -311,13 +333,13 @@ def growth_rate_data(regions, ttl_hash=None):
     return data
 
 @functools.lru_cache(maxsize=32)
-def total_time_series_data(regions, ttl_hash=None):
+def total_time_series_data(regions, additional_days=0, ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
     data = None
     coeffs = None
     if 'All' in regions:
-        data = total_time_series_data_country(ttl_hash=ttl_hash)
+        data = total_time_series_data_country(additional_days=additional_days, ttl_hash=ttl_hash)
         coeffs = data['coeffs']
         data = data['data']
         regions.remove('All')

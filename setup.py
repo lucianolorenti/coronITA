@@ -3,14 +3,15 @@
 from distutils.core import setup
 
 setup(name='Coronita',
-      version='1.1',
+      version='1.2',
       description='Coronavirus Italy',
       author='Luciano Lorenti',
       install_requires=[
           'pandas',
           'numpy',
           'flask',
-	  'gunicorn'
+	  'gunicorn',
+	  'scipy'
       ],
       author_email='lucianolorenti@gmail.com',      
       packages=['coronita'],

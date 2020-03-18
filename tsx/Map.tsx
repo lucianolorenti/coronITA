@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { GeoJSON } from 'react-leaflet';
 import 'react-leaflet-markercluster/dist/styles.min.css';
 import "./mapicon.css";
-import  ItalyMap  from './ItalyMap';
+import ItalyMap from './ItalyMap';
 import { Chroropleth } from './Chroropleth';
 
 declare function require(name: string);
@@ -95,7 +95,7 @@ interface TabPanelProps {
     children?: React.ReactNode;
     index: any;
     value: any;
-  }
+}
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
@@ -114,10 +114,13 @@ function TabPanel(props: TabPanelProps) {
 }
 const MapTab = (props) => {
     const [value, setValue] = React.useState(0);
-    const nMarks = props.isMobile ? Math.round(day_list.length / 3) : Math.round(day_list.length / 9)    
-    const marks = day_list.map((elem, idx) => { return { 
-        'value': elem.value, 
-        'label': ((idx%nMarks)==1? elem.label : "") } })    
+    const nMarks = props.isMobile ? Math.round(day_list.length / 3) : Math.round(day_list.length / 9)
+    const marks = day_list.map((elem, idx) => {
+        return {
+            'value': elem.value,
+            'label': ((idx % nMarks) == 1 ? elem.label : "")
+        }
+    })
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
     };
@@ -128,24 +131,24 @@ const MapTab = (props) => {
     };
     return (
         <React.Fragment>
-            
+
             <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
                 <Tab label="Infected cases" {...a11yProps(0)} />
-                <Tab label="Choropleth" {...a11yProps(1)} />                
+                <Tab label="Choropleth" {...a11yProps(1)} />
             </Tabs>
             <Typography variant="h6">
-            Selected date {currentDate}
-                </Typography>
+                Selected date {currentDate}
+            </Typography>
             <TabPanel value={value} index={0}>
-                <ItalyMap currentDate={currentDate }/>
- </TabPanel>
+                <ItalyMap currentDate={currentDate} />
+            </TabPanel>
             <TabPanel value={value} index={1}>
-                <Chroropleth  currentDate={currentDate }/>
- </TabPanel>
- <Typography id="discrete-slider" gutterBottom>
-        Select the date
+                <Chroropleth currentDate={currentDate} />
+            </TabPanel>
+            <Typography id="discrete-slider" gutterBottom>
+                Select the date
       </Typography>
- <Slider min={0}
+            <Slider min={0}
                 onChangeCommitted={handleDateChange}
                 track={false}
                 ValueLabelComponent={ValueLabelComponent}
