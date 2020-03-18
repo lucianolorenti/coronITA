@@ -146,7 +146,7 @@ function TotalCasesTimeSeries(props: SeriesProps) {
         </Grid>
         <Grid item xs={2}>
           <Typography id="discrete-slider" gutterBottom>
-            Predicted days
+            Predicted future days
       </Typography>
 
           <Slider
