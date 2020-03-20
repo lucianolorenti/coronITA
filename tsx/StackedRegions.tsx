@@ -3,7 +3,7 @@ import { Checkbox, Chip, FormControlLabel, FormLabel, Input, InputLabel, ListIte
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { Area, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Text, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 declare var regions: any;
 
 const useStylesSelect = makeStyles((theme: Theme) =>
@@ -130,7 +130,16 @@ export default function StackedRegions() {
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis />
+            <YAxis
+                        width={105}
+                        label={<Text
+                            x={0}
+                            y={0}
+                            dx={20}
+                            dy={180}
+                            offset={0}
+                            angle={-90}
+                        > {normalize? "Proportion per day" :  "Total cases"} </Text>} />
             <Tooltip />
 
             {selectedRegions.map((elem) => {
@@ -156,7 +165,16 @@ export default function StackedRegions() {
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis />
+            <YAxis
+                        width={105}
+                        label={<Text
+                            x={0}
+                            y={0}
+                            dx={20}
+                            dy={150}
+                            offset={0}
+                            angle={-90}
+                        >  Total cases </Text>} />
             <Tooltip />
 
             {selectedRegions.map((elem) => {

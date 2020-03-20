@@ -242,7 +242,7 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
         'totale_casi').reset_index().set_index('denominazione_regione'))
     hist['totale_casi'] = hist['totale_casi'].astype(float)
     if normalize_data is not None:
-        hist['totale_casi'] = hist['totale_casi'] / normalize_data
+        hist['totale_casi'] =1000*(hist['totale_casi'] / normalize_data)
     hist.reset_index(inplace=True)
     hist.dropna(inplace=True)
     return hist
@@ -384,7 +384,7 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
             province = data.at[i, 'denominazione_provincia']
             curr_value = data.at[i, 'totale_casi']
             normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
-            data.at[i, 'totale_casi'] = (curr_value / normalize_val)
+            data.at[i, 'totale_casi'] = (curr_value / normalize_val) * 1000
         data.dropna(inplace=True)
 
     data.reset_index(inplace=True)
