@@ -3,7 +3,7 @@ import { Checkbox, FormControlLabel, TextField, FormGroup, Grid, Typography, Swi
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { Area, Brush, LineChart, Line, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Brush, LineChart, Line, Text, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
 
 
@@ -86,7 +86,14 @@ export default function StackedAreas() {
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis yAxisid={1}    />
+            <YAxis yAxisid={1}  label={<Text
+                            x={0}
+                            y={0}
+                            dx={20}
+                            dy={300}
+                            offset={0}
+                            angle={-90}
+                        >  Total cases </Text>}  />
             <Tooltip />
             <Area type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
             <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />

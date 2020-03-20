@@ -3,8 +3,8 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 
 import React, { useEffect, useState } from 'react';
-import { InlineMath } from 'react-katex';
-import { CartesianGrid, Legend, ResponsiveContainer, Line, Brush, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
+import MathJax from 'react-mathjax'
+import { CartesianGrid, Label, Legend, ResponsiveContainer, Line, Brush, Text, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
 import { Grid, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, ListItemText, Chip, Input, makeStyles, Theme, createStyles, Slider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -79,13 +79,12 @@ const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean
   if ((showFittedLine) && (entry['value'] == 'Fitted curve')) {
     return (
       <React.Fragment>
-        <span>{value}</span>
-        <span style={{ fontSize: "12px", marginLeft: "1em" }}>
-          <InlineMath >
-            {`y=${b} + \\dfrac{${L}}{1 + e^{-${k}(x-${x0})}}`}
-          </InlineMath>
-        </span>
-
+        <MathJax.Provider>
+          <span>{value}</span>
+          <span style={{ fontSize: "12px", marginLeft: "1em" }}>
+            <MathJax.Node formula={`y=${b} + \\dfrac{${L}}{1 + e^{-${k}(x-${x0})}}`} />
+          </span>
+        </MathJax.Provider>
       </React.Fragment>)
   } else {
     return <span>{value}</span>;
@@ -135,7 +134,7 @@ function TotalCasesTimeSeries(props: SeriesProps) {
   const showFittedCurves = props.selectedRegions.includes('All') && showFittedLine
   return (
     <React.Fragment>
-      <Grid container style={{paddingTop: "1em"}} spacing={1}>
+      <Grid container style={{ paddingTop: "1em" }} spacing={1}>
         <Grid item xs={2}>
           <FormControlLabel
             control={
@@ -171,8 +170,12 @@ function TotalCasesTimeSeries(props: SeriesProps) {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day" tickCount={9} />
-          <YAxis domain={[0, 'dataMax']} />
+          <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / 15)} />
+          <YAxis domain={[0, 'dataMax']} >
+
+            <Label dx={-20} angle={-90}> Total cases</Label>
+
+          </YAxis>
           <Tooltip />
           <Legend formatter={renderColorfulLegendText(expCoeffs, showFittedCurves)} wrapperStyle={{ paddingTop: "0.7em" }} />
           {props.selectedRegions.includes('All') ?
@@ -249,17 +252,33 @@ function GrowthRateSeries(props: SeriesProps) {
   const not_regions_fields = ["day", "gr"]
   return (
 
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={400} key="growth_rate">
       <LineChart
-
-        data={growthRateSerie}
         margin={{
           top: 5, right: 0, left: 0, bottom: 5,
         }}
+        data={growthRateSerie}
+
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="day" tickCount={9} />
-        <YAxis />
+        <XAxis dataKey="day" interval={Math.ceil(growthRateSerie.length / 15)} />
+
+        <YAxis
+          width={105}
+          label={<Text
+            x={0}
+            y={0}
+            dx={20}
+            dy={300}
+            offset={0}
+            angle={-90}
+        >  Total cases day i / Total cases day i -1 </Text>} />
+
+
+
+
+
+
         <ReferenceLine y={1} stroke="green" />
         <Tooltip />
         {Object.keys(growthRateSerie.length > 0 ? growthRateSerie[1] : {})
