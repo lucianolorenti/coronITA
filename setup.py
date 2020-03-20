@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='Coronita',
-      version='1.2',
+      version='1.3',
       description='Coronavirus Italy',
       author='Luciano Lorenti',
       install_requires=[
