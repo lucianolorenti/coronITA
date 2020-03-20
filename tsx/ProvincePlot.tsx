@@ -1,10 +1,8 @@
-import { TextField, FormControlLabel, Checkbox } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
+import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { InlineMath } from 'react-katex';
-import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Tooltip, CartesianGrid, ResponsiveContainer, Text, XAxis, YAxis } from 'recharts';
 import { CustomizedAxisTick } from './chart';
 import { useStyles } from './styles';
 declare var regions: any;
@@ -76,7 +74,17 @@ export default function ProvincePlot() {
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="category" interval={0} tick={<CustomizedAxisTick />} dataKey="denominazione_provincia" />
-                <YAxis />
+                <YAxis width={60} label={
+                <Text
+                            x={0}
+                            y={0}
+                            dx={20}
+                            dy={215}
+                            offset={0}
+                            angle={-90}
+                        > 
+                         {normalized ? "Cases per 1000 people" : "Total cases" }
+                         </Text> } />
                 <Tooltip />
               
                 <Bar dataKey="totale_casi" name="Total cases" fill="#8884d8" />
