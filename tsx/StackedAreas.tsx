@@ -86,14 +86,15 @@ export default function StackedAreas() {
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis yAxisid={1}  label={<Text
+            <YAxis width={80}
+                    yAxisid={1}  label={<Text
                             x={0}
                             y={0}
                             dx={20}
-                            dy={300}
+                            dy={250}
                             offset={0}
                             angle={-90}
-                        >  Total cases </Text>}  />
+                        >  {normalize ? "Proportion per day" : "Total cases"} </Text>}  />
             <Tooltip />
             <Area type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
             <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />
@@ -124,7 +125,17 @@ export default function StackedAreas() {
             <Line type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stroke="#ea2b1f" fill="#ea2b1f" />
             <Line type="monotone" name="Dead" dataKey="deceduti"  stroke="#474747" fill="#474747" />
             <Legend />
-            <YAxis type="number" domain={[0, dataMax => (dataMax + dataMax*0.1)]}  />
+            <YAxis  domain={[0, dataMax => (dataMax + dataMax*0.1)]}
+                        width={105}
+                        label={<Text
+                            x={0}
+                            y={0}
+                            dx={20}
+                            dy={170}
+                            offset={0}
+                            angle={-90}
+                        >  Total cases </Text>} />
+        
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <Brush height={20} dataKey={'day'} />
         </LineChart>)

@@ -59,10 +59,10 @@ export default function TotalCasesHistogram(props) {
                             x={0}
                             y={0}
                             dx={20}
-                            dy={300}
+                            dy={200}
                             offset={0}
                             angle={-90}
-                        >  Total cases </Text>} />
+                        >  {normalized!="" ? "Cases per 1000 people" : "Total cases"} </Text>} />
                     <Tooltip />
 
                     <Bar dataKey="totale_casi" name="Cases" fill="#8884d8" />

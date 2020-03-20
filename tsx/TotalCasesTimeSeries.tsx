@@ -171,7 +171,7 @@ function TotalCasesTimeSeries(props: SeriesProps) {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / 15)} />
-          <YAxis domain={[0, 'dataMax']} >
+          <YAxis domain={[0, (v)=>v.toFixed(0)]}  width={105} >
 
             <Label dx={-20} angle={-90}> Total cases</Label>
 

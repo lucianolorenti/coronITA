@@ -136,10 +136,10 @@ export default function StackedRegions() {
                             x={0}
                             y={0}
                             dx={20}
-                            dy={300}
+                            dy={180}
                             offset={0}
                             angle={-90}
-                        >  Total cases </Text>} />
+                        > {normalize? "Proportion per day" :  "Total cases"} </Text>} />
             <Tooltip />
 
             {selectedRegions.map((elem) => {
@@ -165,7 +165,16 @@ export default function StackedRegions() {
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis />
+            <YAxis
+                        width={105}
+                        label={<Text
+                            x={0}
+                            y={0}
+                            dx={20}
+                            dy={150}
+                            offset={0}
+                            angle={-90}
+                        >  Total cases </Text>} />
             <Tooltip />
 
             {selectedRegions.map((elem) => {
