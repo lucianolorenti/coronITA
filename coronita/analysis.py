@@ -10,7 +10,6 @@ from scipy.optimize import curve_fit
 from datetime import timedelta 
 
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -335,19 +334,23 @@ def growth_rate_data(regions, ttl_hash=None):
                 elem[f'gr_{region}'] = gr if gr < 3 else None             
     return data
 
-@functools.lru_cache(maxsize=32)
+
 def total_time_series_data(regions, additional_days=0, ttl_hash=None):
+    print(regions)
     if isinstance(regions, str):
         regions = regions.split(',')
     data = None
     coeffs = None
     if 'All' in regions:
-        data = total_time_series_data_country(additional_days=additional_days, ttl_hash=ttl_hash)
+        data = total_time_series_data_country(additional_days=additional_days, ttl_hash=ttl_hash).copy()
         coeffs = data['coeffs']
         data = data['data'].copy()
         regions.remove('All')
+        print()
+        print(data)
+    
     for region in regions:
-        total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash).copy().reset_index()
+        total_time_series = total_case_time_series_region(region, ttl_hash=ttl_hash).copy().reset_index()
         last_day = total_time_series.iloc[-1, :]['day']
         for i in range(additional_days):
             next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
@@ -361,10 +364,12 @@ def total_time_series_data(regions, additional_days=0, ttl_hash=None):
         data = pd.DataFrame()     
     if 'index' in data.columns:
         data.drop(columns=['index'], inplace=True)
+
     data = {'data': data.to_dict(orient='records')}
     
     if coeffs is not None:
         data['coeffs'] = coeffs
+  
     return data
 
 

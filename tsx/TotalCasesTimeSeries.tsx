@@ -1,13 +1,12 @@
-import Box from '@material-ui/core/Box';
+import { AppBar, Checkbox, Toolbar, Chip, createStyles, FormControl, FormControlLabel, Grid, Input, InputLabel, ListItemText, makeStyles, MenuItem, Select, Slider, Theme } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-
-import React, { useEffect, useState } from 'react';
-import MathJax from 'react-mathjax'
-import { CartesianGrid, Label, Legend, ResponsiveContainer, Line, Brush, Text, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
-import { useStyles } from './styles';
-import { Grid, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, ListItemText, Chip, Input, makeStyles, Theme, createStyles, Slider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import React, { useEffect, useState } from 'react';
+import MathJax from 'react-mathjax';
+import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
+import { useStyles } from './styles';
+import GraphContainer from './GraphContainer'
 
 declare var regions: any;
 const colors = [
@@ -46,29 +45,9 @@ const MenuProps = {
     },
   },
 };
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && children}
-    </Typography>
-  );
-}
+
 
 const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean) => (value, entry) => {
   const { color } = entry;
@@ -82,7 +61,7 @@ const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean
         <MathJax.Provider>
           <span>{value}</span>
           <span style={{ fontSize: "12px", marginLeft: "1em" }}>
-            <MathJax.Node formula={`y=${b} + \\dfrac{${L}}{1 + e^{-${k}(x-${x0})}}`} />
+            <MathJax.Node inline formula={`y=${b} + \\dfrac{${L}}{1 + e^{-${k}(x-${x0})}}`} />
           </span>
         </MathJax.Provider>
       </React.Fragment>)
@@ -91,8 +70,12 @@ const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean
   }
 
 }
-
-interface SeriesProps {
+interface SeriesProps {  
+  selectedRegions: Array<String>
+}
+interface TotalCasesTimeSeriesProps {
+  showFittedLine: boolean;
+  predictedDays: number;
   selectedRegions: Array<String>
 }
 const marks = [
@@ -105,21 +88,16 @@ const marks = [
     label: '3'
   },
 ]
-function TotalCasesTimeSeries(props: SeriesProps) {
+function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
   const [totalTimeSerie, setTotalTimeSerie] = useState([]);
   const [expCoeffs, setExpCoeffs] = useState(null);
-  const [showFittedLine, setShowFittedLine] = useState(props.selectedRegions.includes('All'));
-  const [predictedDays, setPredictedDay] = useState(0)
+  
 
-  const handleChangeShowFittedLine = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setShowFittedLine(event.target.checked);
-  };
-  const handleDateChange = (event: any, newValue: number) => {
-    setPredictedDay(newValue);
-  };
+
+ 
   useEffect(() => {
 
-    fetch('/total_time_serie?predictedDays=' + predictedDays + '&regions=' + props.selectedRegions)
+    fetch('/total_time_serie?predictedDays=' + props.predictedDays + '&regions=' + props.selectedRegions)
       .then(function (response) {
         return response.json();
       })
@@ -129,49 +107,21 @@ function TotalCasesTimeSeries(props: SeriesProps) {
           setExpCoeffs(data.coeffs)
         }
       });
-  }, [props.selectedRegions, predictedDays])
+  }, [props.selectedRegions, props.predictedDays])
   const not_regions_fields = ["day", "totale_casi", "fitted", "fitted_2", "fitted_7"]
-  const showFittedCurves = props.selectedRegions.includes('All') && showFittedLine
+  const showFittedCurves = props.selectedRegions.includes('All') && props.showFittedLine
   return (
     <React.Fragment>
-      <Grid container style={{ paddingTop: "1em" }} spacing={1}>
-        <Grid item xs={2}>
-          <FormControlLabel
-            control={
-              <Checkbox disabled={!props.selectedRegions.includes('All')} checked={showFittedCurves} onChange={handleChangeShowFittedLine} />
-            }
-            label="Show fitted line"
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Typography id="discrete-slider" gutterBottom>
-            Predicted future days
-      </Typography>
 
-          <Slider
-            marks={marks}
-            defaultValue={0}
-            aria-labelledby="discrete-slider"
-            valueLabelDisplay="auto"
-            step={1}
-            onChangeCommitted={handleDateChange}
-            disabled={!props.selectedRegions.includes('All') || !showFittedCurves}
-            min={0}
-            max={3}
-          />
-        </Grid>
-      </Grid>
+
 
       <ResponsiveContainer width="100%" height={400} >
         <LineChart
           data={totalTimeSerie}
-          margin={{
-            top: 5, right: 15, left: 30, bottom: 5,
-          }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / 15)} />
-          <YAxis domain={[0, (v)=>v.toFixed(0)]}  width={105} >
+          <YAxis domain={[0, (v) => v.toFixed(0)]} width={105} >
 
             <Label dx={-20} angle={-90}> Total cases</Label>
 
@@ -254,9 +204,6 @@ function GrowthRateSeries(props: SeriesProps) {
 
     <ResponsiveContainer width="100%" height={400} key="growth_rate">
       <LineChart
-        margin={{
-          top: 5, right: 0, left: 0, bottom: 5,
-        }}
         data={growthRateSerie}
 
       >
@@ -272,7 +219,7 @@ function GrowthRateSeries(props: SeriesProps) {
             dy={300}
             offset={0}
             angle={-90}
-        >  Total cases day i / Total cases day i -1 </Text>} />
+          >  Total cases day i / Total cases day i -1 </Text>} />
 
 
 
@@ -308,39 +255,40 @@ function GrowthRateSeries(props: SeriesProps) {
     </ResponsiveContainer>
 
   )
-
-
 }
-export default function TotalCasesTimesSeriesTab() {
-  const classes = useStyles();
-  const [currentTab, setCurrentTab] = React.useState(0);
-  const handleCurrentTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
-  };
 
+interface TotalCasesTimesSeriesCompoent {
+  title:React.ReactNode
+}
+export default function TotalCasesTimesSeriesCompoent(props:TotalCasesTimesSeriesCompoent) {
+  const classes = useStyles();
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
+  const [showFittedLine, setShowFittedLine] = useState(selectedRegions.includes('All'));
+  const [predictedDays, setPredictedDay] = useState(0)
+  const handleDateChange = (event: any, newValue: number) => {
+    setPredictedDay(newValue);
+  };
+  const handleChangeShowFittedLine = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShowFittedLine(event.target.checked);
+  };
   const handleRegionsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedRegions(event.target.value as string[])
   };
+  const showFittedCurves = selectedRegions.includes('All') && showFittedLine
   const stylesSelect = useStylesSelect()
-  return (
-    <React.Fragment>
-      <FormControl className={stylesSelect.formControl}>
+  const RegionSelector = () => {
+    return (
+      <FormControl className={classes.formControl}>
+
         <InputLabel >Regions</InputLabel>
         <Select
 
           multiple
           value={selectedRegions}
           onChange={handleRegionsChange}
-          input={<Input id="select-multiple-chip" />}
-          renderValue={selected => (
-            <div className={stylesSelect.chips}>
-              {(selected as string[]).map(value => (
-                <Chip key={value} label={value} className={stylesSelect.chip} />
-              ))}
-            </div>
-          )}
+          input={<Input />}
+          renderValue={selected => (selected as string[]).join(', ')}
           MenuProps={MenuProps}
         >
           {regionsAll.map(name => (
@@ -351,16 +299,44 @@ export default function TotalCasesTimesSeriesTab() {
           ))}
         </Select>
       </FormControl>
-      <Tabs value={currentTab} onChange={handleCurrentTabChange} aria-label="wrapped label tabs example">
-        <Tab label="Total cases" {...a11yProps(0)} />
-        <Tab label="Growth Rate" {...a11yProps(1)} />
-      </Tabs>
-      <TabPanel value={currentTab} index={0}>
-        <TotalCasesTimeSeries selectedRegions={selectedRegions} />
-      </TabPanel>
-      <TabPanel value={currentTab} index={1}>
-        <GrowthRateSeries selectedRegions={selectedRegions} />
-      </TabPanel>
-    </React.Fragment>
+    )
+
+  }
+ 
+  const controls = [
+    < RegionSelector key={5} />,
+    <FormControl key={0}>
+      <FormControlLabel
+        control={
+          <Checkbox disabled={!selectedRegions.includes('All')} checked={showFittedCurves} onChange={handleChangeShowFittedLine} />
+        }
+        label="Show fitted line"
+      />
+    </FormControl>,
+    <FormControl key={1}>
+
+      <Typography id="discrete-slider" gutterBottom>
+        Predicted future days
+    </Typography>
+
+      <Slider key={2}
+        marks={marks}
+        defaultValue={0}
+        aria-labelledby="discrete-slider"
+        valueLabelDisplay="auto"
+        step={1}
+        onChangeCommitted={handleDateChange}
+        disabled={!selectedRegions.includes('All') || !showFittedCurves}
+        min={0}
+        max={3}
+      />
+
+    </FormControl>
+  ]
+  return (
+    <GraphContainer title={props.title} controls={controls} tabTitles={["Total Cases", "Growth Rate"]}>
+      <TotalCasesTimeSeries showFittedLine={showFittedCurves} predictedDays={predictedDays} selectedRegions={selectedRegions} />
+      <GrowthRateSeries selectedRegions={selectedRegions} />
+    </GraphContainer>
   )
 }

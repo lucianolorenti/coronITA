@@ -37,7 +37,6 @@ export const useStyles = makeStyles(theme => ({
   },
   title: {
 
-    marginBottom: "0.5em"
   },
   anchor: {
     position: "relative",
@@ -58,6 +57,7 @@ export const useStyles = makeStyles(theme => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+   
   },
   containerMobile: {
     paddingTop: theme.spacing(4),
@@ -65,13 +65,21 @@ export const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(0),
     paddingRight: theme.spacing(0)
   },
-  paper: {
-    padding: theme.spacing(2),
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  
+  },
+
+  paperContent: {
+    padding: theme.spacing(3),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+    backgroundColor: "#F6F6F6"
   },
-  paperMobile: {
+  paperMobileContent: {
     padding: theme.spacing(0),
     display: 'flex',
     overflow: 'auto',
@@ -87,9 +95,10 @@ export const useStyles = makeStyles(theme => ({
     width: 'auto',
   },
   gridItem: {
-    width: "90%",
+    width: "99%",
     marginLeft: "auto",
-    marginRight: "auto"
+    marginRight: "auto",
+    marginBottom: "1em"
   },
   gridItemMobile: {
     width: "100%",

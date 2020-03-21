@@ -53,7 +53,7 @@ function Copyright() {
 
 interface VizElement {
   title: string,
-  component: JSX.Element
+  Component: React.ElementType
 }
 interface DashboardProps {
   isMobile: boolean
@@ -73,15 +73,15 @@ function DashboardWithSizes(props: DashboardProps) {
 
   const element: VizElement[] = [
    // { title: "Cases", component: <SankeyCases /> },
-    { title: "Time series of infected people", component: <TotalCasesTimesSeriesTab /> },
-    { title: "People affected by the virus", component: <StackedAreas /> },
-    { title: "Affected by region", component: <StackedRegions /> },
-    { title: "Map of infected people", component: <MapTab isMobile={isMobile} /> },
-    { title: "Percentage of deceased people vs positive cases", component: <DeadProportion /> },
-    { title: "Percentage of infected people vs tests", component: <TamponiInfectedRatioSeries /> },
-    { title: "Cases per region", component: <TotalCasesHistogram /> },
-    { title: "Evolution of cases per province", component: <ProvinceTimeSeriesPlot /> },
-    { title: "Cases per province", component: <ProvincePlot /> }]
+    { title: "Time series of infected people", Component: TotalCasesTimesSeriesTab  },
+   { title: "People affected by the virus", Component: StackedAreas  },
+    { title: "Affected by region", Component: StackedRegions }]
+    /*{ title: "Map of infected people", Component: <MapTab isMobile={isMobile} /> },
+    { title: "Percentage of deceased people vs positive cases", Component: <DeadProportion /> },
+    { title: "Percentage of infected people vs tests", Component: <TamponiInfectedRatioSeries /> },
+    { title: "Cases per region", Component: <TotalCasesHistogram /> },
+    { title: "Evolution of cases per province", Component: <ProvinceTimeSeriesPlot /> },
+    { title: "Cases per province", Component: <ProvincePlot /> }]*/
 
 
   return (
@@ -121,7 +121,7 @@ function DashboardWithSizes(props: DashboardProps) {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={isMobile? classes.containerMobile   : classes.container}>
           <Drawer drawer={drawer} toggleDrawer={toggleDrawer} toc={element} />
-          <Paper className={isMobile?classes.paperMobile :classes.paper} >
+          <Paper className={isMobile?classes.paperMobileContent :classes.paperContent} >
 
             <Link href="https://github.com/pcm-dpc/COVID-19" >
               <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
@@ -131,12 +131,7 @@ function DashboardWithSizes(props: DashboardProps) {
               {element.map((elem: VizElement, index: number) => {
                 return (
                   <Grid item   className={isMobile? classes.gridItemMobile   : classes.gridItem} key={index}>
-                    
-                      <Title isMobile={isMobile} >
-                        {elem.title}
-                      </Title>
-                      {elem.component}
-                    
+                      <elem.Component title={elem.title} />
                   </Grid>
 
                 )
