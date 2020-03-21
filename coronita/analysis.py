@@ -9,6 +9,8 @@ import pandas as pd
 from scipy.optimize import curve_fit
 from datetime import timedelta 
 
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -89,7 +91,7 @@ def data_regioni(ttl_hash=None):
               & (d['day'] == day)][feats]
         for f in feats:
             d.loc[(d['denominazione_regione'] == 'Trentino') &
-                  (d['day'] == day), f] += s[f].values[0]
+                  (d['day'] == day), f] += s[f].values[0] if len(s[f].values)> 0 else 0
     d.drop(d[d['denominazione_regione'] == 'Trento'].index, inplace=True)
     return d
 
@@ -342,7 +344,7 @@ def total_time_series_data(regions, additional_days=0, ttl_hash=None):
     if 'All' in regions:
         data = total_time_series_data_country(additional_days=additional_days, ttl_hash=ttl_hash)
         coeffs = data['coeffs']
-        data = data['data']
+        data = data['data'].copy()
         regions.remove('All')
     for region in regions:
         total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash).copy().reset_index()
