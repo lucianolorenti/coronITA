@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 from datetime import timedelta 
+from copy import deepcopy
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -123,7 +125,7 @@ def dead_proportion(region='All', ttl_hash=None):
         data = data_regioni(ttl_hash=ttl_hash)
         if region not in data['denominazione_regione'].unique():
             return pd.DataFrame()
-        data = data[data['denominazione_regione'] == region].copy()
+        data = deepcopy(data[data['denominazione_regione'] == region])
         data.set_index('day', inplace=True)
 
     d = pd.DataFrame(data['deceduti'] / data['totale_casi'] * 100,
@@ -160,7 +162,7 @@ def region_stacked_area(regions, what='terapia_intensiva', ttl_hash=None):
         regions = regions.split(',')
     data = data_regioni(ttl_hash=ttl_hash)
     data = data[data['denominazione_regione'].isin(regions)]    
-    data = data[['day', 'denominazione_regione', what]].copy()
+    data = deepcopy(data[['day', 'denominazione_regione', what]])
     data = data[['day','denominazione_regione', what]].pivot(index='day', columns='denominazione_regione', values=what)
     data.rename({what: 'data'}, inplace=True)
     data.reset_index('day', inplace=True)
@@ -290,7 +292,7 @@ def fit_curve1(y, n=None):
 
 @functools.lru_cache(maxsize=32)
 def total_time_series_data_country(additional_days=0, ttl_hash=None):
-    total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
+    total_time_series = deepcopy(total_case_time_series_country(ttl_hash=ttl_hash))
     
     y = total_time_series['totale_casi'].values
     
@@ -315,7 +317,7 @@ def growth_rate_data(regions, ttl_hash=None):
     data = None
     coeffs = None
     if 'All' in regions:
-        total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
+        total_time_series = deepcopy(total_case_time_series_country(ttl_hash=ttl_hash))
         y = total_time_series['totale_casi'].values
         growth_r = growth_rate(y[1:])
         data = [{'day': d, 'gr': gr} 
@@ -345,7 +347,7 @@ def total_time_series_data(regions, additional_days=0, ttl_hash=None):
         data = data['data']
         regions.remove('All')
     for region in regions:
-        total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash).copy().reset_index()
+        total_time_series = deepcopy(total_case_time_series_region(region,ttl_hash=ttl_hash)).reset_index()
         last_day = total_time_series.iloc[-1, :]['day']
         for i in range(additional_days):
             next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
