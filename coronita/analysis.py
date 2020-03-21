@@ -307,6 +307,7 @@ def total_time_series_data_country(additional_days=0, ttl_hash=None):
     total_time_series['fitted_7'] = np.round(fitted_y_7, decimals=2)
     return {'data': total_time_series, 'coeffs': params.tolist()}
     
+
 @functools.lru_cache(maxsize=32)
 def growth_rate_data(regions, ttl_hash=None):
     if isinstance(regions, str):
@@ -345,6 +346,10 @@ def total_time_series_data(regions, additional_days=0, ttl_hash=None):
         regions.remove('All')
     for region in regions:
         total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash).copy().reset_index()
+        last_day = total_time_series.iloc[-1, :]['day']
+        for i in range(additional_days):
+            next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
+            total_time_series = total_time_series.append({'day': next_day, 'totale_casi': None},  ignore_index=True)
         if data is None:
             data = total_time_series
             data.rename(columns={'totale_casi': f'totale_casi_{region}'}, inplace=True)
