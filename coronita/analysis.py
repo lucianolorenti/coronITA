@@ -250,16 +250,16 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
 
 
 @functools.lru_cache(maxsize=32)
-def total_case_time_series_country(ttl_hash=None):
+def total_case_time_series_country(field='totale_casi', ttl_hash=None):
     data = data_andamento_nazionale(ttl_hash=ttl_hash).reset_index()
-    return data[['day', 'totale_casi']]
+    return data[['day', field]]
 
 
 @functools.lru_cache(maxsize=32)
-def total_case_time_series_region(region, ttl_hash=None):
+def total_case_time_series_region(region, field='totale_casi', ttl_hash=None):
     data = data_regioni(ttl_hash=ttl_hash).reset_index()
     data = data[data['denominazione_regione'] == region]
-    return data[['day', 'totale_casi']]
+    return data[['day', field]]
 
 
 def sigmoid(x, L ,x0, k, b):
@@ -289,11 +289,13 @@ def fit_curve1(y, n=None):
     return ((np.exp(a), np.exp(b)), fitted_y)
 
 
+
+
 @functools.lru_cache(maxsize=32)
-def total_time_series_data_country(additional_days=0, ttl_hash=None):
-    total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
+def total_time_series_data_country(field='totale_casi', additional_days=0, ttl_hash=None):
+    total_time_series = total_case_time_series_country(field, ttl_hash=ttl_hash).copy()
     
-    y = total_time_series['totale_casi'].values
+    y = total_time_series[field].values
     
     (params, fitted_y) = fit_curve(y, n=len(y)+additional_days)
     (params, fitted_y_2) = fit_curve(y[:-2], n=len(y)+additional_days)
@@ -301,7 +303,7 @@ def total_time_series_data_country(additional_days=0, ttl_hash=None):
     last_day = total_time_series.iloc[-1, :]['day']
     for i in range(additional_days):
         next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
-        total_time_series = total_time_series.append({'day': next_day, 'totale_casi': None},  ignore_index=True)
+        total_time_series = total_time_series.append({'day': next_day, field: None},  ignore_index=True)
     
     total_time_series['fitted'] = np.round(fitted_y, decimals=2)
     total_time_series['fitted_2'] = np.round(fitted_y_2, decimals=2)
@@ -310,21 +312,21 @@ def total_time_series_data_country(additional_days=0, ttl_hash=None):
     
 
 @functools.lru_cache(maxsize=32)
-def growth_rate_data(regions, ttl_hash=None):
+def growth_rate_data(regions, field='totale_casi', ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
     data = None
     coeffs = None
     if 'All' in regions:
-        total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
-        y = total_time_series['totale_casi'].values
+        total_time_series = total_case_time_series_country(field, ttl_hash=ttl_hash).copy()
+        y = total_time_series[field].values
         growth_r = growth_rate(y[1:])
         data = [{'day': d, 'gr': gr} 
                      for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
         regions.remove('All')
     for region in regions:
-        total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash)
-        y = total_time_series['totale_casi'].values
+        total_time_series = total_case_time_series_region(region, field, ttl_hash=ttl_hash)
+        y = total_time_series[field].values
         growth_r = growth_rate(y[1:])
         if data is None:
             data = [{'day': d, f'gr_{region}': gr if gr < 3 else None  } 
@@ -335,28 +337,28 @@ def growth_rate_data(regions, ttl_hash=None):
     return data
 
 
-def total_time_series_data(regions, additional_days=0, ttl_hash=None):
+def total_time_series_data(regions, field='totale_casi', additional_days=0, ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
     data = None
     coeffs = None
     if 'All' in regions:
-        data = total_time_series_data_country(additional_days=additional_days, ttl_hash=ttl_hash).copy()
+        data = total_time_series_data_country(field, additional_days=additional_days, ttl_hash=ttl_hash).copy()
         coeffs = data['coeffs']
         data = data['data'].copy()
         regions.remove('All')
     
     for region in regions:
-        total_time_series = total_case_time_series_region(region, ttl_hash=ttl_hash).copy().reset_index()
+        total_time_series = total_case_time_series_region(region, field, ttl_hash=ttl_hash).copy().reset_index()
         last_day = total_time_series.iloc[-1, :]['day']
         for i in range(additional_days):
             next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
-            total_time_series = total_time_series.append({'day': next_day, 'totale_casi': None},  ignore_index=True)
+            total_time_series = total_time_series.append({'day': next_day, field: None},  ignore_index=True)
         if data is None:
             data = total_time_series
-            data.rename(columns={'totale_casi': f'totale_casi_{region}'}, inplace=True)
+            data.rename(columns={field: f'{field}_{region}'}, inplace=True)
         else:
-            data[f'totale_casi_{region}'] = total_time_series['totale_casi']
+            data[f'{field}{region}'] = total_time_series[field]
     if data is None:
         data = pd.DataFrame()     
     if 'index' in data.columns:

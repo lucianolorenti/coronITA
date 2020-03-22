@@ -63,7 +63,9 @@ def map_markers():
 def total_time_serie():
     regions = request.args.get('regions', default='All', type=str)
     predictedDays = request.args.get('predictedDays', default=0, type=int)
+    field = request.args.get('field', default='totale_casi', type=str)
     return json.dumps(analysis.total_time_series_data(regions,
+                                                      field,
                                                       predictedDays,
                                                       ttl_hash=get_ttl_hash()),
                       default=json_serial)
@@ -99,7 +101,9 @@ def region_stacked_area():
 @app.route('/growth_rate')
 def growth_rate():
     regions = request.args.get('regions', default='All', type=str)
+    field = request.args.get('field', default='totale_casi', type=str)
     return json.dumps(analysis.growth_rate_data(regions,
+                                                field,
                                                 ttl_hash=get_ttl_hash()),
                       default=json_serial)
 

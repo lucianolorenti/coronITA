@@ -158,15 +158,15 @@ const GraphContainer = (props: GraphContainerProps) => {
           </IconButton>
           <div id={slugify(props.title as string)} className={classes.anchor} />
           <div>
-              <Typography variant="h6" noWrap>
-                {props.title}
-              </Typography>
-              {props.subtitle === undefined ? null :
-                <Typography style={{ textAlign: "center" }} variant="subtitle2" >
-                  {props.subtitle}
-                </Typography>}
-            
-            </div>
+            <Typography variant="h6" noWrap>
+              {props.title}
+            </Typography>
+            {props.subtitle === undefined ? null :
+              <Typography style={{ textAlign: "center" }} variant="subtitle2" >
+                {props.subtitle}
+              </Typography>}
+
+          </div>
 
           <IsMobileContext.Consumer>
             {isMobile => (!isMobile ? tabs() : null)}
@@ -185,6 +185,7 @@ const GraphContainer = (props: GraphContainerProps) => {
         elevation={0}
         variant={'outlined'}
       >
+ 
         {React.Children.count(props.children) > 1 ?
           React.Children.map(props.children, (elem, idx) => {
             return (

@@ -1,4 +1,4 @@
-import { AppBar, Checkbox, Toolbar, Chip, createStyles, FormControl, FormControlLabel, Grid, Input, InputLabel, ListItemText, makeStyles, MenuItem, Select, Slider, Theme } from '@material-ui/core';
+import { AppBar, Checkbox, Toolbar, Chip, createStyles, FormControl, FormControlLabel, Grid, Input, InputLabel, ListItemText, makeStyles, MenuItem, Select, Slider, Theme, FormLabel, RadioGroup, Radio } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
@@ -52,11 +52,13 @@ const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean
 }
 interface SeriesProps {
   selectedRegions: Array<String>
+  field:String
 }
 interface TotalCasesTimeSeriesProps {
   showFittedLine: boolean;
   predictedDays: number;
   selectedRegions: Array<String>;
+  field: String
 }
 const marks = [
   {
@@ -72,12 +74,11 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
   const [totalTimeSerie, setTotalTimeSerie] = useState([]);
   const [expCoeffs, setExpCoeffs] = useState(null);
 
-
-
-
   useEffect(() => {
 
-    fetch('/total_time_serie?predictedDays=' + props.predictedDays + '&regions=' + props.selectedRegions)
+    fetch('/total_time_serie?predictedDays=' + props.predictedDays 
+                             + '&regions=' + props.selectedRegions
+                             + '&field=' + props.field)
       .then(function (response) {
         return response.json();
       })
@@ -87,7 +88,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
           setExpCoeffs(data.coeffs)
         }
       });
-  }, [props.selectedRegions, props.predictedDays])
+  }, [props.selectedRegions, props.predictedDays, props.field ])
   const not_regions_fields = ["day", "totale_casi", "fitted", "fitted_2", "fitted_7"]
   const showFittedCurves = props.selectedRegions.includes('All') && props.showFittedLine
 
@@ -176,18 +177,19 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
 
 function GrowthRateSeries(props: SeriesProps) {
   const [growthRateSerie, setGrowthRateSerie] = useState([]);
-
+  
 
   useEffect(() => {
 
-    fetch('/growth_rate?regions=' + props.selectedRegions)
+    fetch('/growth_rate?regions=' + props.selectedRegions
+                        + '&field=' + props.field)
       .then(function (response) {
         return response.json();
       })
       .then(function (data) {
         setGrowthRateSerie(data)
       });
-  }, [props.selectedRegions])
+  }, [props.selectedRegions, props.field])
   const not_regions_fields = ["day", "gr"]
   return (
 
@@ -259,6 +261,10 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const [showFittedLine, setShowFittedLine] = useState(selectedRegions.includes('All'));
   const [predictedDays, setPredictedDay] = useState(0)
   const [currentTab, setCurrentTab] = useState(0)
+  const [field, setField] = useState('totale_casi');
+  const handleFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setField((event.target as HTMLInputElement).value);
+  }
   const handleDateChange = (event: any, newValue: number) => {
     setPredictedDay(newValue);
   };
@@ -294,9 +300,21 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     )
 
   }
+  const FieldSelector = () => {
+    return (
+      <FormControl component="fieldset" className={classes.formControl}>
+      <FormLabel component="legend">Field to visualize</FormLabel>
+      <RadioGroup aria-label="field" name="field" value={field} onChange={handleFieldChange}>
+        <FormControlLabel value="totale_casi" control={<Radio />} label="Total cases: Dead + Positive + Helead" />
+        <FormControlLabel value="totale_attualmente_positivi" control={<Radio />} label="Total positive: Positive" />
+      </RadioGroup>
+    </FormControl>
+    )
+  }
 
   const controls = [
-    < RegionSelector key={5} />
+    < RegionSelector key={5} />,
+    < FieldSelector key={10} />
   ]
   if (currentTab == 0) {
     controls.push(<FormControl key={0}>
@@ -338,9 +356,13 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
       <TotalCasesTimeSeries
         showFittedLine={showFittedCurves}
         predictedDays={predictedDays}
-        selectedRegions={selectedRegions} />
+        selectedRegions={selectedRegions}
+        field={field}
+         />
       <GrowthRateSeries
-        selectedRegions={selectedRegions} />
+        selectedRegions={selectedRegions} 
+        field={field}
+        />
     </GraphContainer>
   )
 }

@@ -74,7 +74,7 @@ function DashboardWithSizes(props: DashboardProps) {
     { title: "Affected by region", Component: StackedRegions },
     { title: "Map of infected people", Component: MapTab },
     { title: "Percentage of deceased people vs positive cases", Component: DeadProportion},
-    { title: "Percentage of infected people vs tests", Component: TamponiInfectedRatioSeries  },
+    //{ title: "Percentage of infected people vs tests", Component: TamponiInfectedRatioSeries  },
     { title: "Cases per region", Component: TotalCasesHistogram  },
     { title: "Evolution of cases per province", Component: ProvinceTimeSeriesPlot  },
     { title: "Cases per province", Component: ProvincePlot  }
