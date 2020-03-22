@@ -194,11 +194,3 @@ export default function StackedAreas(props: StackedAreasProps) {
         </GraphContainer>
     )
 }
-        /*<React.Fragment>
-<FormGroup>
-
-</FormGroup>
-<ResponsiveContainer width="100%" height={400}>
-{ useAreas ? TrendsAreaChart() : TrendsLineChart() }
-</ResponsiveContainer>
-</React.Fragment>)*/

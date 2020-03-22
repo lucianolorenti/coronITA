@@ -1,8 +1,6 @@
 import { IconButton } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -22,17 +20,15 @@ import withSizes from 'react-sizes';
 import DeadProportion from './DeadProportion';
 import Drawer from './Drawer';
 import TamponiInfectedRatioSeries from './InfectedRatio';
+import IsMobileContext from './IsMobileContext';
 import MapTab from './Map';
 import ProvincePlot from './ProvincePlot';
 import ProvinceTimeSeriesPlot from './ProvinceTimeSeries';
 import StackedAreas from './StackedAreas';
 import StackedRegions from './StackedRegions';
 import { useStyles } from './styles';
-import Title from './Title';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
-
-
 
 function Copyright() {
   return (
@@ -59,7 +55,7 @@ interface DashboardProps {
   isMobile: boolean
 }
 function DashboardWithSizes(props: DashboardProps) {
-  const {isMobile} = props;
+  const { isMobile } = props;
   const classes = useStyles();
 
   const [drawer, setDrawer] = React.useState(false);
@@ -72,16 +68,18 @@ function DashboardWithSizes(props: DashboardProps) {
   const [toc, setToc] = React.useState([]);
 
   const element: VizElement[] = [
-   // { title: "Cases", component: <SankeyCases /> },
-    { title: "Time series of infected people", Component: TotalCasesTimesSeriesTab  },
-   { title: "People affected by the virus", Component: StackedAreas  },
-    { title: "Affected by region", Component: StackedRegions }]
-    /*{ title: "Map of infected people", Component: <MapTab isMobile={isMobile} /> },
-    { title: "Percentage of deceased people vs positive cases", Component: <DeadProportion /> },
-    { title: "Percentage of infected people vs tests", Component: <TamponiInfectedRatioSeries /> },
-    { title: "Cases per region", Component: <TotalCasesHistogram /> },
-    { title: "Evolution of cases per province", Component: <ProvinceTimeSeriesPlot /> },
-    { title: "Cases per province", Component: <ProvincePlot /> }]*/
+    // { title: "Cases", component: <SankeyCases /> },
+    { title: "Time series of infected people", Component: TotalCasesTimesSeriesTab },
+    { title: "People affected by the virus", Component: StackedAreas },
+    { title: "Affected by region", Component: StackedRegions },
+    { title: "Map of infected people", Component: MapTab },
+    { title: "Percentage of deceased people vs positive cases", Component: DeadProportion},
+    { title: "Percentage of infected people vs tests", Component: TamponiInfectedRatioSeries  },
+    { title: "Cases per region", Component: TotalCasesHistogram  },
+    { title: "Evolution of cases per province", Component: ProvinceTimeSeriesPlot  },
+    { title: "Cases per province", Component: ProvincePlot  }
+  ]
+
 
 
   return (
@@ -119,23 +117,25 @@ function DashboardWithSizes(props: DashboardProps) {
       </AppBar>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={isMobile? classes.containerMobile   : classes.container}>
+        <Container maxWidth="lg" className={isMobile ? classes.containerMobile : classes.container}>
           <Drawer drawer={drawer} toggleDrawer={toggleDrawer} toc={element} />
-          <Paper className={isMobile?classes.paperMobileContent :classes.paperContent} >
+          <Paper className={isMobile ? classes.paperMobileContent : classes.paperContent} >
 
             <Link href="https://github.com/pcm-dpc/COVID-19" >
               <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
             </Link>
 
             <Grid container >
+            <IsMobileContext.Provider value={isMobile}>
               {element.map((elem: VizElement, index: number) => {
                 return (
-                  <Grid item   className={isMobile? classes.gridItemMobile   : classes.gridItem} key={index}>
-                      <elem.Component title={elem.title} />
+                  <Grid item className={isMobile ? classes.gridItemMobile : classes.gridItem} key={index}>
+                    <elem.Component isMobile={isMobile} title={elem.title} />
                   </Grid>
 
                 )
               })}
+               </IsMobileContext.Provider>
             </Grid>
             <Box pt={4}>
               <Copyright />

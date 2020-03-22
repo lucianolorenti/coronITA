@@ -11,6 +11,7 @@ import 'react-leaflet-markercluster/dist/styles.min.css';
 import "./mapicon.css";
 import ItalyMap from './ItalyMap';
 import { Chroropleth } from './Chroropleth';
+import GraphContainer from './GraphContainer';
 
 declare function require(name: string);
 declare var days: Array<any>;
@@ -113,6 +114,7 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 const MapTab = (props) => {
+    const [currentTab, setCurrentTab] = useState(0)
     const [value, setValue] = React.useState(0);
     const nMarks = props.isMobile ? Math.round(day_list.length / 3) : Math.round(day_list.length / 9)
     const marks = day_list.map((elem, idx) => {
@@ -129,22 +131,8 @@ const MapTab = (props) => {
     const handleDateChange = (event: any, newValue: number) => {
         setCurrentDate(sliderLabel(newValue));
     };
-    return (
-        <React.Fragment>
-
-            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                <Tab label="Infected cases" {...a11yProps(0)} />
-                <Tab label="Choropleth" {...a11yProps(1)} />
-            </Tabs>
-            <Typography variant="h6">
-                Selected date {currentDate}
-            </Typography>
-            <TabPanel value={value} index={0}>
-                <ItalyMap currentDate={currentDate} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Chroropleth currentDate={currentDate} />
-            </TabPanel>
+    const DateSelector = () => {
+        return (<React.Fragment>
             <Typography id="discrete-slider" gutterBottom>
                 Select the date
       </Typography>
@@ -156,7 +144,22 @@ const MapTab = (props) => {
                 max={day_list.length - 1}
                 step={0}
                 marks={marks} />
-        </React.Fragment>
+        </React.Fragment>)
+    }
+    return (
+        <GraphContainer
+            setCurrentTab={setCurrentTab}
+            currentTab={currentTab}
+            title={props.title}
+            controls={[]}
+            tabTitles={["Infected cases", "Choropleth"]}
+            bottomElement={< DateSelector />}
+        >
+            <ItalyMap currentDate={currentDate} />
+            <Chroropleth currentDate={currentDate} />
+
+        </GraphContainer>
     )
+
 }
 export default MapTab;

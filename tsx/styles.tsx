@@ -38,13 +38,7 @@ export const useStyles = makeStyles(theme => ({
   title: {
 
   },
-  anchor: {
-    position: "relative",
-    left: "0px",
-    top: "-5em",
-    width: "1px",
-    height: "1px"
-  },
+
   pageTitle: {
     flexGrow: 1,
   },

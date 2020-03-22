@@ -4,6 +4,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
 import { Area, Text, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import GraphContainer from './GraphContainer';
 declare var regions: any;
 
 const useStylesSelect = makeStyles((theme: Theme) =>
@@ -89,7 +90,10 @@ const options = {
     'totale_casi': 'Total cases',
     'tamponi': 'Tamponi'
 }
-export default function StackedRegions() {
+interface StackedRegionsProps {
+    title: React.ReactNode
+}
+export default function StackedRegions(props: StackedRegionsProps) {
 
     const [useAreas, setUseAreas] = useState(true)
     const [data, setData] = useState(null);
@@ -119,6 +123,53 @@ export default function StackedRegions() {
     const handleWhatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWhat((event.target as HTMLInputElement).value)
     }
+    const RegionSelector = () => {
+        return (
+            <FormControl className={stylesSelect.formControl}>
+                <InputLabel id="demo-mutiple-chip-label">Region</InputLabel>
+                <Select
+
+                    multiple
+                    value={selectedRegions}
+                    onChange={handleRegionsChange}
+                    input={<Input />}
+                    renderValue={selected => (selected as string[]).join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {regions.map(name => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedRegions.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        )
+    }
+    const AreaLinesSwitcher = () => {
+        return (
+            <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>Curves</Grid>
+                <Grid item>
+                    <Switch
+                        checked={useAreas}
+                        onChange={handleuseAreaChange}
+                    />
+                </Grid>
+                <Grid item>Areas</Grid>
+            </Grid>
+        )
+    }
+    const AreaNormalizer = () => {
+        return (<FormControl className={stylesSelect.formControl}>
+            <FormControlLabel
+                control={
+                    <Checkbox checked={normalize} onChange={handleChangeNormalize} />
+                }
+                label="Normalize"
+            />
+        </FormControl>)
+    }
     const TrendsAreaChart = () => {
         return (<AreaChart
             data={data}
@@ -131,15 +182,15 @@ export default function StackedRegions() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
             <YAxis
-                        width={105}
-                        label={<Text
-                            x={0}
-                            y={0}
-                            dx={20}
-                            dy={180}
-                            offset={0}
-                            angle={-90}
-                        > {normalize? "Proportion per day" :  "Total cases"} </Text>} />
+                width={105}
+                label={<Text
+                    x={0}
+                    y={0}
+                    dx={20}
+                    dy={180}
+                    offset={0}
+                    angle={-90}
+                > {normalize ? "Proportion per day" : "Total cases"} </Text>} />
             <Tooltip />
 
             {selectedRegions.map((elem) => {
@@ -166,15 +217,15 @@ export default function StackedRegions() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
             <YAxis
-                        width={105}
-                        label={<Text
-                            x={0}
-                            y={0}
-                            dx={20}
-                            dy={150}
-                            offset={0}
-                            angle={-90}
-                        >  Total cases </Text>} />
+                width={105}
+                label={<Text
+                    x={0}
+                    y={0}
+                    dx={20}
+                    dy={150}
+                    offset={0}
+                    angle={-90}
+                >  Total cases </Text>} />
             <Tooltip />
 
             {selectedRegions.map((elem) => {
@@ -190,6 +241,29 @@ export default function StackedRegions() {
         </LineChart>)
 
     }
+    const WhatToVisualizeChooser = () => {
+        return (
+            <FormControl >
+                <Select value={what} onChange={handleWhatChange} displayEmpty >
+                    <MenuItem value="" disabled>
+                        What to visualize
+    </MenuItem>
+                    {
+                        Object.keys(options).sort().map((key, idx) => {
+                            return (
+                                <MenuItem
+                                    key={key}
+                                    value={key}>
+                                    {options[key]}
+                                </MenuItem>
+                            )
+
+                        })
+                    }
+                </Select>
+                <FormHelperText>What to visualize</FormHelperText>
+            </FormControl>)
+    }
     useEffect(() => {
         fetchData(selectedRegions)
     }, [selectedRegions, what])
@@ -201,82 +275,23 @@ export default function StackedRegions() {
         '#e2e6ac', '#00a62c', '#005c73', '#000f73', '#aa00ff', '#73004d', '#73000f', '#b2502d',
         '#33210d', '#ccff00', '#00ffaa', '#00294d', '#000033', '#602080', '#a60042']
     const stylesSelect = useStylesSelect()
+    const controls = [
+        RegionSelector(),
+        WhatToVisualizeChooser(),
+        AreaLinesSwitcher()]
+    if (useAreas) {
+        controls.push(AreaNormalizer())
+    }
     return (
-        <React.Fragment>
-            <FormControl className={stylesSelect.formControl}>
-                <InputLabel id="demo-mutiple-chip-label">Region</InputLabel>
-                <Select
-                    labelId="demo-mutiple-chip-label"
-                    id="demo-mutiple-chip"
-                    multiple
-                    value={selectedRegions}
-                    onChange={handleRegionsChange}
-                    input={<Input id="select-multiple-chip" />}
-                    renderValue={selected => (
-                        <div className={stylesSelect.chips}>
-                            {(selected as string[]).map(value => (
-                                <Chip key={value} label={value} className={stylesSelect.chip} />
-                            ))}
-                        </div>
-                    )}
-                    MenuProps={MenuProps}
-                >
-                    {regions.map(name => (
-                        <MenuItem key={name} value={name}>
-                            <Checkbox checked={selectedRegions.indexOf(name) > -1} />
-                            <ListItemText primary={name} />
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <Grid component="label" container alignItems="center" spacing={1}>
-                <Grid item>Curves</Grid>
-                <Grid item>
-                    <Switch
-                        checked={useAreas}
-                        onChange={handleuseAreaChange}
-                    />
-                </Grid>
-                <Grid item>Areas</Grid>
-            </Grid>
-            <br />
-            {useAreas ? <FormControl className={stylesSelect.formControl}>
-                <FormControlLabel
-                    control={
-                        <Checkbox checked={normalize} onChange={handleChangeNormalize} />
-                    }
-                    label="Normalize"
-                /> 
-            </FormControl> : null }
-            <FormControl component="fieldset" className={stylesSelect.formControl}>
-                <FormLabel component="legend">What to visualize</FormLabel>
-                <RadioGroup row aria-label="what" name="what" value={what} onChange={handleWhatChange}>
+        <GraphContainer
 
-                    {
-                        Object.keys(options).sort().map((key, idx) => {
-                            return (
-
-                                <FormControlLabel
-                                    style={{ paddingRight: "2em" }}
-                                    key={key}
-                                    value={key}
-                                    control={<Radio color="primary" />}
-                                    label={options[key]}
-                                    labelPlacement="end"
-                                />
-                            )
-
-                        })
-                    }
-
-
-                </RadioGroup>
-            </FormControl>
-            <Typography variant="h5" color="inherit" style={{ textAlign: "center" }}>
-                {options[what]}
-            </Typography>
+            title={props.title}
+            controls={controls}
+            tabTitles={["Total Cases", "Growth Rate"]}>
             <ResponsiveContainer width="100%" height={400}>
                 {useAreas ? TrendsAreaChart() : TrendsLineChart()}
             </ResponsiveContainer>
-        </React.Fragment>)
+        </GraphContainer>
+    )
+
 }
