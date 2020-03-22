@@ -39,20 +39,20 @@ const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean
   }
   var [L, k, x0, b] = coeffs.map((elem) => elem.toFixed(2))
   if ((showFittedLine) && (entry['value'] == 'Fitted curve')) {
-    return ( <span>{value}</span>)
+    return (<span>{value}</span>)
   } else {
     return <span>{value}</span>;
   }
-            /*<MathJax.Provider>
-          <span style={{ fontSize: "12px", marginLeft: "1em" }}>
-            <MathJax.Node inline formula={`y=${b} + \\dfrac{${L}}{1 + e^{-${k}(x-${x0})}}`} />
-          </span>
-        </MathJax.Provider>*/
+  /*<MathJax.Provider>
+<span style={{ fontSize: "12px", marginLeft: "1em" }}>
+  <MathJax.Node inline formula={`y=${b} + \\dfrac{${L}}{1 + e^{-${k}(x-${x0})}}`} />
+</span>
+</MathJax.Provider>*/
 
 }
 interface SeriesProps {
   selectedRegions: Array<String>
-  method:string
+  method: string
 }
 interface TotalCasesTimeSeriesProps {
   showFittedLine: boolean;
@@ -100,14 +100,15 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
         <ResponsiveContainer width="100%" height={500} >
           <LineChart
             data={totalTimeSerie}
+            margin={{ left: 15 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
 
-            <YAxis domain={[0, (v) => v.toFixed(0)]} width={105} >
+            <YAxis domain={[0, (v) => v]} >
 
-              <Label dx={-25} angle={-90}> Total cases</Label>
+              <Label dx={-35} angle={-90}> Total cases</Label>
 
             </YAxis>
             <Tooltip />
@@ -181,7 +182,7 @@ function GrowthRateSeries(props: SeriesProps) {
   useEffect(() => {
 
     fetch('/growth_rate?regions=' + props.selectedRegions
-                        + '&method=' + props.method)
+      + '&method=' + props.method)
       .then(function (response) {
         return response.json();
       })
@@ -190,68 +191,60 @@ function GrowthRateSeries(props: SeriesProps) {
       });
   }, [props.selectedRegions, props.method])
   const YAxisLabel = () => {
-   if (props.method == 'gr') {
-      return <Label dx={-35} angle={-90}>   
-      Total cases day i / Total cases day i -1
+    if (props.method == 'gr') {
+      return <Label dx={-35} angle={-90}>
+        Total cases day i / Total cases day i -1
       </Label>
     } else {
-      return <Label dx={-35} angle={-90}>   
-      Total cases day i - Total cases day i -1
+      return <Label dx={-35} angle={-90}>
+        Total cases day i - Total cases day i -1
       </Label>
     }
   }
   const not_regions_fields = ["day", "gr"]
-  return ( <IsMobileContext.Consumer> 
-  {isMobile =>
-    <ResponsiveContainer width="100%" height={500} key="growth_rate">
-      <LineChart
-        data={growthRateSerie}
-        margin={{left:15 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />        
-           <XAxis dataKey="day" interval={Math.ceil(growthRateSerie.length / (isMobile ? 2 : 15))} />       
+  return (<IsMobileContext.Consumer>
+    {isMobile =>
+      <ResponsiveContainer width="100%" height={500} key="growth_rate">
+        <LineChart
+          data={growthRateSerie}
+          margin={{ left: 15 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="day" interval={Math.ceil(growthRateSerie.length / (isMobile ? 2 : 15))} />
 
 
-        <YAxis> 
-        {YAxisLabel()}
-
+          <YAxis>
+            {YAxisLabel()}
 
           </YAxis>
-          
+          <ReferenceLine y={1} stroke="green" />
+          <Tooltip />
+          {Object.keys(growthRateSerie.length > 0 ? growthRateSerie[1] : {})
+            .filter(name => !not_regions_fields.includes(name))
+            .map((elem, idx: number) => {
+              return (
+                <Line isAnimationActive={false}
+                  type="linear"
+                  dataKey={elem}
+                  name={elem.slice(3)}
+                  stroke={colors[idx]}
+                  strokeWidth={2}
+                  key={elem}
+                  activeDot={{ r: 2 }} />
+              )
+            })}
+          <Legend />
+          {props.selectedRegions.includes('All') ? <Line isAnimationActive={false}
+            type="linear"
+            dataKey="gr"
+            name="Growth rate"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }} /> : null}
+          <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
 
-
-
-
-
-
-        <ReferenceLine y={1} stroke="green" />
-        <Tooltip />
-        {Object.keys(growthRateSerie.length > 0 ? growthRateSerie[1] : {})
-          .filter(name => !not_regions_fields.includes(name))
-          .map((elem, idx: number) => {
-            return (
-              <Line isAnimationActive={false}
-                type="linear"
-                dataKey={elem}
-                name={elem.slice(3)}
-                stroke={colors[idx]}
-                strokeWidth={2}
-                key={elem}
-                activeDot={{ r: 2 }} />
-            )
-          })}
-        <Legend />
-        {props.selectedRegions.includes('All') ? <Line isAnimationActive={false}
-          type="linear"
-          dataKey="gr"
-          name="Growth rate"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }} /> : null}
-        <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-
-      </LineChart>
-        </ResponsiveContainer> }
-     </IsMobileContext.Consumer>
+        </LineChart>
+      </ResponsiveContainer>}
+  </IsMobileContext.Consumer>
 
   )
 }
@@ -273,6 +266,9 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   };
   const handleChangeShowFittedLine = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowFittedLine(event.target.checked);
+    if (!event.target.checked) {
+      setPredictedDay(0)
+    }
   };
   const handleRegionsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedRegions(event.target.value as string[])
@@ -309,13 +305,13 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const GrowRatheMethodSelector = () => {
     return (
       <FormControl component="fieldset" className={classes.formControl}>
-      <FormLabel component="legend">Computation</FormLabel>
-      <RadioGroup aria-label="gender" name="gender1" value={grMethod} onChange={handleGRMethod}>
-        <FormControlLabel value="gr" control={<Radio />} label="Quotient" />
-        <FormControlLabel value="diff" control={<Radio />} label="Difference" />
-        
-      </RadioGroup>
-    </FormControl>
+        <FormLabel component="legend">Computation</FormLabel>
+        <RadioGroup aria-label="gender" name="gender1" value={grMethod} onChange={handleGRMethod}>
+          <FormControlLabel value="gr" control={<Radio />} label="Quotient" />
+          <FormControlLabel value="diff" control={<Radio />} label="Difference" />
+
+        </RadioGroup>
+      </FormControl>
     )
   }
   const controls = [
@@ -349,7 +345,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
       />
 
     </FormControl>)
-  } else if (currentTab == 1 ) {
+  } else if (currentTab == 1) {
     controls.push(<GrowRatheMethodSelector />)
   }
 
