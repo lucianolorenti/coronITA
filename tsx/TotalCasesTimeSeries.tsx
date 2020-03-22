@@ -1,4 +1,4 @@
-import { AppBar, Checkbox, Toolbar, Chip, createStyles, FormControl, FormControlLabel, Grid, Input, InputLabel, ListItemText, makeStyles, MenuItem, Select, Slider, Theme } from '@material-ui/core';
+import { AppBar, Checkbox, Toolbar, Chip, createStyles, FormControl, FormControlLabel, Grid, Input, InputLabel, ListItemText, makeStyles, MenuItem, Select, Slider, Theme, RadioGroup, FormLabel, Radio } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
@@ -52,6 +52,7 @@ const renderColorfulLegendText = (coeffs: Array<number>, showFittedLine: Boolean
 }
 interface SeriesProps {
   selectedRegions: Array<String>
+  method:string
 }
 interface TotalCasesTimeSeriesProps {
   showFittedLine: boolean;
@@ -99,7 +100,6 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
         <ResponsiveContainer width="100%" height={500} >
           <LineChart
             data={totalTimeSerie}
-
           >
             <CartesianGrid strokeDasharray="3 3" />
 
@@ -107,7 +107,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
 
             <YAxis domain={[0, (v) => v.toFixed(0)]} width={105} >
 
-              <Label dx={-35} angle={-90}> Total cases</Label>
+              <Label dx={-25} angle={-90}> Total cases</Label>
 
             </YAxis>
             <Tooltip />
@@ -180,38 +180,44 @@ function GrowthRateSeries(props: SeriesProps) {
 
   useEffect(() => {
 
-    fetch('/growth_rate?regions=' + props.selectedRegions)
+    fetch('/growth_rate?regions=' + props.selectedRegions
+                        + '&method=' + props.method)
       .then(function (response) {
         return response.json();
       })
       .then(function (data) {
         setGrowthRateSerie(data)
       });
-  }, [props.selectedRegions])
+  }, [props.selectedRegions, props.method])
+  const YAxisLabel = () => {
+   if (props.method == 'gr') {
+      return <Label dx={-35} angle={-90}>   
+      Total cases day i / Total cases day i -1
+      </Label>
+    } else {
+      return <Label dx={-35} angle={-90}>   
+      Total cases day i - Total cases day i -1
+      </Label>
+    }
+  }
   const not_regions_fields = ["day", "gr"]
-  return (
-
+  return ( <IsMobileContext.Consumer> 
+  {isMobile =>
     <ResponsiveContainer width="100%" height={500} key="growth_rate">
       <LineChart
         data={growthRateSerie}
-
+        margin={{left:15 }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <IsMobileContext.Consumer>
-          {isMobile => <XAxis dataKey="day" interval={Math.ceil(growthRateSerie.length / (isMobile ? 2 : 15))} />}
-        </IsMobileContext.Consumer>
+        <CartesianGrid strokeDasharray="3 3" />        
+           <XAxis dataKey="day" interval={Math.ceil(growthRateSerie.length / (isMobile ? 2 : 15))} />       
 
 
-        <YAxis
-          width={105}
-          label={<Text
-            x={0}
-            y={0}
-            dx={20}
-            dy={300}
-            offset={0}
-            angle={-90}
-          >  Total cases day i / Total cases day i -1 </Text>} />
+        <YAxis> 
+        {YAxisLabel()}
+
+
+          </YAxis>
+          
 
 
 
@@ -244,7 +250,8 @@ function GrowthRateSeries(props: SeriesProps) {
         <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
 
       </LineChart>
-    </ResponsiveContainer>
+        </ResponsiveContainer> }
+     </IsMobileContext.Consumer>
 
   )
 }
@@ -259,6 +266,8 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const [showFittedLine, setShowFittedLine] = useState(selectedRegions.includes('All'));
   const [predictedDays, setPredictedDay] = useState(0)
   const [currentTab, setCurrentTab] = useState(0)
+  const [grMethod, setGrMethod] = useState('gr')
+
   const handleDateChange = (event: any, newValue: number) => {
     setPredictedDay(newValue);
   };
@@ -267,6 +276,9 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   };
   const handleRegionsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedRegions(event.target.value as string[])
+  };
+  const handleGRMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGrMethod((event.target as HTMLInputElement).value);
   };
   const showFittedCurves = selectedRegions.includes('All') && showFittedLine
   const RegionSelector = () => {
@@ -294,7 +306,18 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     )
 
   }
-
+  const GrowRatheMethodSelector = () => {
+    return (
+      <FormControl component="fieldset" className={classes.formControl}>
+      <FormLabel component="legend">Computation</FormLabel>
+      <RadioGroup aria-label="gender" name="gender1" value={grMethod} onChange={handleGRMethod}>
+        <FormControlLabel value="gr" control={<Radio />} label="Quotient" />
+        <FormControlLabel value="diff" control={<Radio />} label="Difference" />
+        
+      </RadioGroup>
+    </FormControl>
+    )
+  }
   const controls = [
     < RegionSelector key={5} />
   ]
@@ -326,6 +349,8 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
       />
 
     </FormControl>)
+  } else if (currentTab == 1 ) {
+    controls.push(<GrowRatheMethodSelector />)
   }
 
   return (
@@ -340,7 +365,8 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
         predictedDays={predictedDays}
         selectedRegions={selectedRegions} />
       <GrowthRateSeries
-        selectedRegions={selectedRegions} />
+        selectedRegions={selectedRegions}
+        method={grMethod} />
     </GraphContainer>
   )
 }

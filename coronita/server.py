@@ -99,7 +99,9 @@ def region_stacked_area():
 @app.route('/growth_rate')
 def growth_rate():
     regions = request.args.get('regions', default='All', type=str)
+    method = request.args.get('method', default='gr', type=str)
     return json.dumps(analysis.growth_rate_data(regions,
+                                                method,
                                                 ttl_hash=get_ttl_hash()),
                       default=json_serial)
 
