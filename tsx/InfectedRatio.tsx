@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useStyles } from './styles';
 import { Typography, Grid, Switch, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import GraphContainer from './GraphContainer';
 declare var regions: any;
 export const toolTipStyles = makeStyles(theme => ({
   tooltip: {
@@ -41,15 +42,17 @@ const CustomTooltip = ({ active, payload, label }) => {
 
   return null;
 };
-
-export default function TamponiInfectedRatioSeries() {
+interface TamponiInfectedRatioSeriesProps {
+  title: any
+}
+export default function TamponiInfectedRatioSeries(props: TamponiInfectedRatioSeriesProps) {
   const [data, setData] = useState(null);
   const classes = useStyles();
   const [zoom, setZoom] = useState(false);
   const [currentRegion, setCurrentRegion] = React.useState("All");
   useEffect(() => {
 
-    fetch('/tamponi_infected_ratio?region=' +currentRegion)
+    fetch('/tamponi_infected_ratio?region=' + currentRegion)
       .then(function (response) {
         return response.json();
       })
@@ -64,17 +67,20 @@ export default function TamponiInfectedRatioSeries() {
     setCurrentRegion(newRegion)
   };
   const regions_all = ['All'].concat(regions)
-  return (
-    <React.Fragment>
-      <Autocomplete
-        id="combo-box-demo"
-        options={regions_all}
-        onChange={handleCurrentRegionChange}
-        getOptionLabel={function (option: string) { return option }}
-        style={{ width: 300 }}
-        value={currentRegion}
-        renderInput={params => <TextField {...params} label="Region" margin="none" />}
-      />
+  
+  const RegionSelector = () => {
+    return (<Autocomplete
+      id="combo-box-demo"
+      options={regions_all}
+      onChange={handleCurrentRegionChange}
+      getOptionLabel={function (option: string) { return option }}
+      style={{ width: 300 }}
+      value={currentRegion}
+      renderInput={params => <TextField {...params} label="Region" margin="none" />}
+    />)
+  }
+  const ZoomSelector = () => {
+    return (<React.Fragment>
       <Typography component="div">
         <Grid component="label" container alignItems="center" spacing={1}>
           <Grid item>Full scale</Grid>
@@ -87,24 +93,30 @@ export default function TamponiInfectedRatioSeries() {
           <Grid item>Zoom</Grid>
         </Grid>
       </Typography>
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart
+    </React.Fragment>)
+  }
+  const controls = [RegionSelector(),
+  ZoomSelector()]
+  
+  return (<GraphContainer title={props.title} controls={controls} >
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart
 
-          data={data}
-          margin={{
-            top: 5, right: 0, left: 0, bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day" tickCount={9} />
-          <YAxis unit="%" domain={[0, (zoom ? 'dataMax' : 100)]} />
-          <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
-          <Legend />
-          <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />
-          <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-          <Brush height={20} dataKey={'day'}/>
-        </LineChart>
-      </ResponsiveContainer>
-    </React.Fragment>
-  )
+        data={data}
+        margin={{
+          top: 5, right: 0, left: 0, bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="day" tickCount={9} />
+        <YAxis unit="%" domain={[0, (zoom ? 'dataMax' : 100)]} />
+        <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
+        <Legend />
+        <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+        <Brush height={20} dataKey={'day'} />
+      </LineChart>
+    </ResponsiveContainer>
+  </GraphContainer>)
+
 }
