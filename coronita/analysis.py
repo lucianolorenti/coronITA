@@ -310,22 +310,26 @@ def total_time_series_data_country(additional_days=0, ttl_hash=None):
     
 
 @functools.lru_cache(maxsize=32)
-def growth_rate_data(regions, ttl_hash=None):
+def growth_rate_data(regions, method='gr', ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
+    if method == 'gr':
+        fun = growth_rate
+    else:
+        fun = difference
     data = None
     coeffs = None
     if 'All' in regions:
         total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
         y = total_time_series['totale_casi'].values
-        growth_r = growth_rate(y[1:])
+        growth_r = fun(y[1:])
         data = [{'day': d, 'gr': gr} 
                      for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
         regions.remove('All')
     for region in regions:
         total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash)
         y = total_time_series['totale_casi'].values
-        growth_r = growth_rate(y[1:])
+        growth_r = fun(y[1:])
         if data is None:
             data = [{'day': d, f'gr_{region}': gr if gr < 3 else None  } 
                      for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
@@ -431,3 +435,6 @@ def provinces_time_series(region, normalize='', ttl_hash=None):
 
 def growth_rate(d):
     return np.exp(np.diff(np.log(d)))
+
+def difference(d):
+    return np.diff(d).astype(float)
