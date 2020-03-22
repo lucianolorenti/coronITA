@@ -154,6 +154,6 @@ def hello():
                        default=json_serial)))
 
 
-@app.rotue('/.well-known/acme-challenge/-XqtlB8yCOEBDD66TLrNRL70OTCWkjpjmOvgdbGfV4k')
+@app.route('/.well-known/acme-challenge/-XqtlB8yCOEBDD66TLrNRL70OTCWkjpjmOvgdbGfV4k')
 def cert():
     return "-XqtlB8yCOEBDD66TLrNRL70OTCWkjpjmOvgdbGfV4k.99X3nqA8oAqJ1r9Fqeiihec0IQClBg0OpaBNg22kvWw"
