@@ -152,3 +152,8 @@ def hello():
         days=json.loads(
             json.dumps(analysis.day_list(ttl_hash=get_ttl_hash()).tolist(),
                        default=json_serial)))
+
+
+@app.rotue('.well-known/acme-challenge/-XqtlB8yCOEBDD66TLrNRL70OTCWkjpjmOvgdbGfV4k')
+def cert():
+    return "-XqtlB8yCOEBDD66TLrNRL70OTCWkjpjmOvgdbGfV4k.99X3nqA8oAqJ1r9Fqeiihec0IQClBg0OpaBNg22kvWw"
