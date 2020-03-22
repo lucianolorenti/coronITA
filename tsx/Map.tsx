@@ -1,16 +1,17 @@
 
-import { makeStyles, Tabs, Tab, Typography, Box } from '@material-ui/core';
-import Slider from '@material-ui/core/Slider';
+import { makeStyles, Tabs, Tab, Typography, Box, Grid } from '@material-ui/core';
+import Slider, { ValueLabelProps } from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
 import L from 'leaflet';
 import MarkerCluster from 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
-import React, { useState } from 'react';
+import React, { useState, FunctionComponent } from 'react';
 import { GeoJSON } from 'react-leaflet';
 import 'react-leaflet-markercluster/dist/styles.min.css';
 import "./mapicon.css";
 import ItalyMap from './ItalyMap';
 import { Chroropleth } from './Chroropleth';
+import GraphContainer from './GraphContainer';
 
 declare function require(name: string);
 declare var days: Array<any>;
@@ -52,22 +53,22 @@ export function iconCreateFunction(cluster: MarkerCluster) {
 
 
 
-interface Props {
-    children: React.ReactElement;
-    open: boolean;
-    value: number;
-}
+
 const sliderLabel = (i: number) => {
     return day_list[i].label
 }
 
 
-function ValueLabelComponent(props: Props) {
-    const { children, open, value } = props;
-
+ const ToolTip: FunctionComponent<ValueLabelProps>  = (props:ValueLabelProps) =>  {
+    var label = ''
+    if (isNaN(props.value)) {
+        label = ''
+    } else {
+        label = sliderLabel(props.value)
+    }
     return (
-        <Tooltip open={open} enterTouchDelay={0} placement="bottom" title={sliderLabel(value)}>
-            {children}
+        <Tooltip open={props.open} enterTouchDelay={0} placement="bottom" title={label}>
+            {props.children}
         </Tooltip>
     );
 }
@@ -113,7 +114,8 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 const MapTab = (props) => {
-    const [value, setValue] = React.useState(0);
+    var timeout;
+    const [currentTab, setCurrentTab] = useState(0)
     const nMarks = props.isMobile ? Math.round(day_list.length / 3) : Math.round(day_list.length / 9)
     const marks = day_list.map((elem, idx) => {
         return {
@@ -121,42 +123,48 @@ const MapTab = (props) => {
             'label': ((idx % nMarks) == 1 ? elem.label : "")
         }
     })
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue);
-    };
-    const [currentDate, setCurrentDate] = useState(day_list[day_list.length - 1].label)
+    const [commitedDateIndex, setCommitedDateIndex] = useState(day_list.length-1)
 
-    const handleDateChange = (event: any, newValue: number) => {
-        setCurrentDate(sliderLabel(newValue));
+ 
+    const handleCurrentDateChange = (event: any, newValue: number) => {    
+            setCommitedDateIndex(newValue);         
     };
-    return (
-        <React.Fragment>
 
-            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                <Tab label="Infected cases" {...a11yProps(0)} />
-                <Tab label="Choropleth" {...a11yProps(1)} />
-            </Tabs>
-            <Typography variant="h6">
-                Selected date {currentDate}
-            </Typography>
-            <TabPanel value={value} index={0}>
-                <ItalyMap currentDate={currentDate} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Chroropleth currentDate={currentDate} />
-            </TabPanel>
-            <Typography id="discrete-slider" gutterBottom>
-                Select the date
+    const DateSelector = () => {
+        return (<Grid container>
+            <Grid item xs={1}>
+                <Typography style={{textAlign: "center", paddingTop: "0.5em"}} id="discrete-slider" >
+                    Date
       </Typography>
-            <Slider min={0}
-                onChangeCommitted={handleDateChange}
-                track={false}
-                ValueLabelComponent={ValueLabelComponent}
-                defaultValue={day_list.length - 1}
-                max={day_list.length - 1}
-                step={0}
-                marks={marks} />
-        </React.Fragment>
+            </Grid>
+            <Grid item xs={11}>
+                <Slider min={0}         
+                    onChangeCommitted={handleCurrentDateChange}      
+                    track={false}
+                    defaultValue={commitedDateIndex}
+                    ValueLabelComponent={ToolTip}            
+                    max={day_list.length - 1}
+                    step={0}
+                    marks={marks} />
+            </Grid>
+        </Grid>)
+    }
+    const date_str = day_list[commitedDateIndex].label;
+    return (
+        <GraphContainer
+            setCurrentTab={setCurrentTab}
+            currentTab={currentTab}
+            title={props.title}
+            subtitle={"Date "+  date_str}
+            controls={[]}
+            tabTitles={["Infected cases", "Choropleth"]}
+            bottomElement={< DateSelector />}
+        >
+            <ItalyMap currentDate={date_str} />
+            <Chroropleth currentDate={date_str} />
+
+        </GraphContainer>
     )
+
 }
 export default MapTab;

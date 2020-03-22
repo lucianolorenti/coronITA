@@ -2,9 +2,10 @@ import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid,Brush, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Brush, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis, Label } from 'recharts';
 import { CustomizedAxisTick } from './chart';
 import { useStyles } from './styles';
+import GraphContainer from './GraphContainer';
 declare var regions: any;
 declare var days: Array<any>;
 
@@ -25,8 +26,10 @@ var colors = ['#a6cee3',
     '#b2df8a']
 
 
-
-export default function ProvinceTimeSeriesPlot() {
+interface ProvinceTimeSeriesPlotProps {
+    title: any
+}
+export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProps) {
     const classes = useStyles();
     const [regionTimeSerie, setRegionTimeSerie] = useState({ data: null, provinces: [] });
     const [currentRegion, setCurrentRegion] = React.useState("Veneto");
@@ -57,9 +60,7 @@ export default function ProvinceTimeSeriesPlot() {
             setNormalized("")
         }
     };
-
-
-    return (<React.Fragment>
+    const controls = [
 
         <Autocomplete
             id="combo-box-demo"
@@ -69,7 +70,7 @@ export default function ProvinceTimeSeriesPlot() {
             style={{ width: 300 }}
             value={currentRegion}
             renderInput={params => <TextField {...params} label="Region" margin="none" />}
-        />
+        />,
         <FormControlLabel
             control={
                 <Checkbox
@@ -80,43 +81,44 @@ export default function ProvinceTimeSeriesPlot() {
             }
             label="Cases per 1000 people"
         />
-        <Typography variant="h6">
-            Date {days[days.length - 1]}
-        </Typography>
-        {normalized ? "Every province is normalized according to its population. Data obtained from wikipedia": null}
-        <ResponsiveContainer width="100%" height={500}>
-      
-            <LineChart
-                data={regionTimeSerie.data}
-                margin={{
-                    top: 5, right: 0, left: 0, bottom: 150,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-                <XAxis type="category" interval={1}  dataKey="day" />
-                <YAxis label={<Text
-                    x={0}
-                    y={0}
-                    dx={20}
-                    dy={200}
-                    offset={0}
-                    angle={-90}
-                >  {normalized ? "Case per 1000 people" : "Total cases"}</Text>} />
-                <Tooltip />
-                {regionTimeSerie.provinces.map((elem, idx) => {
-                    return <Line type="linear"
-                        key={elem}
-                        dataKey={elem}
-                        name={elem}
-                        stroke={colors[idx]}
-                        strokeWidth={2}
-                        activeDot={{ r: 11 }} />
-                })}
-                <Legend verticalAlign="top" />
-                <Brush  height={20} dataKey={'day'}/>
-            </LineChart>
-        </ResponsiveContainer>
-    </React.Fragment>
+    ]
+
+    return (
+        <GraphContainer title={props.title} controls={controls} >
+            <ResponsiveContainer width="100%" height={500} >
+
+                <LineChart
+                    data={regionTimeSerie.data}
+                    margin={{left: 15}}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+                    <XAxis type="category" interval={1} dataKey="day" />
+                    <YAxis>
+                        <Label value={normalized ? "Case per 1000 people" : "Total cases"} position="left" textAnchor='middle' angle={-90} />
+                    </YAxis>
+
+                    <Tooltip />
+                    {regionTimeSerie.provinces.map((elem, idx) => {
+                        return <Line type="linear"
+                            key={elem}
+                            dataKey={elem}
+                            name={elem}
+                            stroke={colors[idx]}
+                            strokeWidth={2}
+                            activeDot={{ r: 11 }} />
+                    })}
+                    <Legend verticalAlign="top" />
+                    <Brush height={20} dataKey={'day'} />
+                </LineChart>
+            </ResponsiveContainer>
+        </GraphContainer>
     )
+
 }
+        /*
+<Typography variant="h6">
+Date {days[days.length - 1]}
+</Typography>
+{normalized ? "Every province is normalized according to its population. Data obtained from wikipedia" : null}
+*/
