@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Text } from 'recharts';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Label } from 'recharts';
 import { CustomizedAxisTick } from './chart';
 import { Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { useStyles } from './styles'
 import GraphContainer from './GraphContainer'
 
 declare var days: Array<any>;
-interface TotalCasesHistogramProps  {
-    title:any
+interface TotalCasesHistogramProps {
+    title: any
 }
-export default function TotalCasesHistogram(props:TotalCasesHistogramProps) {
+export default function TotalCasesHistogram(props: TotalCasesHistogramProps) {
     const [histogramCases, setHistogramCases] = useState([]);
     const [normalized, setNormalized] = useState("");
 
@@ -50,21 +50,17 @@ export default function TotalCasesHistogram(props:TotalCasesHistogramProps) {
 
                 data={histogramCases}
                 margin={{
-                    top: 5, right: 0, left: 0, bottom: 100,
+                    left: 15,
+                    bottom: 75
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="category" interval={0} tick={<CustomizedAxisTick />} dataKey="denominazione_regione" />
-                <YAxis
-                    width={105}
-                    label={<Text
-                        x={0}
-                        y={0}
-                        dx={20}
-                        dy={200}
-                        offset={0}
-                        angle={-90}
-                    >  {normalized != "" ? "Cases per 1000 people" : "Total cases"} </Text>} />
+                <YAxis>
+
+                    <Label value={normalized != "" ? "Cases per 1000 people" : "Total cases"} position="left" textAnchor='middle' angle={-90} />
+
+                </YAxis>
                 <Tooltip />
 
                 <Bar dataKey="totale_casi" name="Cases" fill="#8884d8" />

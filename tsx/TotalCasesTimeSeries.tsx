@@ -191,7 +191,7 @@ function GrowthRateSeries(props: SeriesProps) {
   const not_regions_fields = ["day", "gr"]
   return (
 
-    <ResponsiveContainer width="100%" height={400} key="growth_rate">
+    <ResponsiveContainer width="100%" height={500} key="growth_rate">
       <LineChart
         data={growthRateSerie}
 

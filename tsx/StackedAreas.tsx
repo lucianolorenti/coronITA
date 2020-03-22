@@ -3,7 +3,7 @@ import { Checkbox, FormControlLabel, TextField, FormGroup, Grid, Typography, Swi
 import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { Area, Brush, LineChart, Line, Text, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Brush, Label, LineChart, Line, Text, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
 import GraphContainer from './GraphContainer';
 
@@ -49,27 +49,24 @@ interface TrendsAreaChartProps {
     normalize: boolean
 }
 const TrendsAreaChart = (props: TrendsAreaChartProps) => {
-    console.log('a')
+    const plotLabel = () => {
+        return (props.normalize ? "Proportion per day" : "Total cases")
+    }
     return (<AreaChart
         data={props.data}
         stackOffset={props.normalize ? "expand" : "none"}
         margin={{
-            top: 10, right: 0, left: 0, bottom: 0,
+            top: 10, right: 0, left: 15, bottom: 0,
         }}
     >
 
         <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="day" />
-        <YAxis width={80}
-            yAxisid={1} label={<Text
-                x={0}
-                y={0}
-                dx={20}
-                dy={250}
-                offset={0}
-                angle={-90}
-            >  {props.normalize ? "Proportion per day" : "Total cases"} </Text>} />
+        <YAxis  yAxisid={1} >
+            <Label value={plotLabel()} position="left"   textAnchor='middle' angle={-90}/>
+        </YAxis>
+            
         <Tooltip />
         <Area type="monotone" name="Discharged healed" dataKey="dimessi_guariti" stackId="1" stroke="#62f442" fill="#62f442" />
         <Area type="monotone" name="Home isolation" dataKey="isolamento_domiciliare" stackId="1" stroke="#e2c622" fill="#e2c622" />

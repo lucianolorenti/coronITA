@@ -3,7 +3,7 @@ import { Checkbox, Chip, FormControlLabel, FormLabel, Input, InputLabel, ListIte
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { Area, Text, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Label, Text, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
 declare var regions: any;
 
@@ -175,22 +175,16 @@ export default function StackedRegions(props: StackedRegionsProps) {
             data={data}
             stackOffset={normalize ? "expand" : "none"}
             margin={{
-                top: 10, right: 0, left: 0, bottom: 0,
+                left: 15,
             }}
         >
             <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis
-                width={105}
-                label={<Text
-                    x={0}
-                    y={0}
-                    dx={20}
-                    dy={180}
-                    offset={0}
-                    angle={-90}
-                > {normalize ? "Proportion per day" : "Total cases"} </Text>} />
+            <YAxis>
+
+                <Label value={normalize ? "Proportion per day" : "Total cases"} position="left" textAnchor='middle' angle={-90} />
+            </YAxis>
             <Tooltip />
 
             {selectedRegions.map((elem) => {
