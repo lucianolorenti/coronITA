@@ -270,7 +270,7 @@ def sigmoid(x, L ,x0, k, b):
 def fit_curve(y, n=None):
     x = np.array(range(0, len(y)))
     p0 = [max(y), np.median(x),1,min(y)]
-    popt, pcov = curve_fit(sigmoid, x, y, p0, method='dogbox')
+    popt, pcov = curve_fit(sigmoid, x, y, p0, method='dogbox', maxfev=50000)
     if n is not None:
         x = np.array(range(0, n))    
     fitted_y = sigmoid(x, *popt)
