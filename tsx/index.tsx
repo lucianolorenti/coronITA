@@ -97,7 +97,7 @@ function DashboardWithSizes(props: DashboardProps) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" noWrap className={classes.pageTitle}>
-            COVID-19       <ReactCountryFlag
+            Coronavirus COVID-19 in Italy     <ReactCountryFlag
               className="emojiFlag"
               countryCode="IT"
               style={{
@@ -119,7 +119,7 @@ function DashboardWithSizes(props: DashboardProps) {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={isMobile ? classes.containerMobile : classes.container}>
           <Drawer drawer={drawer} toggleDrawer={toggleDrawer} toc={element} />
-          <Paper className={isMobile ? classes.paperMobileContent : classes.paperContent} >
+         
 
             <Link href="https://github.com/pcm-dpc/COVID-19" >
               <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
@@ -140,7 +140,7 @@ function DashboardWithSizes(props: DashboardProps) {
             <Box pt={4}>
               <Copyright />
             </Box>
-          </Paper>
+         
         </Container>
       </main>
     </div>

@@ -47,6 +47,7 @@ export const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    backgroundColor: "#FFFFFF",
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -89,7 +90,7 @@ export const useStyles = makeStyles(theme => ({
     width: 'auto',
   },
   gridItem: {
-    width: "99%",
+    width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
     marginBottom: "1em"
