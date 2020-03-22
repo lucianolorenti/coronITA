@@ -1,5 +1,5 @@
 # Dashboard of Coronavirus in Italy
-## [Live!](https://itacovid-19.herokuapp.com/)
+## [Live!](http://italiacovid.online/)
 
 ## Description 
 The [Civil Protection Department is publishing reliable data about the incidence of this virus in the Italian Population](https://github.com/pcm-dpc/COVID-19).
