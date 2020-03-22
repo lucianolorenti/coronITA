@@ -273,7 +273,7 @@ def fit_curve(y, n=None):
     popt, pcov = curve_fit(sigmoid, x, y, p0, method='dogbox', maxfev=50000)
     if n is not None:
         x = np.array(range(0, n))    
-    fitted_y = sigmoid(x, *popt)
+    fitted_y = [max(int(y), 0) for y in sigmoid(x, *popt)]
     return (popt, fitted_y)
 
 
