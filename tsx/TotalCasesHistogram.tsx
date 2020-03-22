@@ -44,7 +44,7 @@ export default function TotalCasesHistogram(props: TotalCasesHistogramProps) {
             label="Normalize by region population"
         />
     ]
-    return (<GraphContainer title={props.title} controls={controls} >
+    return (<GraphContainer title={props.title} subtitle={"Date "  + days[days.length - 1]} controls={controls} >
         <ResponsiveContainer width="100%" height={500}>
             <BarChart
 
@@ -75,6 +75,6 @@ export default function TotalCasesHistogram(props: TotalCasesHistogramProps) {
 
 /*
 <Typography variant="h6">
-    Date {days[days.length - 1]}
+
 </Typography>
 */

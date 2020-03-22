@@ -66,7 +66,7 @@ export default function ProvincePlot(props: ProvincePlotProps) {
     ]
 
     return (
-        <GraphContainer title={props.title} controls={controls} >
+        <GraphContainer title={props.title} subtitle={"Date " +  days[days.length - 1]} controls={controls} >
             <ResponsiveContainer width="100%" height={500} margin={{left: 15}}>
 
 
@@ -92,8 +92,3 @@ export default function ProvincePlot(props: ProvincePlotProps) {
 
     )
 }
-/*
- <Typography variant="h6">
-                Date {days[days.length - 1]}
-            </Typography>
-            */

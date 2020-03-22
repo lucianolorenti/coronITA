@@ -1,4 +1,4 @@
-import { AppBar, createStyles, Divider, IconButton, makeStyles, Tab, Tabs, Theme, Toolbar, Typography, useTheme } from '@material-ui/core';
+import { AppBar, createStyles, Divider, IconButton, makeStyles, Tab, Tabs, Theme, Toolbar, Typography, useTheme, Grid } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import React, { useRef, useState, Dispatch, SetStateAction } from 'react';
 import slugify from 'slugify';
@@ -77,6 +77,7 @@ interface GraphContainerProps {
   bottomElement?: React.ReactNode,
   setCurrentTab?: Dispatch<SetStateAction<number>>,
   currentTab?: number
+  subtitle?: React.ReactNode
 }
 const GraphContainer = (props: GraphContainerProps) => {
   const classes = useStyles();
@@ -156,26 +157,34 @@ const GraphContainer = (props: GraphContainerProps) => {
             <BuildIcon />
           </IconButton>
           <div id={slugify(props.title as string)} className={classes.anchor} />
-          <Typography  variant="h6" noWrap>
-            {props.title}
-          </Typography>
+          <div>
+              <Typography variant="h6" noWrap>
+                {props.title}
+              </Typography>
+              {props.subtitle === undefined ? null :
+                <Typography style={{ textAlign: "center" }} variant="subtitle2" >
+                  {props.subtitle}
+                </Typography>}
+            
+            </div>
+
           <IsMobileContext.Consumer>
             {isMobile => (!isMobile ? tabs() : null)}
-            </IsMobileContext.Consumer>
+          </IsMobileContext.Consumer>
 
         </Toolbar>
         <IsMobileContext.Consumer>
-            {isMobile => (isMobile ? <Toolbar> {tabs()} </Toolbar> : null)}
-            </IsMobileContext.Consumer>
-       
+          {isMobile => (isMobile ? <Toolbar> {tabs()} </Toolbar> : null)}
+        </IsMobileContext.Consumer>
+
       </AppBar>
 
-      <Paper square 
-               id={slugify(props.title as string) + "_page"} 
-               style={{ paddingTop: "1em", paddingLeft: "1em", paddingBottom: "1em", paddingRight: "1em" }} 
-               elevation={0}
-               variant={'outlined'}
-               >
+      <Paper square
+        id={slugify(props.title as string) + "_page"}
+        style={{ paddingTop: "1em", paddingLeft: "1em", paddingBottom: "1em", paddingRight: "1em" }}
+        elevation={0}
+        variant={'outlined'}
+      >
         {React.Children.count(props.children) > 1 ?
           React.Children.map(props.children, (elem, idx) => {
             return (
@@ -194,17 +203,17 @@ const GraphContainer = (props: GraphContainerProps) => {
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
             <Paper>
-  
-                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                  {(props.controls).map((elem, idx) => {
-                    return (<MenuItem
-                      button
-                      key={idx}
-                    >
-                      {elem}
-                    </MenuItem>)
-                  })}
-                </MenuList>
+
+              <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                {(props.controls).map((elem, idx) => {
+                  return (<MenuItem
+                    button
+                    key={idx}
+                  >
+                    {elem}
+                  </MenuItem>)
+                })}
+              </MenuList>
 
             </Paper>
           </Grow>

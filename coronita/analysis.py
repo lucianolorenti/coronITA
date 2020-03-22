@@ -336,7 +336,6 @@ def growth_rate_data(regions, ttl_hash=None):
 
 
 def total_time_series_data(regions, additional_days=0, ttl_hash=None):
-    print(regions)
     if isinstance(regions, str):
         regions = regions.split(',')
     data = None
@@ -346,8 +345,6 @@ def total_time_series_data(regions, additional_days=0, ttl_hash=None):
         coeffs = data['coeffs']
         data = data['data'].copy()
         regions.remove('All')
-        print()
-        print(data)
     
     for region in regions:
         total_time_series = total_case_time_series_region(region, ttl_hash=ttl_hash).copy().reset_index()
