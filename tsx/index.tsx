@@ -1,21 +1,27 @@
-import { IconButton } from '@material-ui/core';
+import { Button, IconButton, Popover } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import FacebookIcon from '@material-ui/icons/Facebook';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import InfoIcon from '@material-ui/icons/Info';
 import MenuIcon from '@material-ui/icons/Menu';
+import RedditIcon from '@material-ui/icons/Reddit';
+import ShareIcon from '@material-ui/icons/Share';
+import TelegramIcon from '@material-ui/icons/Telegram';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import clsx from 'clsx';
 import 'katex/dist/katex.min.css';
 import React from 'react';
 import ReactCountryFlag from "react-country-flag";
 import ReactDOM from 'react-dom';
+import { FacebookShareButton, RedditShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton } from "react-share";
 import withSizes from 'react-sizes';
 import DeadProportion from './DeadProportion';
 import Drawer from './Drawer';
@@ -29,6 +35,9 @@ import StackedRegions from './StackedRegions';
 import { useStyles } from './styles';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
+import { useTheme } from '@material-ui/core/styles';
+
+
 
 function Copyright() {
   return (
@@ -57,7 +66,7 @@ interface DashboardProps {
 function DashboardWithSizes(props: DashboardProps) {
   const { isMobile } = props;
   const classes = useStyles();
-
+  const theme = useTheme();
   const [drawer, setDrawer] = React.useState(false);
   const toggleDrawer = (open: boolean) => event => {
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -65,7 +74,17 @@ function DashboardWithSizes(props: DashboardProps) {
     }
     setDrawer(open)
   };
-  const [toc, setToc] = React.useState([]);
+  const [shareMenuAnchorEl, setShareMenuAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleShareButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setShareMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setShareMenuAnchorEl(null);
+  };
+  const open = Boolean(shareMenuAnchorEl);
+  const share_menu_id = open ? 'share-menu-popover' : undefined;
 
   const element: VizElement[] = [
     // { title: "Cases", component: <SankeyCases /> },
@@ -73,15 +92,64 @@ function DashboardWithSizes(props: DashboardProps) {
     { title: "People affected by the virus", Component: StackedAreas },
     { title: "Affected by region", Component: StackedRegions },
     { title: "Map of infected people", Component: MapTab },
-    { title: "Percentage of deceased people vs positive cases", Component: DeadProportion},
-    { title: "Percentage of infected people vs tests", Component: TamponiInfectedRatioSeries  },
-    { title: "Cases per region", Component: TotalCasesHistogram  },
-    { title: "Evolution of cases per province", Component: ProvinceTimeSeriesPlot  },
-    { title: "Cases per province", Component: ProvincePlot  }
+    { title: "Percentage of deceased people vs positive cases", Component: DeadProportion },
+    { title: "Percentage of infected people vs tests", Component: TamponiInfectedRatioSeries },
+    { title: "Cases per region", Component: TotalCasesHistogram },
+    { title: "Evolution of cases per province", Component: ProvinceTimeSeriesPlot },
+    { title: "Cases per province", Component: ProvincePlot }
   ]
 
+  const ShareButtons = () => {
+    return <React.Fragment>
+      <FacebookShareButton style={{padding: "0.5em"}} url="http://italiacovid.online/" >
+        <FacebookIcon  style={{color: "#FFF"}} />
+      </FacebookShareButton>
+      <WhatsappShareButton style={{padding: "0.5em"}}  url="http://italiacovid.online/" >
+        <WhatsAppIcon style={{color: "#FFF"}} />
+      </WhatsappShareButton>
+      <TelegramShareButton style={{padding: "0.5em"}}  url="http://italiacovid.online/" >
+        <TelegramIcon style={{color: "#FFF"}} />
+      </TelegramShareButton>
+      <TwitterShareButton style={{padding: "0.5em"}} url="http://italiacovid.online/" >
+        <TwitterIcon  style={{color: "#FFF"}}/>
+      </TwitterShareButton>
+      <RedditShareButton style={{padding: "0.5em"}}  url="http://italiacovid.online/" >
+        <RedditIcon style={{color: "#FFF"}}/>
+      </RedditShareButton>
+    </React.Fragment>
+  }
 
-
+  const ShareMenu = () => {
+    return <React.Fragment>
+      <IconButton
+        aria-describedby={share_menu_id}
+        aria-label="share"
+        color="inherit"
+        edge="start"
+        component="span" onClick={handleShareButtonClick} >
+        <ShareIcon />
+      </IconButton>
+      <Popover
+        id={share_menu_id}
+        open={open}
+        anchorEl={shareMenuAnchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+       
+      >
+        <div className={classes.popover}>
+          {ShareButtons()}
+        </div>
+      </Popover>
+    </React.Fragment>
+  }
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -97,7 +165,8 @@ function DashboardWithSizes(props: DashboardProps) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" noWrap className={classes.pageTitle}>
-            Coronavirus COVID-19 in Italy     <ReactCountryFlag
+            {isMobile ? "COVID-19 Italy" : "Coronavirus COVID-19 in Italy"}
+            <ReactCountryFlag
               className="emojiFlag"
               countryCode="IT"
               style={{
@@ -107,6 +176,8 @@ function DashboardWithSizes(props: DashboardProps) {
               aria-label="Italy"
             />
           </Typography>
+           {ShareMenu() }
+
 
           <Typography variant="subtitle1" color="inherit" noWrap className={classes.right}>
             <Link href="https://github.com/lucianolorenti/coronITA" color="inherit">
@@ -114,18 +185,19 @@ function DashboardWithSizes(props: DashboardProps) {
             </Link>
           </Typography>
         </Toolbar>
+
       </AppBar>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={isMobile ? classes.containerMobile : classes.container}>
           <Drawer drawer={drawer} toggleDrawer={toggleDrawer} toc={element} />
-         
 
-            <Link href="https://github.com/pcm-dpc/COVID-19" >
-              <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
+
+          <Link href="https://github.com/pcm-dpc/COVID-19" >
+            <InfoIcon style={{ "paddingTop": "0.5em" }} />  Data Provided by Presidenza del Consiglio dei Ministri - Dipartimento della Protezione Civile
             </Link>
 
-            <Grid container >
+          <Grid container >
             <IsMobileContext.Provider value={isMobile}>
               {element.map((elem: VizElement, index: number) => {
                 return (
@@ -135,12 +207,12 @@ function DashboardWithSizes(props: DashboardProps) {
 
                 )
               })}
-               </IsMobileContext.Provider>
-            </Grid>
-            <Box pt={4}>
-              <Copyright />
-            </Box>
-         
+            </IsMobileContext.Provider>
+          </Grid>
+          <Box pt={4}>
+            <Copyright />
+          </Box>
+
         </Container>
       </main>
     </div>

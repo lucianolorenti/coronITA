@@ -4,7 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
 import MathJax from 'react-mathjax';
-import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
+import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
 import GraphContainer from './GraphContainer'
 import IsMobileContext from './IsMobileContext';
@@ -100,8 +100,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
         <ResponsiveContainer width="100%" height={500} >
           <LineChart
             data={totalTimeSerie}
-            margin={{ left: 15 }}
-          >
+            margin={{ left: 15 }}>
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
