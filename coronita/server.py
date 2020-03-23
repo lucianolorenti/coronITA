@@ -152,3 +152,4 @@ def hello():
         days=json.loads(
             json.dumps(analysis.day_list(ttl_hash=get_ttl_hash()).tolist(),
                        default=json_serial)))
+
