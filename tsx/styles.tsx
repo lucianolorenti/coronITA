@@ -30,7 +30,7 @@ export const useStyles = makeStyles(theme => ({
     marginRight:"auto"
   },
   menuButton: {
-    marginRight: 36,
+    marginRight: 5,
   },
   hide: {
     display: 'none',
@@ -38,7 +38,6 @@ export const useStyles = makeStyles(theme => ({
   title: {
 
   },
-
   pageTitle: {
     flexGrow: 1,
   },
@@ -103,5 +102,9 @@ export const useStyles = makeStyles(theme => ({
   },
   right: {
     margintLeft: "auto"
+  },
+  popover: {
+    backgroundColor: theme.palette.primary.main,
+    padding:"0.5em"
   }
 }));
