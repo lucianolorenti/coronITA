@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 from datetime import timedelta 
-
+from scipy.optimize import differential_evolution, least_squares
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,7 +49,9 @@ def map_locations(date, ttl_hash=None):
 
 
 def process_df(d):
-    d['data'] = pd.to_datetime(d['data'])
+   
+    d['data'] = pd.to_datetime(d['data'].str.strip(), errors='coerce')
+    d.dropna(inplace=True)
     d['day'] = d['data'].dt.date
     d['denominazione_regione'] = d['denominazione_regione'].str.replace(
         'P.A. Bolzano', 'Bolzano')
@@ -261,19 +263,75 @@ def total_case_time_series_region(region, ttl_hash=None):
     data = data[data['denominazione_regione'] == region]
     return data[['day', 'totale_casi']]
 
+def chapman_richards(time, alpha, beta, rate, slope):
+    """
+    Computes the Chapman-Richards growth model
+    Parameters
+    ----------
+    time : time
+    alpha : upper asymptote
+    beta : growth range
+    rate : growth rate
+    slope : slope of growth
+    See Also
+    --------
+    chapman_richards_inverse
+    References
+    ----------
+    .. [1] D. Fekedulegn, M. Mac Siurtain, and J. Colbert, "Parameter estimation
+           of nonlinear growth models in forestry," Silva Fennica, vol. 33,
+           no. 4, pp. 327-336, 1999.
+    """
+
+    result = alpha * (1 - beta * np.exp(-rate * time)) ** (1 / (1 - slope))
+
+    return result
+
+
+def logistic(time, alpha, beta, rate):
+    """
+    Computes the Logistic growth model
+    Parameters
+    ----------
+    time : time
+    alpha : upper asymptote
+    beta : growth range
+    rate : growth rate
+    See Also
+    --------
+    logistic_inverse, generalised_logistic, generalised_logistic_inverse
+    References
+    ----------
+    .. [1] D. Fekedulegn, M. Mac Siurtain, and J. Colbert, "Parameter estimation
+           of nonlinear growth models in forestry," Silva Fennica, vol. 33,
+           no. 4, pp. 327-336, 1999.
+    """
+
+    result = alpha / (1 + beta * np.exp(-rate * time))
+
+    return (result)
+
+
 
 def sigmoid(x, L ,x0, k, b):
     y = (L / (1 + np.exp(-k*(x-x0))))+b
     return (y)
 
+def sum_squared_error(x, y, f, parameterTuple):
+    return np.sum((y - f(x, *parameterTuple)) ** 2)
+
 
 def fit_curve(y, n=None):
+    f = logistic
     x = np.array(range(0, len(y)))
-    p0 = [max(y), np.median(x),1,min(y)]
-    popt, pcov = curve_fit(sigmoid, x, y, p0, method='dogbox', maxfev=50000)
+
+
+
+    popt, pcov = curve_fit(f, x, y, p0=[np.max(y), 1, 1.25], maxfev=35000)
+    print(popt)
     if n is not None:
         x = np.array(range(0, n))    
-    fitted_y = [max(int(y), 0) for y in sigmoid(x, *popt)]
+    fitted_y = [max(int(y), 0) for y in f(x, *popt)]
     return (popt, fitted_y)
 
 
