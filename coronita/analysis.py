@@ -385,15 +385,26 @@ def growth_rate_data(regions, method='gr', ttl_hash=None):
                      for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
         regions.remove('All')
     for region in regions:
-        total_time_series = total_case_time_series_region(region,ttl_hash=ttl_hash)
-        y = total_time_series['totale_casi'].values
+        
+        total_time_series = total_case_time_series_region(region, ttl_hash=ttl_hash)
+        y = total_time_series['totale_casi'].values        
         growth_r = fun(y[1:])
         if data is None:
-            data = [{'day': d, f'gr_{region}': gr if gr < 3 else None  } 
-                     for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
+            data = []
+            for (d, gr) in zip(total_time_series['day'].values[2:], growth_r):
+                elem = {'day': d} 
+                if (method=='gr' and gr < 3) or (method != 'gr'):
+                    elem[f'gr_{region}'] =  gr
+                else:
+                    elem[f'gr_{region}'] =  None
+                data.append(elem)
         else:
             for elem, gr in zip(data, growth_r):
-                elem[f'gr_{region}'] = gr if gr < 3 else None             
+                if (method=='gr' and gr < 3) or (method != 'gr'):
+                    elem[f'gr_{region}'] = gr 
+                else:
+                    elem[f'gr_{region}'] = None 
+            print(data)
     return data
 
 
