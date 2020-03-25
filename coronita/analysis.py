@@ -49,9 +49,10 @@ def map_locations(date, ttl_hash=None):
 
 
 def process_df(d):
-   
+    d.fillna('', inplace=True)
     d['data'] = pd.to_datetime(d['data'].str.strip(), errors='coerce')
     d.dropna(inplace=True)
+    
     d['day'] = d['data'].dt.date
     d['denominazione_regione'] = d['denominazione_regione'].str.replace(
         'P.A. Bolzano', 'Bolzano')
@@ -450,7 +451,7 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
     data = data_province(ttl_hash=ttl_hash)
     data = data[data['denominazione_regione'] == region]
     if data.empty:
-        return []
+        return pd.DataFrame()
     normalize_data = None
     if len(normalize) > 0:
         normalize_data = provinces_data()        
@@ -478,7 +479,7 @@ def provinces_time_series(region, normalize='', ttl_hash=None):
     data = data_province(ttl_hash=ttl_hash)
     data = data[data['denominazione_regione'] == region]
     if data.empty:
-        return []
+        return pd.DataFrame()
     normalize_data = None
     if len(normalize) > 0:
         normalize_data = provinces_data()        
