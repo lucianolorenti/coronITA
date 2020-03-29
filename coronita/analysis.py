@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
-from datetime import timedelta 
+from datetime import timedelta
 from scipy.optimize import differential_evolution, least_squares
 
 logging.basicConfig(level=logging.INFO)
@@ -52,7 +52,7 @@ def process_df(d):
     d.fillna('', inplace=True)
     d['data'] = pd.to_datetime(d['data'].str.strip(), errors='coerce')
     d.dropna(inplace=True)
-    
+
     d['day'] = d['data'].dt.date
     d['denominazione_regione'] = d['denominazione_regione'].str.replace(
         'P.A. Bolzano', 'Bolzano')
@@ -81,19 +81,20 @@ def data_regioni(ttl_hash=None):
     d = pd.read_csv(FILE_PATH)
     process_df(d)
     feats = [
-        'ricoverati_con_sintomi', 'terapia_intensiva',
-        'totale_ospedalizzati', 'isolamento_domiciliare',
-        'totale_attualmente_positivi', 'nuovi_attualmente_positivi',
-        'dimessi_guariti', 'deceduti', 'totale_casi', 'tamponi'
+        'ricoverati_con_sintomi', 'terapia_intensiva', 'totale_ospedalizzati',
+        'isolamento_domiciliare', 'totale_attualmente_positivi',
+        'nuovi_attualmente_positivi', 'dimessi_guariti', 'deceduti',
+        'totale_casi', 'tamponi'
     ]
     d.loc[d['denominazione_regione'] == 'Bolzano',
           'denominazione_regione'] = 'Trentino'
-    for day in np.unique(d['day']):        
+    for day in np.unique(d['day']):
         s = d[(d['denominazione_regione'] == 'Trento')
               & (d['day'] == day)][feats]
         for f in feats:
             d.loc[(d['denominazione_regione'] == 'Trentino') &
-                  (d['day'] == day), f] += s[f].values[0] if len(s[f].values)> 0 else 0
+                  (d['day'] == day),
+                  f] += s[f].values[0] if len(s[f].values) > 0 else 0
     d.drop(d[d['denominazione_regione'] == 'Trento'].index, inplace=True)
     return d
 
@@ -106,9 +107,9 @@ def data_province(ttl_hash=None):
     data = pd.read_csv(FILE_PATH)
     process_df(data)
     data.loc[data['denominazione_regione'] == 'Bolzano',
-              'denominazione_regione'] = 'Trentino'
+             'denominazione_regione'] = 'Trentino'
     data.loc[data['denominazione_regione'] == 'Trento',
-              'denominazione_regione'] = 'Trentino'
+             'denominazione_regione'] = 'Trentino'
     return data
 
 
@@ -163,9 +164,12 @@ def region_stacked_area(regions, what='terapia_intensiva', ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
     data = data_regioni(ttl_hash=ttl_hash)
-    data = data[data['denominazione_regione'].isin(regions)]    
+    data = data[data['denominazione_regione'].isin(regions)]
     data = data[['day', 'denominazione_regione', what]].copy()
-    data = data[['day','denominazione_regione', what]].pivot(index='day', columns='denominazione_regione', values=what)
+    data = data[['day', 'denominazione_regione',
+                 what]].pivot(index='day',
+                              columns='denominazione_regione',
+                              values=what)
     data.rename({what: 'data'}, inplace=True)
     data.reset_index('day', inplace=True)
     return data
@@ -215,6 +219,7 @@ def provinces_list(region, ttl_hash=None):
     data = data[data['denominazione_regione'] == region]
     return data['denominazione_provincia'].unique().values
 
+
 @functools.lru_cache(maxsize=32)
 def region_list(ttl_hash=None):
     data = data_province(ttl_hash=ttl_hash)
@@ -246,23 +251,23 @@ def total_case_histogram(date, normalize='', ttl_hash=None):
         'totale_casi').reset_index().set_index('denominazione_regione'))
     hist['totale_casi'] = hist['totale_casi'].astype(float)
     if normalize_data is not None:
-        hist['totale_casi'] =1000*(hist['totale_casi'] / normalize_data)
+        hist['totale_casi'] = 1000 * (hist['totale_casi'] / normalize_data)
     hist.reset_index(inplace=True)
     hist.dropna(inplace=True)
     return hist
 
 
-@functools.lru_cache(maxsize=32)
-def total_case_time_series_country(ttl_hash=None):
-    data = data_andamento_nazionale(ttl_hash=ttl_hash).reset_index()
-    return data[['day', 'totale_casi']]
+def total_case_time_series_region(regions,
+                                  fields=['totale_casi'],
+                                  ttl_hash=None):
+    data = data_regioni(ttl_hash=ttl_hash).copy().reset_index()
+    data = data[data['denominazione_regione'].isin(regions)].pivot(
+        index='day', columns='denominazione_regione', values=fields)
+    data.columns = [
+        f'{region}@{what}' for (what, region) in data.columns.to_flat_index()
+    ]
+    return data
 
-
-@functools.lru_cache(maxsize=32)
-def total_case_time_series_region(region, ttl_hash=None):
-    data = data_regioni(ttl_hash=ttl_hash).reset_index()
-    data = data[data['denominazione_regione'] == region]
-    return data[['day', 'totale_casi']]
 
 def chapman_richards(time, alpha, beta, rate, slope):
     """
@@ -284,7 +289,7 @@ def chapman_richards(time, alpha, beta, rate, slope):
            no. 4, pp. 327-336, 1999.
     """
 
-    result = alpha * (1 - beta * np.exp(-rate * time)) ** (1 / (1 - slope))
+    result = alpha * (1 - beta * np.exp(-rate * time))**(1 / (1 - slope))
 
     return result
 
@@ -313,27 +318,24 @@ def logistic(time, alpha, beta, rate):
     return (result)
 
 
-
-def sigmoid(x, L ,x0, k, b):
-    y = (L / (1 + np.exp(-k*(x-x0))))+b
+def sigmoid(x, L, x0, k, b):
+    y = (L / (1 + np.exp(-k * (x - x0)))) + b
     return (y)
 
+
 def sum_squared_error(x, y, f, parameterTuple):
-    return np.sum((y - f(x, *parameterTuple)) ** 2)
+    return np.sum((y - f(x, *parameterTuple))**2)
 
 
 def fit_curve(y, n=None):
     f = logistic
     x = np.array(range(0, len(y)))
 
-
-
     popt, pcov = curve_fit(f, x, y, p0=[np.max(y), 1, 1.25], maxfev=35000)
-    print(popt)
     if n is not None:
-        x = np.array(range(0, n))    
-    fitted_y = [max(int(y), 0) for y in f(x, *popt)]
-    return (popt, fitted_y)
+        x = np.array(range(0, n))
+    fitted_y = [max(y, 0) for y in f(x, *popt)]
+    return (popt, np.round(fitted_y, decimals=0))
 
 
 def fit_curve1(y, n=None):
@@ -343,108 +345,105 @@ def fit_curve1(y, n=None):
                         1,
                         w=np.sqrt(y + 0.000000000001))
     if n is not None:
-        x = np.array(range(0, n))    
+        x = np.array(range(0, n))
     fitted_y = np.exp(b) * np.exp(a * x)
     return ((np.exp(a), np.exp(b)), fitted_y)
 
 
-@functools.lru_cache(maxsize=32)
-def total_time_series_data_country(additional_days=0, ttl_hash=None):
-    total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
-    
-    y = total_time_series['totale_casi'].values
-    
-    (params, fitted_y) = fit_curve(y, n=len(y)+additional_days)
-    (params, fitted_y_2) = fit_curve(y[:-2], n=len(y)+additional_days)
-    (params, fitted_y_7) = fit_curve(y[:-5], n=len(y)+additional_days)
-    last_day = total_time_series.iloc[-1, :]['day']
+def fit_field(df, field, additional_days=0):
+    y = df[field].values
+    (params, fitted_y) = fit_curve(y, n=len(y) + additional_days)
+    return np.round(fitted_y, decimals=2)
+
+
+def extend_df(df, additional_days=0):
+    last_day = df.iloc[-1, :]['day']
+    empty_dict = {field: None for field in df.columns}
     for i in range(additional_days):
-        next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
-        total_time_series = total_time_series.append({'day': next_day, 'totale_casi': None},  ignore_index=True)
-    
-    total_time_series['fitted'] = np.round(fitted_y, decimals=2)
-    total_time_series['fitted_2'] = np.round(fitted_y_2, decimals=2)
-    total_time_series['fitted_7'] = np.round(fitted_y_7, decimals=2)
-    return {'data': total_time_series, 'coeffs': params.tolist()}
-    
+        next_day = (last_day + timedelta(days=(i + 1))).strftime("%Y-%m-%d")
+        df = df.append(dict({'day': next_day}, **empty_dict),
+                       ignore_index=True)
+    return df
 
-@functools.lru_cache(maxsize=32)
-def growth_rate_data(regions, method='gr', ttl_hash=None):
-    if isinstance(regions, str):
-        regions = regions.split(',')
-    if method == 'gr':
-        fun = growth_rate
-    else:
-        fun = difference
-    data = None
-    coeffs = None
-    if 'All' in regions:
-        total_time_series = total_case_time_series_country(ttl_hash=ttl_hash).copy()
-        y = total_time_series['totale_casi'].values
-        growth_r = fun(y[1:])
-        data = [{'day': d, 'gr': gr} 
-                     for (d, gr) in zip(total_time_series['day'].values[2:], growth_r)]
-        regions.remove('All')
-    for region in regions:
+
+def is_fitteable(field):
+    return field in ['totale_casi', 'totale_attualmente_positivi']
+
+def transform_df(df, transformation):
+    if transformation != 'raw':
         
-        total_time_series = total_case_time_series_region(region, ttl_hash=ttl_hash)
-        y = total_time_series['totale_casi'].values        
-        growth_r = fun(y[1:])
-        if data is None:
-            data = []
-            for (d, gr) in zip(total_time_series['day'].values[2:], growth_r):
-                elem = {'day': d} 
-                if (method=='gr' and gr < 3) or (method != 'gr'):
-                    elem[f'gr_{region}'] =  gr
-                else:
-                    elem[f'gr_{region}'] =  None
-                data.append(elem)
-        else:
-            for elem, gr in zip(data, growth_r):
-                if (method=='gr' and gr < 3) or (method != 'gr'):
-                    elem[f'gr_{region}'] = gr 
-                else:
-                    elem[f'gr_{region}'] = None 
-            print(data)
-    return data
+        cols = [col for col in df.columns if col != 'day']
+        df = df.where(df.notnull(), np.nan)
+        df[cols] = df[cols].astype('float')
+        if transformation == 'log':
+            df[cols] = df[cols].transform(np.log)
+        elif transformation == 'diff':
+            df[cols] = df[cols].diff()
+        elif transformation == 'gr':
+            df[cols] = df[cols].transform(np.log)
+            df[cols] = df[cols].diff()
+            df[cols] = df[cols].transform(np.exp)
+        df[cols]  = df[cols].round(decimals=2)
+        df = df.where(df.notnull(), None)           
+    return df
 
-
-def total_time_series_data(regions, additional_days=0, ttl_hash=None):
+def total_time_series_data(regions, fields, transformation='raw', additional_days=0, ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
-    data = None
+    if isinstance(fields, str):
+        fields = fields.split(',')
+    data = []
     coeffs = None
+    fitteable_fields = [field for field in fields if is_fitteable(field)]
     if 'All' in regions:
-        data = total_time_series_data_country(additional_days=additional_days, ttl_hash=ttl_hash).copy()
-        coeffs = data['coeffs']
-        data = data['data'].copy()
+        df = data_andamento_nazionale(
+            ttl_hash=ttl_hash)[fields].copy().reset_index()
+        df.columns = [
+            f'All@{column}' if column != 'day' else 'day'
+            for column in df.columns
+        ]
+        fitted_columns = {}
+        for field in fitteable_fields:
+            field_name = f'All@{field}'
+            fitted_columns[f'fitted_{field_name}'] = fit_field(
+                df, field_name, additional_days=additional_days)
+        df = extend_df(df, additional_days=additional_days)
+        df = pd.concat([df, pd.DataFrame(fitted_columns)], axis=1)
+        df = transform_df(df, transformation)
+        data.append(df)
         regions.remove('All')
-    
-    for region in regions:
-        total_time_series = total_case_time_series_region(region, ttl_hash=ttl_hash).copy().reset_index()
-        last_day = total_time_series.iloc[-1, :]['day']
-        for i in range(additional_days):
-            next_day = (last_day + timedelta(days=(i+1))).strftime("%Y-%m-%d")
-            total_time_series = total_time_series.append({'day': next_day, 'totale_casi': None},  ignore_index=True)
-        if data is None:
-            data = total_time_series
-            data.rename(columns={'totale_casi': f'totale_casi_{region}'}, inplace=True)
-        else:
-            data[f'totale_casi_{region}'] = total_time_series['totale_casi']
-    if data is None:
-        data = pd.DataFrame()     
+
+    total_time_series = total_case_time_series_region(
+        regions, fields, ttl_hash=ttl_hash).copy().reset_index()
+    if not total_time_series.empty:
+        fitted_columns = {}
+        for field in fitteable_fields:
+            for region in regions:
+                field_name = f'{region}@{field}'
+                fitted_columns[f'fitted_{field_name}'] = fit_field(
+                    total_time_series,
+                    field_name,
+                    additional_days=additional_days)
+        total_time_series = extend_df(total_time_series, additional_days=additional_days)
+        total_time_series = pd.concat([total_time_series, pd.DataFrame(fitted_columns)], axis=1)
+        total_time_series = transform_df(total_time_series, transformation)
+        data.append(total_time_series)
+
+
+    if len(data) == 0:
+        data = pd.DataFrame()
+    elif len(data) == 1:
+        data = data[0]
+    else:
+        data[1].drop(columns='day', inplace=True)
+        data = pd.concat(data, sort=False, axis=1)
+
     if 'index' in data.columns:
         data.drop(columns=['index'], inplace=True)
 
     data = {'data': data.to_dict(orient='records')}
-    
-    if coeffs is not None:
-        data['coeffs'] = coeffs
-  
     return data
 
-
-  
 
 @functools.lru_cache(maxsize=32)
 def region_histogram(date, region, normalize='', ttl_hash=None):
@@ -454,19 +453,19 @@ def region_histogram(date, region, normalize='', ttl_hash=None):
         return pd.DataFrame()
     normalize_data = None
     if len(normalize) > 0:
-        normalize_data = provinces_data()        
+        normalize_data = provinces_data()
     data = data[data['day'] == pd.to_datetime(
         date, format='%Y-%m-%d', errors='coerce')]
-    data = (data[[
-        'denominazione_provincia', 'totale_casi'
-    ]].groupby('denominazione_provincia').agg('sum').sort_values(
-        'totale_casi').reset_index())
+    data = (data[['denominazione_provincia',
+                  'totale_casi']].groupby('denominazione_provincia').agg(
+                      'sum').sort_values('totale_casi').reset_index())
     data['totale_casi'] = data['totale_casi'].astype('float')
     if normalize_data is not None:
         for i in data.index:
             province = data.at[i, 'denominazione_provincia']
             curr_value = data.at[i, 'totale_casi']
-            normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
+            normalize_val = normalize_data.get(province,
+                                               {}).get(normalize, np.nan)
             data.at[i, 'totale_casi'] = (curr_value / normalize_val) * 1000
         data.dropna(inplace=True)
 
@@ -482,29 +481,31 @@ def provinces_time_series(region, normalize='', ttl_hash=None):
         return pd.DataFrame()
     normalize_data = None
     if len(normalize) > 0:
-        normalize_data = provinces_data()        
-    data = (data[[
-        'day',  'denominazione_provincia', 'totale_casi'
-    ]].groupby(['day', 'denominazione_provincia']).agg('sum').sort_values(
-        'totale_casi').reset_index())
+        normalize_data = provinces_data()
+    data = (data[['day', 'denominazione_provincia', 'totale_casi']].groupby([
+        'day', 'denominazione_provincia'
+    ]).agg('sum').sort_values('totale_casi').reset_index())
     data['totale_casi'] = data['totale_casi'].astype(float)
     if normalize_data is not None:
         for i in data.index:
             province = data.at[i, 'denominazione_provincia']
             curr_value = data.at[i, 'totale_casi']
-            normalize_val = normalize_data.get(province, {}).get(normalize, np.nan)
-            data.at[i, 'totale_casi'] = 1000 *( curr_value / normalize_val)   
+            normalize_val = normalize_data.get(province,
+                                               {}).get(normalize, np.nan)
+            data.at[i, 'totale_casi'] = 1000 * (curr_value / normalize_val)
         data.dropna(inplace=True)
 
     data.reset_index(inplace=True)
-    data = data.pivot(index='day', columns='denominazione_provincia', values='totale_casi')
+    data = data.pivot(index='day',
+                      columns='denominazione_provincia',
+                      values='totale_casi')
     data.reset_index(inplace=True)
     return data
 
 
-
 def growth_rate(d):
     return np.exp(np.diff(np.log(d)))
+
 
 def difference(d):
     return np.diff(d).astype(float)
