@@ -167,7 +167,7 @@ function DashboardWithSizes(props: DashboardProps) {
           <Typography variant="h6" color="inherit" noWrap className={classes.pageTitle}>
             {isMobile ? "COVID-19 Italy" : "Coronavirus COVID-19 in Italy"}
             <ReactCountryFlag
-              className="emojiFlag"
+            cdnUrl="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/1x1/"
               countryCode="IT"
               style={{
                 fontSize: '2em',
