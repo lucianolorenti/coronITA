@@ -376,7 +376,7 @@ def transform_df(df, transformation):
         df = df.where(df.notnull(), np.nan)
         df[cols] = df[cols].astype('float')
         if transformation == 'log':
-            df[cols] = df[cols].transform(np.log)
+            df[cols] = df[cols].where(df[cols]>0.0005, None)
         elif transformation == 'diff':
             df[cols] = df[cols].diff()
         elif transformation == 'gr':

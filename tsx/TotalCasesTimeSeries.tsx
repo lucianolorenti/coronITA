@@ -51,17 +51,18 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
   const [totalTimeSerie, setTotalTimeSerie] = useState([]);
 
   useEffect(() => {
-    const transformation = props.transformation == 'log' ? 'raw' : props.transformation;
+    
 
     fetch('/total_time_serie?' +
       'predictedDays=' + props.predictedDays +
       '&regions=' + props.selectedRegions +
       '&fields=' + props.fields +
-      '&transformation=' + transformation)
+      '&transformation=' + props.transformation)
       .then(function (response) {
         return response.json();
       })
       .then(function (data) {
+        console.log(data.data)
         setTotalTimeSerie(data.data)
       });
   }, [props.selectedRegions, props.predictedDays, props.fields, props.transformation])
