@@ -1,17 +1,20 @@
-import { AppBar, createStyles, Divider, IconButton, makeStyles, Tab, Tabs, Theme, Toolbar, Typography, useTheme, Grid } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import React, { useRef, useState, Dispatch, SetStateAction } from 'react';
-import slugify from 'slugify';
-
-import BuildIcon from '@material-ui/icons/Build';
-
-
+import { AppBar, createStyles, Divider, IconButton, makeStyles, Tab, Tabs, Theme, Toolbar, Typography } from '@material-ui/core';
 import Grow from '@material-ui/core/Grow';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
+import SettingsIcon from '@material-ui/icons/Settings';
+import React, { Dispatch, SetStateAction } from 'react';
+import slugify from 'slugify';
 import IsMobileContext from './IsMobileContext';
+
+import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
+
+
+
+
+
 
 function a11yProps(index) {
   return {
@@ -60,6 +63,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "1px",
       height: "1px"
     },
+    settings: {
+      backgroundColor: theme.palette.primary.dark
+    }
   }))
 
 
@@ -144,17 +150,23 @@ const GraphContainer = (props: GraphContainerProps) => {
       >
         <Toolbar>
           <IconButton
-            color="inherit"
+            
             aria-label="open drawer"
-
+            style={{
+              backgroundColor: "#EEE",
+              color: "#636eff",
+              padding: "5px",
+              "borderRadius": "15%"
+            }}
             edge="start"
             className={classes.menuButton}
             ref={anchorRef}
             aria-controls={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
+            size="small"
             onClick={handleToggle}
           >
-            <BuildIcon />
+            <SettingsIcon />
           </IconButton>
           <div id={slugify(props.title as string)} className={classes.anchor} />
           <div>

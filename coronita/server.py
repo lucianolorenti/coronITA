@@ -63,7 +63,11 @@ def map_markers():
 def total_time_serie():
     regions = request.args.get('regions', default='All', type=str)
     predictedDays = request.args.get('predictedDays', default=0, type=int)
+    fields = request.args.get('fields', default='totale_casi', type=str)
+    transformation = request.args.get('transformation', default='raw', type=str)
     return json.dumps(analysis.total_time_series_data(regions,
+                                                      fields,
+                                                      transformation,
                                                       predictedDays,
                                                       ttl_hash=get_ttl_hash()),
                       default=json_serial)

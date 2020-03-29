@@ -3,8 +3,9 @@ import { Checkbox, Chip, FormControlLabel, FormLabel, Input, InputLabel, ListIte
 import FormControl from '@material-ui/core/FormControl';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { Area, Label, Text, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, Label, Text, BarChart, Bar, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
+import names from './Names'
 declare var regions: any;
 
 const useStylesSelect = makeStyles((theme: Theme) =>
@@ -79,17 +80,7 @@ function getStyles(name: string, personName: string[], theme: Theme) {
                 : theme.typography.fontWeightMedium,
     };
 }
-const options = {
-    'ricoverati_con_sintomi': 'Hospitalized',
-    'terapia_intensiva': 'Intensive therapy',
-    'totale_ospedalizzati': 'Total hospitalized',
-    'isolamento_domiciliare': 'Home isolation',
-    'totale_attualmente_positivi': 'Total currently positive',
-    'dimessi_guariti': 'Discharged healed',
-    'deceduti': 'Died',
-    'totale_casi': 'Total cases',
-    'tamponi': 'Tamponi'
-}
+
 interface StackedRegionsProps {
     title: React.ReactNode
 }
@@ -149,7 +140,7 @@ export default function StackedRegions(props: StackedRegionsProps) {
     const AreaLinesSwitcher = () => {
         return (
             <Grid component="label" container alignItems="center" spacing={1}>
-                <Grid item>Curves</Grid>
+                <Grid item>Bars</Grid>
                 <Grid item>
                     <Switch
                         checked={useAreas}
@@ -170,8 +161,17 @@ export default function StackedRegions(props: StackedRegionsProps) {
             />
         </FormControl>)
     }
-    const TrendsAreaChart = () => {
-        return (<AreaChart
+    const TrendsAreaChart = (useAreas: boolean) => {
+        let PlotChart = null
+        let Element = null
+        if (useAreas) {
+            PlotChart = AreaChart
+            Element = Area
+        } else {
+            PlotChart = BarChart
+            Element = Bar
+        }
+        return (<PlotChart
             data={data}
             stackOffset={normalize ? "expand" : "none"}
             margin={{
@@ -183,12 +183,16 @@ export default function StackedRegions(props: StackedRegionsProps) {
             <XAxis dataKey="day" />
             <YAxis>
 
-                <Label value={normalize ? "Proportion per day" : "Total cases"} position="left" textAnchor='middle' angle={-90} />
+                <Label
+                    value={normalize ? "Proportion per day" : "Total cases"}
+                    position="left"
+                    textAnchor='middle'
+                    angle={-90} />
             </YAxis>
             <Tooltip />
 
             {selectedRegions.map((elem) => {
-                return <Area type="monotone"
+                return <Element type="monotone"
                     key={elem}
                     name={elem}
                     dataKey={elem} stackId="1" stroke={colors[regions.indexOf(elem)]} fill={colors[regions.indexOf(elem)]} />
@@ -197,44 +201,9 @@ export default function StackedRegions(props: StackedRegionsProps) {
 
             <Legend />
             <Brush height={20} dataKey={'day'} />
-        </AreaChart>)
+        </PlotChart>)
     }
-    const TrendsLineChart = () => {
 
-        return (<LineChart
-            data={data}
-            margin={{
-                top: 10, right: 0, left: 0, bottom: 0,
-            }}
-        >
-            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" />
-            <YAxis
-                width={105}
-                label={<Text
-                    x={0}
-                    y={0}
-                    dx={20}
-                    dy={150}
-                    offset={0}
-                    angle={-90}
-                >  Total cases </Text>} />
-            <Tooltip />
-
-            {selectedRegions.map((elem) => {
-                return <Line type="monotone"
-                    key={elem}
-                    name={elem}
-                    dataKey={elem} stroke={colors[regions.indexOf(elem)]} fill={colors[regions.indexOf(elem)]} />
-            })}
-
-
-            <Legend />
-            <Brush height={20} dataKey={'day'} />
-        </LineChart>)
-
-    }
     const WhatToVisualizeChooser = () => {
         return (
             <FormControl >
@@ -243,12 +212,12 @@ export default function StackedRegions(props: StackedRegionsProps) {
                         What to visualize
     </MenuItem>
                     {
-                        Object.keys(options).sort().map((key, idx) => {
+                        Object.keys(names).sort().map((key, idx) => {
                             return (
                                 <MenuItem
                                     key={key}
                                     value={key}>
-                                    {options[key]}
+                                    {names[key]}
                                 </MenuItem>
                             )
 
@@ -283,7 +252,7 @@ export default function StackedRegions(props: StackedRegionsProps) {
             controls={controls}
             tabTitles={["Total Cases", "Growth Rate"]}>
             <ResponsiveContainer width="100%" height={400}>
-                {useAreas ? TrendsAreaChart() : TrendsLineChart()}
+                {TrendsAreaChart(useAreas)}
             </ResponsiveContainer>
         </GraphContainer>
     )

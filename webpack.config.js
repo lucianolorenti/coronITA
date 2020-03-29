@@ -1,5 +1,5 @@
 var path = require('path'); module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
           'index':  './tsx/index.tsx',
          },
