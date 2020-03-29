@@ -31,7 +31,7 @@ interface TotalCasesTimeSeriesProps {
   predictedDays: number;
   selectedRegions: Array<String>;
   fields: Array<String>;
-  transformation: String
+  transformation: string
 }
 const marks = [
   {
@@ -51,12 +51,13 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
   const [totalTimeSerie, setTotalTimeSerie] = useState([]);
 
   useEffect(() => {
+    const transformation = props.transformation == 'log' ? 'raw' : props.transformation;
 
     fetch('/total_time_serie?' +
       'predictedDays=' + props.predictedDays +
       '&regions=' + props.selectedRegions +
       '&fields=' + props.fields +
-      '&transformation=' + props.transformation)
+      '&transformation=' + transformation)
       .then(function (response) {
         return response.json();
       })
@@ -100,6 +101,15 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
       return 'dataMin'
     }
   }
+  const yAxisLabel = () => {
+    const labels = {
+      'raw': <Label dx={-35} angle={-90}> Total cases </Label> ,
+      'gr': <Label dx={-35} angle={-90}>Cases day i / Cases day i-1 </Label>,
+      'diff': <Label dx={-35} angle={-90}>Cases day i - Cases day i-1 </Label>,
+      'log': <Label dx={-35} angle={-90}> Logarithm of cases </Label>
+    }
+    return labels[props.transformation];
+  }
   return (
 
 
@@ -113,9 +123,9 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
 
             <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
 
-            <YAxis domain={[data_min(), 'dataMax']} >
+            <YAxis domain={[data_min(), 'dataMax']} scale={props.transformation == 'log' ? 'log' : 'linear'} >
 
-              <Label dx={-35} angle={-90}> Total cases</Label>
+               {yAxisLabel()} 
 
             </YAxis>
             <Tooltip />
