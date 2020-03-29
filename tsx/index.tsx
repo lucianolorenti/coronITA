@@ -174,6 +174,7 @@ function DashboardWithSizes(props: DashboardProps) {
                 lineHeight: '2em',
               }}
               aria-label="Italy"
+              svg
             />
           </Typography>
            {ShareMenu() }
