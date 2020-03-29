@@ -384,6 +384,7 @@ def transform_df(df, transformation):
             df[cols] = df[cols].diff()
             df[cols] = df[cols].transform(np.exp)
         df[cols]  = df[cols].round(decimals=2)
+        df.replace([np.inf, -np.inf], np.nan, inplace=True)
         df = df.where(df.notnull(), None)           
     return df
 
