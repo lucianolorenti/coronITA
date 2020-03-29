@@ -27,60 +27,27 @@ const MenuProps = {
 };
 
 interface TotalCasesTimeSeriesProps {
-  showFittedLine: boolean;
-  predictedDays: number;
   selectedRegions: Array<String>;
   fields: Array<String>;
-  transformation: string
 }
-const marks = [
-  {
-    value: 0,
-    label: '0'
-  },
-  {
-    value: 3,
-    label: '3'
-  },
-  {
-    value: 7,
-    label: '7'
-  },
-]
-function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
+function TrendPlot(props: TotalCasesTimeSeriesProps) {
   const [totalTimeSerie, setTotalTimeSerie] = useState([]);
 
   useEffect(() => {
-    const transformation = props.transformation == 'log' ? 'raw' : props.transformation;
 
-    fetch('/total_time_serie?' +
-      'predictedDays=' + props.predictedDays +
+    fetch('/trend?' +
       '&regions=' + props.selectedRegions +
-      '&fields=' + props.fields +
-      '&transformation=' + transformation)
+      '&fields=' + props.fields)
       .then(function (response) {
         return response.json();
       })
       .then(function (data) {
         setTotalTimeSerie(data.data)
       });
-  }, [props.selectedRegions, props.predictedDays, props.fields, props.transformation])
+  }, [props.selectedRegions,  props.fields])
 
-  const fittedLine = (elem: string, idx: number, name: string) => {
-    if (!props.showFittedLine) {
-      return null;
-    }
-    return (<Line isAnimationActive={false}
-      type="linear"
-      dataKey={elem}
-      name={name}
-      stroke={colors[idx]}
-      key={elem}
-      strokeWidth={2}
-      dot={false}
-      strokeDasharray="5 5" />
-    )
-  }
+
+
   const normalLine = (elem: string, idx: number, name: string) => {
     return (
       <Line isAnimationActive={false}
@@ -94,24 +61,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
     )
 
   }
-  const dataMin = () => {
-    if (props.transformation == 'gr') {
-      return 0.5
-    } else {
-      return 'dataMin'
-    }
-  }
-  
-  
-  const yAxisLabel = () => {
-    const labels = {
-      'raw': <Label dx={-35} angle={-90}> Total cases </Label> ,
-      'gr': <Label dx={-35} angle={-90}>Cases day i / Cases day i-1 </Label>,
-      'diff': <Label dx={-35} angle={-90}>Cases day i - Cases day i-1 </Label>,
-      'log': <Label dx={-35} angle={-90}> Logarithm of cases </Label>
-    }
-    return labels[props.transformation];
-  }
+
   return (
 
 
@@ -123,13 +73,11 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             margin={{ left: 15 }}>
             <CartesianGrid strokeDasharray="3 3" />
 
-            <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
+            <XAxis dataKey="day" scale={'log'} />
 
-            <YAxis domain={[dataMin(), 'dataMax']} scale={props.transformation == 'log' ? 'log' : 'linear'} >
+            <YAxis label=' New confirmed cases' scale={'log'} />
 
-               {yAxisLabel()} 
-
-            </YAxis>
+            
             <Tooltip />
             <Legend
               verticalAlign="top" />
@@ -160,14 +108,9 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
 
                 const name = region + what
 
-                return isFitted ? fittedLine(elem, idx, name) : normalLine(elem, idx, name)
+                return  normalLine(elem, idx, name)
               })}
-            {props.transformation == 'gr' ?
-              <ReferenceLine
-                y={1}
-                strokeWidth={2}
-                stroke="green" />
-              : null}
+
             <Brush height={20} dataKey={'day'} />
      
           </LineChart>
@@ -187,34 +130,16 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
   const [currentFields, setCurrentFields] = useState<string[]>(['totale_attualmente_positivi'])
-  const fitteableFields = ['totale_attualmente_positivi', 'totale_casi']
-  const hasFittedFields = (fitteableFields.filter(field => currentFields.includes(field))).length > 0
-  const [showFittedLine, setShowFittedLine] = useState(hasFittedFields);
-  const [predictedDays, setPredictedDay] = useState(0)
 
-  const [dataTransformation, setDataTransformation] = useState('raw')
-  const showFittedCurves = hasFittedFields && showFittedLine
+
 
 
   const handleFieldsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCurrentFields(event.target.value as string[]);
   };
-  const handlePredictedDaysCommited = (event: any, newValue: number) => {
-    setPredictedDay(newValue);
-  };
 
-  const handleChangeShowFittedLine = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-    setShowFittedLine(event.target.checked);
-    if (!event.target.checked) {
-      setPredictedDay(0)
-    }
-  };
   const handleRegionsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedRegions(event.target.value as string[])
-  };
-  const handleDataTransformationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDataTransformation((event.target as HTMLInputElement).value);
   };
 
 
@@ -275,71 +200,13 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     )
 
   }
-  const TransformationMethodSelector = () => {
-    return (
-      <FormControl component="fieldset" className={classes.formControl}>
-        <FormLabel component="legend">Data tranformation</FormLabel>
-        <RadioGroup
-          aria-label="transformation"
-          name="transformation"
-          value={dataTransformation}
-          defaultValue="raw"
-          onChange={handleDataTransformationChange}>
-          <FormControlLabel value="raw" control={<Radio />} label="Raw data" />
-          <FormControlLabel value="log" control={<Radio />} label="Logarithm" />
-          <FormControlLabel value="gr" control={<Radio />} label="Quotient" />
-          <FormControlLabel value="diff" control={<Radio />} label="Difference" />
 
-        </RadioGroup>
-      </FormControl>
-    )
-  }
 
-  const ShowFittedLineControl = () => {
-    return (
-      <FormControl key={0} >
-        <FormControlLabel
-          control={
-            <Checkbox
-              disabled={!hasFittedFields}
-              checked={showFittedCurves}
-              onChange={handleChangeShowFittedLine} />
-          }
-          label="Show fitted line"
-        />
-      </FormControl>)
-  }
-  const FutureDaySelector = () => {
-    return (
-      <FormControl key={1}>
+ 
 
-        <Typography id="discrete-slider" gutterBottom>
-          Predicted future days
-</Typography>
-
-        <Slider
-
-          marks={marks}
-          defaultValue={predictedDays}
-          aria-labelledby="discrete-slider"
-          valueLabelDisplay="auto"
-          step={1}
-          onChangeCommitted={handlePredictedDaysCommited}
-
-          disabled={!hasFittedFields || !showFittedCurves}
-          min={0}
-          max={7}
-        />
-
-      </FormControl>
-    )
-  }
   const controls = [
     < RegionSelector key={5} />,
     <FieldSelector key={6} />,
-    <ShowFittedLineControl />,
-    <FutureDaySelector />,
-    <TransformationMethodSelector />
   ]
 
 
@@ -347,13 +214,12 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     <GraphContainer
       title={props.title}
       controls={controls}
-      tabTitles={["Total Cases"]}>
-      <TotalCasesTimeSeries
-        showFittedLine={showFittedCurves}
-        predictedDays={predictedDays}
+      tabTitles={["New cases trend"]}>
+      <TrendPlot
+
         selectedRegions={selectedRegions}
         fields={currentFields}
-        transformation={dataTransformation}
+
       />
     </GraphContainer>
   )

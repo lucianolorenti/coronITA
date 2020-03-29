@@ -36,7 +36,7 @@ import { useStyles } from './styles';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
 import { useTheme } from '@material-ui/core/styles';
-
+import TrendPlot from './TrendPlot'
 
 
 function Copyright() {
@@ -91,6 +91,7 @@ function DashboardWithSizes(props: DashboardProps) {
     { title: "Time series of infected people", Component: TotalCasesTimesSeriesTab },
     { title: "People affected by the virus", Component: StackedAreas },
     { title: "Affected by region", Component: StackedRegions },
+    { title: "Virus Trend Plot", Component: TrendPlot },
     { title: "Map of infected people", Component: MapTab },
     { title: "Percentage of deceased people vs positive cases", Component: DeadProportion },
     { title: "Percentage of infected people vs tests", Component: TamponiInfectedRatioSeries },

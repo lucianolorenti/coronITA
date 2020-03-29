@@ -388,6 +388,10 @@ def transform_df(df, transformation):
     return df
 
 def total_time_series_data(regions, fields, transformation='raw', additional_days=0, ttl_hash=None):
+    pass
+
+@functools.lru_cache(maxsize=32)
+def total_time_series_data(regions, fields, transformation='raw', additional_days=0, ttl_hash=None):
     if isinstance(regions, str):
         regions = regions.split(',')
     if isinstance(fields, str):
