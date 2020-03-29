@@ -36,3 +36,6 @@
     margin-right: 8px;
     opacity: 0.7;
 }
+.menu * {
+    font-size: "0.7rem"
+}

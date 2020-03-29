@@ -8,8 +8,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import React, { Dispatch, SetStateAction } from 'react';
 import slugify from 'slugify';
 import IsMobileContext from './IsMobileContext';
+import CloseIcon from '@material-ui/icons/Close';
 
-import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
 
 
 
@@ -94,7 +94,9 @@ const GraphContainer = (props: GraphContainerProps) => {
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
   };
-
+  const close = () => {
+    setOpen(false);
+  };
 
   function handleListKeyDown(event: React.KeyboardEvent) {
     if (event.key === 'Tab') {
@@ -208,25 +210,37 @@ const GraphContainer = (props: GraphContainerProps) => {
         {props.bottomElement}
       </Paper>
 
-      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+      <Popper open={open} anchorEl={anchorRef.current}  transition disablePortal>
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
-            <Paper>
+            <Paper >
+        
+              <MenuList 
+              className="menu"
+              autoFocusItem={open} 
 
-              <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+              onKeyDown={handleListKeyDown}>
+              <MenuItem onClick={close} >
+                <IconButton
+                    size="small"
+                    color="primary"
+                    >
+                <CloseIcon />
+                </IconButton>
+              </MenuItem>
                 {(props.controls).map((elem, idx) => {
                   return (<MenuItem
-                    button
+                    style={{paddingBottom: "0px", paddingTop: "0px"}}
                     key={idx}
                   >
                     {elem}
                   </MenuItem>)
                 })}
               </MenuList>
-
+    
             </Paper>
           </Grow>
         )}

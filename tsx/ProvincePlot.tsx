@@ -1,8 +1,8 @@
 import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { Bar, BarChart, Tooltip, CartesianGrid, ResponsiveContainer, Text, XAxis, YAxis, Label } from 'recharts';
+import { Bar, BarChart, Tooltip, CartesianGrid, ResponsiveContainer,  Text, XAxis, YAxis, Label } from 'recharts';
 import { CustomizedAxisTick } from './chart';
 import { useStyles } from './styles';
 import GraphContainer from './GraphContainer';
@@ -18,7 +18,7 @@ export default function ProvincePlot(props: ProvincePlotProps) {
     const [regionTimeSerie, setRegionTimeSerie] = useState(null);
     const [currentRegion, setCurrentRegion] = React.useState("Veneto");
     const [normalized, setNormalized] = useState("");
-    const fetchData = (newRegion) => {
+    const fetchData = (newRegion: string) => {
         fetch('/province_cases_hist?region=' + newRegion + "&normalized=" + normalized)
             .then(function (response) {
                 return response.json();
@@ -67,7 +67,7 @@ export default function ProvincePlot(props: ProvincePlotProps) {
 
     return (
         <GraphContainer title={props.title} subtitle={"Date " +  days[days.length - 1]} controls={controls} >
-            <ResponsiveContainer width="100%" height={500} margin={{left: 15}}>
+            <ResponsiveContainer width="100%" height={500} >
 
 
                 <BarChart
@@ -80,8 +80,11 @@ export default function ProvincePlot(props: ProvincePlotProps) {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="category" interval={0} tick={<CustomizedAxisTick />} dataKey="denominazione_provincia" />
                     <YAxis>
-                        <Label value={normalized ? "Case per 1000 people" : "Total cases"} position="left" textAnchor='middle' angle={-90} />
-
+                        <Label position="left" className={classes.yAxisLabel} >
+                          
+                            {normalized ? "Case per 1000 people" : "Total cases"} 
+                            
+                        </Label>
                     </YAxis>
                     <Tooltip />
 

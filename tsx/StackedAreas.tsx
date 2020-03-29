@@ -26,6 +26,7 @@ interface TrendsAreaChartProps {
     useAreas: boolean
 }
 const TrendsAreaChart = (props: TrendsAreaChartProps) => {
+    const classes = useStyles();
     const plotLabel = () => {
         return (props.normalize ? "Proportion per day" : "Total cases")
     }
@@ -46,15 +47,17 @@ const TrendsAreaChart = (props: TrendsAreaChartProps) => {
         }}
     >
 
-        <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+        <ReferenceLine x="2020-03-09" stroke="#EE5555">
+              <Label>  LockDown </Label>
+            </ReferenceLine>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="day" />
-        <YAxis yAxisid={1} >
+        <YAxis  >
             <Label
                 value={plotLabel()}
                 position="left"
-                textAnchor='middle'
-                angle={-90} />
+          
+                className={classes.yAxisLabel} />
         </YAxis>
 
         <Tooltip />

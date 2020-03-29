@@ -92,10 +92,16 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
                     margin={{left: 15}}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+                    <ReferenceLine x="2020-03-09" stroke="#EE5555">
+              <Label>  LockDown </Label>
+            </ReferenceLine>
                     <XAxis type="category" interval={1} dataKey="day" />
                     <YAxis>
-                        <Label value={normalized ? "Case per 1000 people" : "Total cases"} position="left" textAnchor='middle' angle={-90} />
+                        <Label 
+                        value={normalized ? "Case per 1000 people" : "Total cases"} 
+                        position="left" 
+                        textAnchor='middle' 
+                        className={classes.yAxisLabel} />
                     </YAxis>
 
                     <Tooltip />

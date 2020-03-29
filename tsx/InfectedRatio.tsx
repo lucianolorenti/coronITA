@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, Brush, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Brush, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Label, Tooltip, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
 import { useStyles } from './styles';
 import { Typography, Grid, Switch, TextField } from '@material-ui/core';
@@ -67,7 +67,7 @@ export default function TamponiInfectedRatioSeries(props: TamponiInfectedRatioSe
     setCurrentRegion(newRegion)
   };
   const regions_all = ['All'].concat(regions)
-  
+
   const RegionSelector = () => {
     return (<Autocomplete
       id="combo-box-demo"
@@ -97,7 +97,7 @@ export default function TamponiInfectedRatioSeries(props: TamponiInfectedRatioSe
   }
   const controls = [RegionSelector(),
   ZoomSelector()]
-  
+
   return (<GraphContainer title={props.title} controls={controls} >
     <ResponsiveContainer width="100%" height={400}>
       <LineChart
@@ -113,7 +113,9 @@ export default function TamponiInfectedRatioSeries(props: TamponiInfectedRatioSe
         <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
         <Legend />
         <Line type="linear" dataKey="percentage" name="Infected / Test" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+        <ReferenceLine x="2020-03-09" stroke="#EE5555">
+          <Label>  LockDown </Label>
+        </ReferenceLine>
         <Brush height={20} dataKey={'day'} />
       </LineChart>
     </ResponsiveContainer>

@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { Area, Label, Text, BarChart, Bar, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
 import names from './Names'
+import {useStyles} from './styles';
+
 declare var regions: any;
 
 const useStylesSelect = makeStyles((theme: Theme) =>
@@ -85,7 +87,7 @@ interface StackedRegionsProps {
     title: React.ReactNode
 }
 export default function StackedRegions(props: StackedRegionsProps) {
-
+    const classes = useStyles();
     const [useAreas, setUseAreas] = useState(true)
     const [data, setData] = useState(null);
 
@@ -178,16 +180,16 @@ export default function StackedRegions(props: StackedRegionsProps) {
                 left: 15,
             }}
         >
-            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+                        <ReferenceLine x="2020-03-09" stroke="#EE5555">
+              <Label>  LockDown </Label>
+            </ReferenceLine>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
             <YAxis>
-
                 <Label
                     value={normalize ? "Proportion per day" : "Total cases"}
                     position="left"
-                    textAnchor='middle'
-                    angle={-90} />
+                    className={classes.yAxisLabel} />
             </YAxis>
             <Tooltip />
 

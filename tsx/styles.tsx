@@ -62,8 +62,7 @@ export const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
-    maxWidth: 300,
-  
+    maxWidth: 300
   },
 
   paperContent: {
@@ -106,5 +105,11 @@ export const useStyles = makeStyles(theme => ({
   popover: {
     backgroundColor: theme.palette.primary.main,
     padding:"0.5em"
+  },
+  yAxisLabel: {
+    "transformBox": "fill-box",
+    "transformOrigin": "center",
+    "transform": "rotate(-90deg)",
+    "translate": "50% 0px"
   }
 }));

@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, Brush, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Brush, Legend, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useStyles } from './styles';
 import GraphContainer from './GraphContainer';
 
@@ -119,7 +119,9 @@ export default function DeadProportion(props:DeadProportionProps) {
         <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
         <Legend />
         <Line type="linear" dataKey="percentage" name="Dead / Positive" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+        <ReferenceLine x="2020-03-09" stroke="#EE5555">
+          <Label>  LockDown </Label>
+        </ReferenceLine>
         <Brush height={20} dataKey={'day'} />
       </LineChart>
     </ResponsiveContainer>

@@ -1,11 +1,12 @@
 import { Checkbox, FormControl, FormControlLabel, FormLabel, Input, InputLabel, ListItemText, MenuItem, Radio, RadioGroup, Select, Slider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
-import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ReferenceLiney, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
 import IsMobileContext from './IsMobileContext';
 import names from './Names';
 import { useStyles } from './styles';
+import './styles.css'
 declare var regions: any;
 const colors = [
   '#ff0000', '#733f1d', '#ffaa00', '#234010', '#60bfac', '#3385cc', '#5a5673',
@@ -49,9 +50,9 @@ const marks = [
 ]
 function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
   const [totalTimeSerie, setTotalTimeSerie] = useState([]);
-
+  const classes = useStyles();
   useEffect(() => {
-    
+
 
     fetch('/total_time_serie?' +
       'predictedDays=' + props.predictedDays +
@@ -62,7 +63,6 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
         return response.json();
       })
       .then(function (data) {
-        console.log(data.data)
         setTotalTimeSerie(data.data)
       });
   }, [props.selectedRegions, props.predictedDays, props.fields, props.transformation])
@@ -102,12 +102,12 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
       return 'dataMin'
     }
   }
-  const yAxisLabel = () => {
+  const yAxisLabel = (): React.ReactElement<typeof Label> => {
     const labels = {
-      'raw': <Label dx={-35} angle={-90}> Total cases </Label> ,
-      'gr': <Label dx={-35} angle={-90}>Cases day i / Cases day i-1 </Label>,
-      'diff': <Label dx={-35} angle={-90}>Cases day i - Cases day i-1 </Label>,
-      'log': <Label dx={-35} angle={-90}> Logarithm of cases </Label>
+      'raw': <Label    position="left" className={classes.yAxisLabel}> Total cases </Label>,
+      'gr': <Label   position="left" className={classes.yAxisLabel}>Cases day i / Cases day i-1 </Label>,
+      'diff': <Label   position="left" className={classes.yAxisLabel}>Cases day i - Cases day i-1 </Label>,
+      'log': <Label    position="left" className={classes.yAxisLabel}> Logarithm of cases </Label>
     }
     return labels[props.transformation];
   }
@@ -123,18 +123,22 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
-
-            <YAxis domain={[data_min(), 'dataMax']} scale={props.transformation == 'log' ? 'log' : 'linear'} >
-
-               {yAxisLabel()} 
-
-            </YAxis>
+            
+            <YAxis
+              domain={[data_min(), 'dataMax']}
+              scale={props.transformation == 'log' ? 'log' : 'linear'}
+              // @ts-ignore
+            
+              label={yAxisLabel()} />
+           
             <Tooltip />
             <Legend
               verticalAlign="top" />
 
 
-            <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+            <ReferenceLine x="2020-03-09" stroke="#EE5555">
+              <Label>  LockDown </Label>
+            </ReferenceLine>
 
             {Object.keys(totalTimeSerie.length > 0 ? totalTimeSerie[1] : {})
               .map((elem, idx: number) => {
