@@ -82,8 +82,8 @@ def data_regioni(ttl_hash=None):
     process_df(d)
     feats = [
         'ricoverati_con_sintomi', 'terapia_intensiva', 'totale_ospedalizzati',
-        'isolamento_domiciliare', 'totale_attualmente_positivi',
-        'nuovi_attualmente_positivi', 'dimessi_guariti', 'deceduti',
+        'isolamento_domiciliare', 'totale_positivi',
+        'variazione_totale_positivi', 'dimessi_guariti', 'deceduti',
         'totale_casi', 'tamponi'
     ]
     d.loc[d['denominazione_regione'] == 'Bolzano',
@@ -367,7 +367,7 @@ def extend_df(df, additional_days=0):
 
 
 def is_fitteable(field):
-    return field in ['totale_casi', 'totale_attualmente_positivi']
+    return field in ['totale_casi', 'totale_positivi']
 
 def transform_df(df, transformation):
     if transformation != 'raw':

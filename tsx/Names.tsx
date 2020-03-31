@@ -3,7 +3,7 @@ const names = {
     'terapia_intensiva': 'Intensive therapy',
     'totale_ospedalizzati': 'Total hospitalized',
     'isolamento_domiciliare': 'Home isolation',
-    'totale_attualmente_positivi': 'Total currently positive',
+    'totale_positivi': 'Total currently positive',
     'dimessi_guariti': 'Discharged healed',
     'deceduti': 'Died',
     'totale_casi': 'Total cases',

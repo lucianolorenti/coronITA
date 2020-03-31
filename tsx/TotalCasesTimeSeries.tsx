@@ -184,8 +184,8 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const classes = useStyles();
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
-  const [currentFields, setCurrentFields] = useState<string[]>(['totale_attualmente_positivi'])
-  const fitteableFields = ['totale_attualmente_positivi', 'totale_casi']
+  const [currentFields, setCurrentFields] = useState<string[]>(['totale_positivi'])
+  const fitteableFields = ['totale_positivi', 'totale_casi']
   const hasFittedFields = (fitteableFields.filter(field => currentFields.includes(field))).length > 0
   const [showFittedLine, setShowFittedLine] = useState(hasFittedFields);
   const [predictedDays, setPredictedDay] = useState(0)
@@ -223,11 +223,12 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
       { name: 'Tamponi', value: 'tamponi' },
       { name: 'Dead', value: 'deceduti' },
       { name: 'Recovered', value: 'dimessi_guariti' },
-      { name: 'Current positive', value: 'totale_attualmente_positivi' },
+      { name: 'Current positive', value: 'totale_positivi' },
       { name: 'Hospitalised', value: 'ricoverati_con_sintomi' },
       { name: 'Intensive Care', value: 'terapia_intensiva' },
       { name: 'Total hospitalised', value: 'totale_ospedalizzati' },
-      { name: 'Home confinement', value: 'isolamento_domiciliare' }
+      { name: 'Home confinement', value: 'isolamento_domiciliare' },
+      { name: 'New positives', value: 'nuovi_positivi'}
     ]
     return (<FormControl className={classes.formControl}>
       <InputLabel id="demo-mutiple-name-label">Name</InputLabel>
