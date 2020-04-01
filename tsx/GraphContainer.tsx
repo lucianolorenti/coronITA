@@ -117,30 +117,6 @@ const GraphContainer = (props: GraphContainerProps) => {
   }, [open]);
 
 
-
-
-  const setCurrentTab = props.setCurrentTab;
-  const currentTab = props.currentTab;
-  const handleCurrentTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
-  };
-  const tabs = () => {
-    return (React.Children.count(props.children) > 1 ?
-      <React.Fragment>
-        <Divider orientation="vertical" variant="inset" />
-        <Tabs
-          variant="fullWidth"
-          aria-label="full width tabs"
-          value={currentTab}
-          onChange={handleCurrentTabChange} >
-          {React.Children.map(props.children, ((elem, idx) => {
-            const tabTitle = props.tabTitles.length > idx ? props.tabTitles[idx] : "Title"
-            return <Tab label={tabTitle} key={idx} {...a11yProps(idx)} />
-          }))}
-
-        </Tabs>
-      </React.Fragment> : null)
-  }
   return (
     <div id={slugify(props.title as string) + "_container"}>
 
@@ -183,10 +159,6 @@ const GraphContainer = (props: GraphContainerProps) => {
                 </Typography>}
             
             </div>
-                {tabs()}
-          <IsMobileContext.Consumer>
-            {isMobile => (!isMobile ? tabs() : null)}
-          </IsMobileContext.Consumer>
 
         </Toolbar>
       
@@ -199,14 +171,7 @@ const GraphContainer = (props: GraphContainerProps) => {
         elevation={0}
         variant={'outlined'}
       >
-        {React.Children.count(props.children) > 1 ?
-          React.Children.map(props.children, (elem, idx) => {
-            return (
-              <TabPanel key={idx} value={currentTab} index={idx}>
-                {elem}
-              </TabPanel>
-            )
-          }) : props.children}
+        {props.children}
         {props.bottomElement}
       </Paper>
 
