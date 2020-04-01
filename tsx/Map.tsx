@@ -30,7 +30,7 @@ var day_list = days.map((elem, index) => { return { 'value': index, 'label': ele
 
 export const mapStyles = makeStyles(theme => ({
     map: {
-        height: plotHeight + "px"
+        height: plotHeight - 50 + "px"
     },
     icon: {
         backgroundColor: "#EEAA22"
