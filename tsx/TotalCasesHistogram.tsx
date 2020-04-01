@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Label } from 'recharts';
 import { CustomizedAxisTick } from './chart';
 import { Typography, FormControlLabel, Checkbox } from '@material-ui/core';
-import { useStyles } from './styles'
+import { useStyles, plotHeight } from './styles'
 import GraphContainer from './GraphContainer'
 
 declare var days: Array<any>;
@@ -45,7 +45,9 @@ export default function TotalCasesHistogram(props: TotalCasesHistogramProps) {
         />
     ]
     return (<GraphContainer title={props.title} subtitle={"Date "  + days[days.length - 1]} controls={controls} >
-        <ResponsiveContainer width="100%" height={500}>
+        <ResponsiveContainer 
+        width="100%"
+         height={plotHeight}>
             <BarChart
 
                 data={histogramCases}

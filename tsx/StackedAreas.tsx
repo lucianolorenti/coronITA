@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
 import { Bar, BarChart, Area, Brush, Label, LineChart, Line, Text, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useStyles } from './styles';
+import { useStyles, plotHeight} from './styles';
 import GraphContainer from './GraphContainer';
 
 
@@ -140,7 +140,7 @@ export default function StackedAreas(props: StackedAreasProps) {
     ]
     return (
         <GraphContainer title={props.title} controls={controls} >
-            <ResponsiveContainer id={"total_areas"} width="100%" height={400}>
+            <ResponsiveContainer id={"total_areas"} width="100%" height={plotHeight}>
                 {TrendsAreaChart({ normalize: normalize, data: data, useAreas: useAreas })}
             </ResponsiveContainer>
         </GraphContainer>

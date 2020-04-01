@@ -2,8 +2,13 @@ import L from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import { Map, Marker, TileLayer } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import { MapProps, mapStyles, iconCreateFunction, makeid } from './Map';
-export default function ItalyMap(props: MapProps) {
+import { mapStyles, iconCreateFunction, makeid, MapProps } from './Map';
+import MapContainer from './Map'
+
+
+
+
+function ItalyMap(props: MapProps) {
     const { currentDate } = props;
     const [markers, setMarkers] = useState([]);
     const fetchMarkers = () => {
@@ -43,3 +48,4 @@ export default function ItalyMap(props: MapProps) {
 
     </div>);
 }
+export default MapContainer(ItalyMap)

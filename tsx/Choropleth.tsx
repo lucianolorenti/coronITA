@@ -4,6 +4,7 @@ import Choropleth, { Legend } from 'react-leaflet-choropleth';
 import { MapProps, mapStyles } from './Map';
 import L from 'leaflet';
 import Control from 'react-leaflet-control';
+import MapContainer from './Map'
 
 const style = {
     fillColor: '#F28F3B',
@@ -22,7 +23,7 @@ export function makeid(length) {
     }
 }
 
-export function Chroropleth(props: MapProps) {
+function Chroropleth(props: MapProps) {
     const { currentDate } = props;
     const [cases, setCases] = useState({})
     const [geojson, setData] = useState({
@@ -181,3 +182,4 @@ export function Chroropleth(props: MapProps) {
        
         </React.Fragment>);
 }
+export default MapContainer(Chroropleth)

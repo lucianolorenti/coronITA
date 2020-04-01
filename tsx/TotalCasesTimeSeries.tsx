@@ -5,7 +5,7 @@ import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, Re
 import GraphContainer from './GraphContainer';
 import IsMobileContext from './IsMobileContext';
 import names from './Names';
-import { useStyles } from './styles';
+import { useStyles, plotHeight} from './styles';
 import './styles.css'
 declare var regions: any;
 const colors = [
@@ -116,13 +116,13 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
 
     <IsMobileContext.Consumer>
       {isMobile =>
-        <ResponsiveContainer width="100%" height={500} >
+        <ResponsiveContainer width="100%" height={plotHeight} >
           <LineChart
             data={totalTimeSerie}
             margin={{ left: 15 }}>
             <CartesianGrid strokeDasharray="3 3" />
 
-            <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
+            <XAxis dataKey="day" />
             // @ts-ignore
             <YAxis
               domain={[data_min(), 'dataMax']}

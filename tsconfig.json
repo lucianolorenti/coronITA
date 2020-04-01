@@ -11,6 +11,6 @@
         "target": "es6"
     },
     "files": [
-	"tsx/index.tsx", "./tsx/Chroropleth.tsx", "./tsx/ItalyMap.tsx"
+	"tsx/index.tsx", "./tsx/Choropleth.tsx", "./tsx/ItalyMap.tsx"
     ]
 }

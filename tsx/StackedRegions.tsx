@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Area, Label, Text, BarChart, Bar, Brush, AreaChart, LineChart, Line, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
 import names from './Names'
-import {useStyles} from './styles';
+import {useStyles, plotHeight} from './styles';
 
 declare var regions: any;
 
@@ -253,7 +253,7 @@ export default function StackedRegions(props: StackedRegionsProps) {
             title={props.title}
             controls={controls}
             tabTitles={["Total Cases", "Growth Rate"]}>
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={plotHeight}>
                 {TrendsAreaChart(useAreas)}
             </ResponsiveContainer>
         </GraphContainer>

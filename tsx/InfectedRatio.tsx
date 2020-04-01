@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Brush, Legend, ResponsiveContainer, Line, LineChart, ReferenceLine, Label, Tooltip, XAxis, YAxis } from 'recharts';
 import { makeStyles } from '@material-ui/core/styles';
-import { useStyles } from './styles';
+import { useStyles, plotHeight } from './styles';
 import { Typography, Grid, Switch, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import GraphContainer from './GraphContainer';
@@ -98,8 +98,12 @@ export default function TamponiInfectedRatioSeries(props: TamponiInfectedRatioSe
   const controls = [RegionSelector(),
   ZoomSelector()]
 
-  return (<GraphContainer title={props.title} controls={controls} >
-    <ResponsiveContainer width="100%" height={400}>
+  return (<GraphContainer 
+  title={props.title} 
+  controls={controls} >
+    <ResponsiveContainer 
+    width="100%" 
+    height={plotHeight}>
       <LineChart
 
         data={data}

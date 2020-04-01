@@ -29,6 +29,7 @@ function TabPanel(props) {
     <Typography
       component="div"
       role="tabpanel"
+      variant="subtitle1"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
@@ -129,7 +130,7 @@ const GraphContainer = (props: GraphContainerProps) => {
         <Divider orientation="vertical" variant="inset" />
         <Tabs
           variant="fullWidth"
-          aria-label="full width tabs example"
+          aria-label="full width tabs"
           value={currentTab}
           onChange={handleCurrentTabChange} >
           {React.Children.map(props.children, ((elem, idx) => {
@@ -150,7 +151,8 @@ const GraphContainer = (props: GraphContainerProps) => {
           backgroundColor: "#636eff"
         }}
       >
-        <Toolbar>
+        <Toolbar 
+        variant="dense">
           <IconButton
             
             aria-label="open drawer"
@@ -172,7 +174,7 @@ const GraphContainer = (props: GraphContainerProps) => {
           </IconButton>
           <div id={slugify(props.title as string)} className={classes.anchor} />
           <div>
-              <Typography variant="h6" noWrap>
+              <Typography variant="subtitle1" noWrap>
                 {props.title}
               </Typography>
               {props.subtitle === undefined ? null :
@@ -181,15 +183,13 @@ const GraphContainer = (props: GraphContainerProps) => {
                 </Typography>}
             
             </div>
-
+                {tabs()}
           <IsMobileContext.Consumer>
             {isMobile => (!isMobile ? tabs() : null)}
           </IsMobileContext.Consumer>
 
         </Toolbar>
-        <IsMobileContext.Consumer>
-          {isMobile => (isMobile ? <Toolbar> {tabs()} </Toolbar> : null)}
-        </IsMobileContext.Consumer>
+      
 
       </AppBar>
 

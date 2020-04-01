@@ -1,9 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
 
+export const plotHeight = 400;
+
 
 export const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    width: '100%'
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -40,6 +43,7 @@ export const useStyles = makeStyles(theme => ({
   },
   pageTitle: {
     flexGrow: 1,
+
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -49,8 +53,9 @@ export const useStyles = makeStyles(theme => ({
     backgroundColor: "#FFFFFF",
   },
   container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    width: '100%'
    
   },
   containerMobile: {

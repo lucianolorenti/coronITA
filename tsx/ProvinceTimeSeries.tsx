@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Brush, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Text, Tooltip, XAxis, YAxis, Label } from 'recharts';
 import { CustomizedAxisTick } from './chart';
-import { useStyles } from './styles';
+import { useStyles, plotHeight } from './styles';
 import GraphContainer from './GraphContainer';
 declare var regions: any;
 declare var days: Array<any>;
@@ -85,7 +85,7 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
 
     return (
         <GraphContainer title={props.title} controls={controls} >
-            <ResponsiveContainer width="100%" height={500} >
+            <ResponsiveContainer width="100%" height={plotHeight} >
 
                 <LineChart
                     data={regionTimeSerie.data}
@@ -95,7 +95,7 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
                     <ReferenceLine x="2020-03-09" stroke="#EE5555">
               <Label>  LockDown </Label>
             </ReferenceLine>
-                    <XAxis type="category" interval={1} dataKey="day" />
+                    <XAxis type="category"  dataKey="day" />
                     <YAxis>
                         <Label 
                         value={normalized ? "Case per 1000 people" : "Total cases"} 

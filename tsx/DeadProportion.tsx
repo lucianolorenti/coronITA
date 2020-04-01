@@ -5,7 +5,7 @@ import Switch from '@material-ui/core/Switch';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Brush, Legend, Label, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useStyles } from './styles';
+import { useStyles, plotHeight } from './styles';
 import GraphContainer from './GraphContainer';
 
 declare var regions: any;
@@ -105,7 +105,7 @@ export default function DeadProportion(props:DeadProportionProps) {
 
   return (
     <GraphContainer title={props.title} controls={controls} >
-    <ResponsiveContainer width="100%" height={500}>
+    <ResponsiveContainer width="100%" height={plotHeight}>
       <LineChart
 
         data={data}

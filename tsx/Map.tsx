@@ -1,17 +1,17 @@
 
-import { makeStyles, Tabs, Tab, Typography, Box, Grid } from '@material-ui/core';
+import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import Slider, { ValueLabelProps } from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
 import L from 'leaflet';
 import MarkerCluster from 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
-import React, { useState, FunctionComponent } from 'react';
-import { GeoJSON } from 'react-leaflet';
+import React, { FunctionComponent, useState } from 'react';
 import 'react-leaflet-markercluster/dist/styles.min.css';
-import "./mapicon.css";
-import ItalyMap from './ItalyMap';
-import { Chroropleth } from './Chroropleth';
+
 import GraphContainer from './GraphContainer';
+
+import "./mapicon.css";
+import {plotHeight} from './styles'
 
 declare function require(name: string);
 declare var days: Array<any>;
@@ -30,7 +30,7 @@ var day_list = days.map((elem, index) => { return { 'value': index, 'label': ele
 
 export const mapStyles = makeStyles(theme => ({
     map: {
-        height: "400px"
+        height: plotHeight + "px"
     },
     icon: {
         backgroundColor: "#EEAA22"
@@ -73,7 +73,7 @@ const sliderLabel = (i: number) => {
     );
 }
 
-export function makeid(length) {
+ export function makeid(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
@@ -85,36 +85,12 @@ export function makeid(length) {
 export interface MapProps {
     currentDate: String
 }
+interface MapsContainerProps {
+    isMobile:boolean,
+    title:string
 
-function a11yProps(index: any) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
 }
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: any;
-    value: any;
-}
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <Typography
-            component="div"
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box p={3}>{children}</Box>}
-        </Typography>
-    );
-}
-const MapTab = (props) => {
-    var timeout;
+const MapContainer = Contained => (props: MapsContainerProps) => {
     const [currentTab, setCurrentTab] = useState(0)
     const nMarks = props.isMobile ? Math.round(day_list.length / 3) : Math.round(day_list.length / 9)
     const marks = day_list.map((elem, idx) => {
@@ -157,14 +133,15 @@ const MapTab = (props) => {
             title={props.title}
             subtitle={"Date "+  date_str}
             controls={[]}
-            tabTitles={["Infected cases", "Choropleth"]}
+            tabTitles={["Infected cases"]}
             bottomElement={< DateSelector />}
         >
-            <ItalyMap currentDate={date_str} />
-            <Chroropleth currentDate={date_str} />
+            <Contained currentDate={date_str} />
+    
 
         </GraphContainer>
     )
 
 }
-export default MapTab;
+
+export default MapContainer;
