@@ -123,13 +123,13 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" interval={Math.ceil(totalTimeSerie.length / (isMobile ? 2 : 10))} />
-            
+            // @ts-ignore
             <YAxis
               domain={[data_min(), 'dataMax']}
-              scale={props.transformation == 'log' ? 'log' : 'linear'}
-              // @ts-ignore
-            
-              label={yAxisLabel()} />
+              scale={props.transformation == 'log' ? 'log' : 'linear'}>
+                    {yAxisLabel()}
+              </YAxis>
+              
            
             <Tooltip />
             <Legend
