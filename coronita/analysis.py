@@ -358,7 +358,7 @@ def fit_field(df, field, additional_days=0):
 
 def extend_df(df, additional_days=0):
     last_day = df.iloc[-1, :]['day']
-    empty_dict = {field: None for field in df.columns}
+    empty_dict = {field: None for field in df.columns if field!='day'}
     for i in range(additional_days):
         next_day = (last_day + timedelta(days=(i + 1))).strftime("%Y-%m-%d")
         df = df.append(dict({'day': next_day}, **empty_dict),
