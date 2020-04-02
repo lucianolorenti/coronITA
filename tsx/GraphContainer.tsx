@@ -5,10 +5,11 @@ import MenuList from '@material-ui/core/MenuList';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import SettingsIcon from '@material-ui/icons/Settings';
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState} from 'react';
 import slugify from 'slugify';
 import IsMobileContext from './IsMobileContext';
 import CloseIcon from '@material-ui/icons/Close';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 
@@ -85,10 +86,12 @@ interface GraphContainerProps {
   setCurrentTab?: Dispatch<SetStateAction<number>>,
   currentTab?: number
   subtitle?: React.ReactNode
+  showTooltip?: boolean
 }
 const GraphContainer = (props: GraphContainerProps) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [openTooltip, setOpenTooltip] = useState(true)
   const anchorRef = React.useRef<HTMLButtonElement>(null);
 
 
@@ -117,19 +120,8 @@ const GraphContainer = (props: GraphContainerProps) => {
   }, [open]);
 
 
-  return (
-    <div id={slugify(props.title as string) + "_container"}>
-
-      <AppBar
-        position="static"
-        elevation={0}
-        style={{
-          backgroundColor: "#636eff"
-        }}
-      >
-        <Toolbar 
-        variant="dense">
-          <IconButton
+  const SettingsButton =() => {
+        return( <IconButton
             
             aria-label="open drawer"
             style={{
@@ -147,7 +139,29 @@ const GraphContainer = (props: GraphContainerProps) => {
             onClick={handleToggle}
           >
             <SettingsIcon />
-          </IconButton>
+          </IconButton>)
+  }
+
+  return (
+    <div id={slugify(props.title as string) + "_container"}>
+
+      <AppBar
+        position="static"
+        elevation={0}
+        style={{
+          backgroundColor: "#636eff"
+        }}
+      >
+        <Toolbar 
+        variant="dense">
+        {props.showTooltip ?
+          <Tooltip open={openTooltip}  arrow title="Use this to open the plot toolbar">
+            <SettingsButton/>
+            </Tooltip>
+            : <SettingsButton/> }
+            
+        
+       
           <div id={slugify(props.title as string)} className={classes.anchor} />
           <div>
               <Typography variant="subtitle1" noWrap>
@@ -215,6 +229,8 @@ const GraphContainer = (props: GraphContainerProps) => {
     </div>)
 }
 GraphContainer.defaultProps = {
-  tabTitles: []
+  tabTitles: [],
+  showTooltip: false
+  
 }
 export default GraphContainer;

@@ -40,7 +40,7 @@ import { useStyles } from './styles';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
 import Choropleth from './Choropleth';
-
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 function Copyright() {
@@ -73,6 +73,7 @@ function DashboardWithSizes(props: DashboardProps) {
   const theme = useTheme();
   const [drawer, setDrawer] = React.useState(false);
   const [gridMode, setGridMode] = React.useState(true)
+  const [tooltipOpen, setTooltipOpen] = React.useState(true)
 
   const handleGridModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGridMode(event.target.checked);
@@ -191,6 +192,9 @@ function DashboardWithSizes(props: DashboardProps) {
             />
           </Typography>
           {!isMobile ? 
+          <Tooltip open={tooltipOpen}  arrow title="Choose grid view or list view of the plots">
+         
+        
           <div>
             <Grid component="label" container alignItems="center" spacing={1}>
               <Grid item><ListIcon /></Grid>
@@ -203,6 +207,7 @@ function DashboardWithSizes(props: DashboardProps) {
             </Grid>
 
           </div>
+          </Tooltip>
           : null}
           <Divider
             orientation="vertical"
@@ -256,7 +261,9 @@ function DashboardWithSizes(props: DashboardProps) {
                     md={gridMode ? 6 : 12}
                     sm={12}
                   >
-                    <elem.Component isMobile={isMobile || gridMode} title={elem.title} />
+                    <elem.Component 
+                        isMobile={isMobile || gridMode} 
+                        title={elem.title}  />
                   </Grid>
 
                 )
