@@ -158,24 +158,18 @@ const GraphContainer = (props: GraphContainerProps) => {
             {SettingsButton()}
           </Tooltip>
 
-
-
-
           <div id={slugify(props.title as string)} className={classes.anchor} />
-          <div>
-            <Typography variant="subtitle1" noWrap>
-              {props.title}
-            </Typography>
-            {props.subtitle === undefined ? null :
-              <Typography style={{ textAlign: "center" }} variant="subtitle2" >
-                {props.subtitle}
-              </Typography>}
 
-          </div>
+          <Typography variant="subtitle1" component={'span'} noWrap>
+            {props.title}
+          </Typography>
+          {props.subtitle === undefined ? null :
+            <Typography style={{ textAlign: "center", marginLeft: "0.7em", paddingTop: "0.1em" }}
+              component={'span'} variant="subtitle2" >
+              {props.subtitle}
+            </Typography>}
 
         </Toolbar>
-
-
       </AppBar>
 
       <Paper square
