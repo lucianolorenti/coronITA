@@ -22,7 +22,7 @@ import TelegramIcon from '@material-ui/icons/Telegram';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactCountryFlag from "react-country-flag";
 import ReactDOM from 'react-dom';
 import { FacebookShareButton, RedditShareButton, TelegramShareButton, TwitterShareButton, WhatsappShareButton } from "react-share";
@@ -40,7 +40,9 @@ import { useStyles } from './styles';
 import TotalCasesHistogram from './TotalCasesHistogram';
 import TotalCasesTimesSeriesTab from './TotalCasesTimeSeries';
 import Choropleth from './Choropleth';
-
+import Tooltip from '@material-ui/core/Tooltip';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 
 function Copyright() {
@@ -72,10 +74,29 @@ function DashboardWithSizes(props: DashboardProps) {
   const classes = useStyles();
   const theme = useTheme();
   const [drawer, setDrawer] = React.useState(false);
-  const [gridMode, setGridMode] = React.useState(true)
+  const [layoutMode, setLayoutMode] = React.useState('grid')
+  const [tooltipOpen, setTooltipOpen] = React.useState(true)
 
-  const handleGridModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGridMode(event.target.checked);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTooltipOpen(false)
+    }, 8000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  function handleTooltipClose() {
+    setTooltipOpen(false);
+  }
+
+  function handleTooltipOpen() {
+    setTooltipOpen(true);
+  }
+
+
+  const handleLayoutModeChange = (event: React.MouseEvent<HTMLElement>, newLayout: string | null) => {
+    if (newLayout !== null) {
+      setLayoutMode(newLayout);
+    }
   }
   const toggleDrawer = (open: boolean) => event => {
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -160,6 +181,7 @@ function DashboardWithSizes(props: DashboardProps) {
       </Popover>
     </React.Fragment>
   }
+  const gridMode = layoutMode == 'grid'
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -174,9 +196,7 @@ function DashboardWithSizes(props: DashboardProps) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="div">
 
-          </Typography>
           <Typography variant="h6" color="inherit" noWrap className={classes.pageTitle}>
             {isMobile ? "COVID-19 Italy" : "Coronavirus COVID-19 in Italy"}
             <ReactCountryFlag
@@ -190,20 +210,41 @@ function DashboardWithSizes(props: DashboardProps) {
               svg
             />
           </Typography>
-          {!isMobile ? 
-          <div>
-            <Grid component="label" container alignItems="center" spacing={1}>
-              <Grid item><ListIcon /></Grid>
-              <Grid item>
-                <Switch
-                  checked={gridMode}
-                  onChange={handleGridModeChange} name="gridMode" />
-              </Grid>
-              <Grid item><GridOnIcon /></Grid>
-            </Grid>
+          {!isMobile ?
+            <Tooltip
+              open={tooltipOpen}
+              onClose={handleTooltipClose} 
+              onOpen={handleTooltipOpen} 
+              arrow
+              title={<Typography
+                variant="subtitle1">
+                Choose grid or list view of the plots
+                </Typography>}
+            >
 
-          </div>
-          : null}
+
+              <div>
+                <ToggleButtonGroup
+                  value={layoutMode}
+                  size="small"
+                  exclusive
+
+                  onChange={handleLayoutModeChange}
+                  color="secondary"
+                  aria-label="layout"
+                >
+                  <ToggleButton value="list" aria-label="list">
+                    <ListIcon />
+                  </ToggleButton>
+                  <ToggleButton value="grid" aria-label="grid">
+                    <GridOnIcon />
+                  </ToggleButton>
+                </ToggleButtonGroup >
+
+
+              </div>
+            </Tooltip>
+            : null}
           <Divider
             orientation="vertical"
             flexItem
@@ -252,11 +293,13 @@ function DashboardWithSizes(props: DashboardProps) {
                     item
                     className={isMobile ? classes.gridItemMobile : classes.gridItem}
                     key={index}
-                    lg={gridMode ? 4 : 12}
+                    lg={gridMode ? 6 : 12}
                     md={gridMode ? 6 : 12}
                     sm={12}
                   >
-                    <elem.Component isMobile={isMobile || gridMode} title={elem.title} />
+                    <elem.Component
+                      isMobile={isMobile || gridMode}
+                      title={elem.title} />
                   </Grid>
 
                 )

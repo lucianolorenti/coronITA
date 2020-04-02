@@ -7,6 +7,9 @@ import IsMobileContext from './IsMobileContext';
 import names from './Names';
 import { useStyles, plotHeight} from './styles';
 import './styles.css'
+
+
+
 declare var regions: any;
 const colors = [
   '#ff0000', '#733f1d', '#ffaa00', '#234010', '#60bfac', '#3385cc', '#5a5673',
@@ -66,6 +69,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
         setTotalTimeSerie(data.data)
       });
   }, [props.selectedRegions, props.predictedDays, props.fields, props.transformation])
+
 
   const fittedLine = (elem: string, idx: number, name: string) => {
     if (!props.showFittedLine) {
@@ -130,10 +134,9 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
                     {yAxisLabel()}
               </YAxis>
               
-           
-            <Tooltip />
+      
             <Legend
-              verticalAlign="top" />
+              verticalAlign="bottom" />
 
 
             <ReferenceLine x="2020-03-09" stroke="#EE5555">
@@ -277,7 +280,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const TransformationMethodSelector = () => {
     return (
       <FormControl component="fieldset" className={classes.formControl}>
-        <FormLabel component="legend">Data tranformation</FormLabel>
+        <FormLabel component="legend">Data transformation</FormLabel>
         <RadioGroup
           aria-label="transformation"
           name="transformation"
@@ -346,7 +349,8 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     <GraphContainer
       title={props.title}
       controls={controls}
-      tabTitles={["Total Cases"]}>
+      tabTitles={["Total Cases"]}
+      showTooltip={true}>
       <TotalCasesTimeSeries
         showFittedLine={showFittedCurves}
         predictedDays={predictedDays}
