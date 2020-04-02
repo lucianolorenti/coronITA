@@ -136,7 +136,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
               
       
             <Legend
-              verticalAlign="top" />
+              verticalAlign="bottom" />
 
 
             <ReferenceLine x="2020-03-09" stroke="#EE5555">
