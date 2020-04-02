@@ -5,7 +5,7 @@ import MenuList from '@material-ui/core/MenuList';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import SettingsIcon from '@material-ui/icons/Settings';
-import React, { Dispatch, SetStateAction, useEffect, useState} from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState, FunctionComponent, forwardRef, useRef, Ref } from 'react';
 import slugify from 'slugify';
 import IsMobileContext from './IsMobileContext';
 import CloseIcon from '@material-ui/icons/Close';
@@ -15,31 +15,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 
 
-
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      variant="subtitle1"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && children}
-    </Typography>
-  );
-}
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -90,14 +65,21 @@ interface GraphContainerProps {
 }
 const GraphContainer = (props: GraphContainerProps) => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [openTooltip, setOpenTooltip] = useState(true)
-  const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const [openTooltip, setOpenTooltip] = useState(props.showTooltip)
+  const anchorRef = useRef<HTMLButtonElement>(null);
 
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
   };
+  function handleTooltipClose() {
+    setOpenTooltip(false);
+  }
+
+  function handleTooltipOpen() {
+    setOpenTooltip(true);
+  }
   const close = () => {
     setOpen(false);
   };
@@ -119,27 +101,36 @@ const GraphContainer = (props: GraphContainerProps) => {
     prevOpen.current = open;
   }, [open]);
 
+  useEffect(() => {
+    if (props.showTooltip) {
+      const timer = setTimeout(() => {
+        setOpenTooltip(false)
+      }, 8000)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
-  const SettingsButton =() => {
-        return( <IconButton
-            
-            aria-label="open drawer"
-            style={{
-              backgroundColor: "#EEE",
-              color: "#636eff",
-              padding: "5px",
-              "borderRadius": "15%"
-            }}
-            edge="start"
-            className={classes.menuButton}
-            ref={anchorRef}
-            aria-controls={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            size="small"
-            onClick={handleToggle}
-          >
-            <SettingsIcon />
-          </IconButton>)
+
+
+  const SettingsButton = () => {
+    return (
+      <IconButton
+        ref={anchorRef}
+        aria-label="open drawer"
+        style={{
+          backgroundColor: "#EEE",
+          color: "#636eff",
+          padding: "5px",
+          "borderRadius": "15%"
+        }}
+        edge="start"
+        className={classes.menuButton}
+        aria-controls={open ? 'menu-list-grow' : undefined}
+        aria-haspopup="true"
+        size="small"
+        onClick={handleToggle}>
+        <SettingsIcon />
+      </IconButton>)
   }
 
   return (
@@ -152,30 +143,38 @@ const GraphContainer = (props: GraphContainerProps) => {
           backgroundColor: "#636eff"
         }}
       >
-        <Toolbar 
-        variant="dense">
-        {props.showTooltip ?
-          <Tooltip open={openTooltip}  arrow title="Use this to open the plot toolbar">
-            <SettingsButton/>
-            </Tooltip>
-            : <SettingsButton/> }
-            
-        
-       
+        <Toolbar
+          variant="dense">
+          <Tooltip
+            open={openTooltip}
+            onClose={handleTooltipClose}
+            onOpen={handleTooltipOpen}
+            arrow
+            title={<Typography
+              variant="subtitle1">
+              Use this button to open the plot toolbar
+                </Typography>}
+          >
+            {SettingsButton()}
+          </Tooltip>
+
+
+
+
           <div id={slugify(props.title as string)} className={classes.anchor} />
           <div>
-              <Typography variant="subtitle1" noWrap>
-                {props.title}
-              </Typography>
-              {props.subtitle === undefined ? null :
-                <Typography style={{ textAlign: "center" }} variant="subtitle2" >
-                  {props.subtitle}
-                </Typography>}
-            
-            </div>
+            <Typography variant="subtitle1" noWrap>
+              {props.title}
+            </Typography>
+            {props.subtitle === undefined ? null :
+              <Typography style={{ textAlign: "center" }} variant="subtitle2" >
+                {props.subtitle}
+              </Typography>}
+
+          </div>
 
         </Toolbar>
-      
+
 
       </AppBar>
 
@@ -189,37 +188,37 @@ const GraphContainer = (props: GraphContainerProps) => {
         {props.bottomElement}
       </Paper>
 
-      <Popper open={open} anchorEl={anchorRef.current}  transition disablePortal>
+      <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
             <Paper >
-        
-              <MenuList 
-              className="menu"
-              autoFocusItem={open} 
 
-              onKeyDown={handleListKeyDown}>
-              <MenuItem onClick={close} >
-                <IconButton
+              <MenuList
+                className="menu"
+                autoFocusItem={open}
+
+                onKeyDown={handleListKeyDown}>
+                <MenuItem onClick={close} >
+                  <IconButton
                     size="small"
                     color="primary"
-                    >
-                <CloseIcon />
-                </IconButton>
-              </MenuItem>
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </MenuItem>
                 {(props.controls).map((elem, idx) => {
                   return (<MenuItem
-                    style={{paddingBottom: "0px", paddingTop: "0px"}}
+                    style={{ paddingBottom: "0px", paddingTop: "0px" }}
                     key={idx}
                   >
                     {elem}
                   </MenuItem>)
                 })}
               </MenuList>
-    
+
             </Paper>
           </Grow>
         )}
@@ -231,6 +230,6 @@ const GraphContainer = (props: GraphContainerProps) => {
 GraphContainer.defaultProps = {
   tabTitles: [],
   showTooltip: false
-  
+
 }
 export default GraphContainer;
