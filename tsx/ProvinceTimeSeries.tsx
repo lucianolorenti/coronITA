@@ -114,7 +114,7 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
                             strokeWidth={2}
                             activeDot={{ r: 11 }} />
                     })}
-                    <Legend verticalAlign="top" />
+                    <Legend verticalAlign="bottom" />
                     <Brush height={20} dataKey={'day'} />
                 </LineChart>
             </ResponsiveContainer>
