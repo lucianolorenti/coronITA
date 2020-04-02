@@ -1,7 +1,7 @@
 import { Checkbox, FormControl, FormControlLabel, FormLabel, Input, InputLabel, ListItemText, MenuItem, Radio, RadioGroup, Select, Slider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
-import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip as RechartsTooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
 import IsMobileContext from './IsMobileContext';
 import names from './Names';
@@ -137,8 +137,6 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
       
             <Legend
               verticalAlign="bottom" />
-
-
             <ReferenceLine x="2020-03-09" stroke="#EE5555">
               <Label>  LockDown </Label>
             </ReferenceLine>
@@ -171,6 +169,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
                 stroke="green" />
               : null}
             <Brush height={20} dataKey={'day'} />
+            <RechartsTooltip />
           </LineChart>
 
         </ResponsiveContainer>}
