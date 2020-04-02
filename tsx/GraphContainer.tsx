@@ -182,7 +182,12 @@ const GraphContainer = (props: GraphContainerProps) => {
         {props.bottomElement}
       </Paper>
 
-      <Popper open={open} anchorEl={anchorRef.current} transition disablePortal>
+      <Popper 
+      open={open} 
+      anchorEl={anchorRef.current} 
+      transition disablePortal
+      style={{zIndex: 999}}
+      >
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
