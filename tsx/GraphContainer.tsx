@@ -145,7 +145,8 @@ const GraphContainer = (props: GraphContainerProps) => {
       >
         <Toolbar
           variant="dense">
-          <Tooltip
+          
+          {props.controls.length > 0 ?  <Tooltip
             open={openTooltip}
             onClose={handleTooltipClose}
             onOpen={handleTooltipOpen}
@@ -156,7 +157,7 @@ const GraphContainer = (props: GraphContainerProps) => {
                 </Typography>}
           >
             {SettingsButton()}
-          </Tooltip>
+          </Tooltip> : null}
 
           <div id={slugify(props.title as string)} className={classes.anchor} />
 
@@ -181,7 +182,7 @@ const GraphContainer = (props: GraphContainerProps) => {
         {props.children}
         {props.bottomElement}
       </Paper>
-
+      {props.controls.length > 0 ? 
       <Popper 
       open={open} 
       anchorEl={anchorRef.current} 
@@ -221,7 +222,7 @@ const GraphContainer = (props: GraphContainerProps) => {
             </Paper>
           </Grow>
         )}
-      </Popper>
+      </Popper> : null}
 
 
     </div>)
