@@ -141,6 +141,14 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
               <Label>  LockDown </Label>
             </ReferenceLine>
 
+            <ReferenceLine x="2020-06-14" stroke="#EE5555">
+              <Label>  Fase 2 </Label>
+            </ReferenceLine>
+
+            <ReferenceLine x="2020-06-15" stroke="#EE5555">
+              <Label>  Fase 3 </Label>
+            </ReferenceLine>
+
             {Object.keys(totalTimeSerie.length > 0 ? totalTimeSerie[1] : {})
               .map((elem, idx: number) => {
                 if (elem == 'day') {
