@@ -116,8 +116,8 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
     return labels[props.transformation];
   }
   const GenerateYAxis = () => {
-    const data_min_m = this.data_min()
-    const label = this.yAxisLabel()
+    const data_min_m = data_min()
+    const label = yAxisLabel()
     const scale = props.transformation == 'log' ? 'log' : 'linear'
     // @ts-ignore
     return (
