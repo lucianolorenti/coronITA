@@ -124,7 +124,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
       // @ts-ignore
       <YAxis
               domain={[data_min_m, 'dataMax']}
-              scale={scale} >/>
+              scale={scale} >
                  <Label    position="left" className={classes.yAxisLabel} value={label} />
               </YAxis>
               
