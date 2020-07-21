@@ -186,7 +186,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const classes = useStyles();
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
-  const [currentFields, setCurrentFields] = useState<string[]>(['totale_positivi'])
+  const [currentFields, setCurrentFields] = useState<string[]>(['totale_casi'])
   const fitteableFields = ['totale_positivi', 'totale_casi']
   const hasFittedFields = (fitteableFields.filter(field => currentFields.includes(field))).length > 0
   const [showFittedLine, setShowFittedLine] = useState(hasFittedFields);
