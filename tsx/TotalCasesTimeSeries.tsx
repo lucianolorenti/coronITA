@@ -142,7 +142,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" />
-            {this.GenerateYAxis()}
+            {GenerateYAxis()}
       
             <Legend
               verticalAlign="bottom" />
