@@ -106,14 +106,29 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
       return 'dataMin'
     }
   }
-  const yAxisLabel = (): React.ReactElement<typeof Label> => {
+  const yAxisLabel = () => {
     const labels = {
-      'raw': <Label    position="left" className={classes.yAxisLabel}> Total cases </Label>,
-      'gr': <Label   position="left" className={classes.yAxisLabel}>Cases day i / Cases day i-1 </Label>,
-      'diff': <Label   position="left" className={classes.yAxisLabel}>Cases day i - Cases day i-1 </Label>,
-      'log': <Label    position="left" className={classes.yAxisLabel}> Logarithm of cases </Label>
+      'raw': "Total cases",
+      'gr': "Cases day i / Cases day i-1",
+      'diff': "Cases day i - Cases day i-1",
+      'log': "Logarithm of cases"
     }
     return labels[props.transformation];
+  }
+  const GenerateYAxis = () => {
+    const data_min_m = data_min()
+    const label = yAxisLabel()
+    const scale = props.transformation == 'log' ? 'log' : 'linear'
+    // @ts-ignore
+    return (
+      // @ts-ignore
+      <YAxis
+              domain={[data_min_m, 'dataMax']}
+              scale={scale} >
+                 <Label    position="left" className={classes.yAxisLabel} value={label} />
+              </YAxis>
+              
+    )
   }
   return (
 
@@ -127,18 +142,20 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" />
-            // @ts-ignore
-            <YAxis
-              domain={[data_min(), 'dataMax']}
-              scale={props.transformation == 'log' ? 'log' : 'linear'}>
-                    {yAxisLabel()}
-              </YAxis>
-              
+            {GenerateYAxis()}
       
             <Legend
               verticalAlign="bottom" />
             <ReferenceLine x="2020-03-09" stroke="#EE5555">
               <Label>  LockDown </Label>
+            </ReferenceLine>
+
+            <ReferenceLine x="2020-05-04" stroke="#EE5555">
+              <Label>  Fase 2 </Label>
+            </ReferenceLine>
+
+            <ReferenceLine x="2020-06-15" stroke="#EE5555">
+              <Label>  Fase 3 </Label>
             </ReferenceLine>
 
             {Object.keys(totalTimeSerie.length > 0 ? totalTimeSerie[1] : {})
@@ -187,7 +204,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
   const [currentFields, setCurrentFields] = useState<string[]>(['totale_casi'])
-  const fitteableFields = ['totale_positivi', 'totale_casi']
+  const fitteableFields = ['totale_casi']
   const hasFittedFields = (fitteableFields.filter(field => currentFields.includes(field))).length > 0
   const [showFittedLine, setShowFittedLine] = useState(hasFittedFields);
   const [predictedDays, setPredictedDay] = useState(0)
