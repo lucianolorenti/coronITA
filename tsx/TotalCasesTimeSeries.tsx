@@ -150,7 +150,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
               <Label>  LockDown </Label>
             </ReferenceLine>
 
-            <ReferenceLine x="2020-06-14" stroke="#EE5555">
+            <ReferenceLine x="2020-05-04" stroke="#EE5555">
               <Label>  Fase 2 </Label>
             </ReferenceLine>
 
