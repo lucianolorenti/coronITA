@@ -59,13 +59,15 @@ export default function TotalCasesHistogram(props: TotalCasesHistogramProps) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="category" interval={0} tick={<CustomizedAxisTick />} dataKey="denominazione_regione" />
                 // @ts-ignore
-                <YAxis label={
-
-                    <Label 
+                <YAxis>
+                <Label 
                     value={normalized != "" ? "Cases per 1000 people" : "Total cases"} 
                     position="left" 
        
-                    className={classes.yAxisLabel} />} />
+                    className={classes.yAxisLabel}  />
+                </YAxis>
+
+                  
                 <Tooltip />
 
                 <Bar dataKey="totale_casi" name="Cases" fill="#8884d8" />

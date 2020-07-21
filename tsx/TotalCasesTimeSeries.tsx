@@ -106,14 +106,29 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
       return 'dataMin'
     }
   }
-  const yAxisLabel = (): React.ReactElement<typeof Label> => {
+  const yAxisLabel = () => {
     const labels = {
-      'raw': <Label    position="left" className={classes.yAxisLabel}> Total cases </Label>,
-      'gr': <Label   position="left" className={classes.yAxisLabel}>Cases day i / Cases day i-1 </Label>,
-      'diff': <Label   position="left" className={classes.yAxisLabel}>Cases day i - Cases day i-1 </Label>,
-      'log': <Label    position="left" className={classes.yAxisLabel}> Logarithm of cases </Label>
+      'raw': "Total cases",
+      'gr': "Cases day i / Cases day i-1",
+      'diff': "Cases day i - Cases day i-1",
+      'log': "Logarithm of cases"
     }
     return labels[props.transformation];
+  }
+  const GenerateYAxis = () => {
+    const data_min_m = this.data_min()
+    const label = this.yAxisLabel()
+    const scale = props.transformation == 'log' ? 'log' : 'linear'
+    // @ts-ignore
+    return (
+      // @ts-ignore
+      <YAxis
+              domain={[data_min_m, 'dataMax']}
+              scale={scale} >/>
+                 <Label    position="left" className={classes.yAxisLabel} value={label} />
+              </YAxis>
+              
+    )
   }
   return (
 
@@ -127,13 +142,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <CartesianGrid strokeDasharray="3 3" />
 
             <XAxis dataKey="day" />
-            // @ts-ignore
-            <YAxis
-              domain={[data_min(), 'dataMax']}
-              scale={props.transformation == 'log' ? 'log' : 'linear'}>
-                    {yAxisLabel()}
-              </YAxis>
-              
+            {this.GenerateYAxis()}
       
             <Legend
               verticalAlign="bottom" />
