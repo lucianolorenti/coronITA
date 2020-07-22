@@ -92,9 +92,18 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
                     margin={{left: 15}}
                 >
                     <CartesianGrid strokeDasharray="3 3" />
+
                     <ReferenceLine x="2020-03-09" stroke="#EE5555">
-              <Label>  LockDown </Label>
-            </ReferenceLine>
+            <Label>  LockDown </Label>
+        </ReferenceLine>
+
+        <ReferenceLine x="2020-05-04" stroke="#EE5555">
+            <Label>  Fase 2 </Label>
+        </ReferenceLine>
+
+        <ReferenceLine x="2020-06-15" stroke="#EE5555">
+            <Label>  Fase 3 </Label>
+        </ReferenceLine>
                     <XAxis type="category"  dataKey="day" />
                     <YAxis>
                         <Label 

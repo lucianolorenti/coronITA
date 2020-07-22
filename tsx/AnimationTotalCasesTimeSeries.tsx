@@ -2,7 +2,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
 import { InlineMath } from 'react-katex';
-import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, Label } from 'recharts';
 
 interface ArrayConstructor {
     from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): Array<U>;
@@ -85,7 +85,18 @@ export default function AnimationTotalCasesTimeSeries() {
                                 strokeDasharray="5 5" />
                         )
                     })}
-                    <ReferenceLine x="2020-03-09" label="LockDown" stroke="#EE5555" />
+                    
+        <ReferenceLine x="2020-03-09" stroke="#EE5555">
+            <Label>  LockDown </Label>
+        </ReferenceLine>
+
+        <ReferenceLine x="2020-05-04" stroke="#EE5555">
+            <Label>  Fase 2 </Label>
+        </ReferenceLine>
+
+        <ReferenceLine x="2020-06-15" stroke="#EE5555">
+            <Label>  Fase 3 </Label>
+        </ReferenceLine>
                 </LineChart>
 
             </ResponsiveContainer>
