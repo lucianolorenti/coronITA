@@ -502,6 +502,7 @@ def provinces_time_series(region, normalize='', ttl_hash=None):
                       columns='denominazione_provincia',
                       values='totale_casi')
     data.reset_index(inplace=True)
+    data.fillna(0, inplace=True)
     return data
 
 
