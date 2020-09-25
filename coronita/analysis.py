@@ -327,6 +327,10 @@ def sum_squared_error(x, y, f, parameterTuple):
     return np.sum((y - f(x, *parameterTuple))**2)
 
 
+def moving_average(df, field, additional_days=0):
+    return np.round(df[field].rolling(7).mean().fillna(0).values, 2)
+    
+
 def fit_curve(y, n=None):
     f = logistic
     x = np.array(range(0, len(y)))
@@ -367,7 +371,7 @@ def extend_df(df, additional_days=0):
 
 
 def is_fitteable(field):
-    return field in ['totale_casi', 'totale_positivi']
+    return field in ['totale_casi', 'totale_positivi', 'nuovi_positivi']
 
 def transform_df(df, transformation):
     if transformation != 'raw':
@@ -407,8 +411,10 @@ def total_time_series_data(regions, fields, transformation='raw', additional_day
         fitted_columns = {}
         for field in fitteable_fields:
             field_name = f'All@{field}'
-            fitted_columns[f'fitted_{field_name}'] = fit_field(
+            fitted_columns[f'fitted_{field_name}'] = moving_average(
                 df, field_name, additional_days=additional_days)
+            print(f'fitted_{field_name}')
+            print(fitted_columns[f'fitted_{field_name}'])
         df = extend_df(df, additional_days=additional_days)
         df = pd.concat([df, pd.DataFrame(fitted_columns)], axis=1)
         df = transform_df(df, transformation)
@@ -422,7 +428,7 @@ def total_time_series_data(regions, fields, transformation='raw', additional_day
         for field in fitteable_fields:
             for region in regions:
                 field_name = f'{region}@{field}'
-                fitted_columns[f'fitted_{field_name}'] = fit_field(
+                fitted_columns[f'fitted_{field_name}'] = moving_average(
                     total_time_series,
                     field_name,
                     additional_days=additional_days)

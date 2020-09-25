@@ -120,11 +120,12 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
                             dataKey={elem}
                             name={elem}
                             stroke={colors[idx]}
-                            strokeWidth={2}
-                            activeDot={{ r: 11 }} />
+                            dot={{ stroke: colors[idx],  r: 0.5 }}
+                            strokeWidth={1.5}                            
+                            />
                     })}
                     <Legend verticalAlign="bottom" />
-                    <Brush height={20} dataKey={'day'} />
+                    <Brush height={20} dataKey={'day'}  startIndex={60}/>
                 </LineChart>
             </ResponsiveContainer>
         </GraphContainer>

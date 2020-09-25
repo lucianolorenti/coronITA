@@ -118,7 +118,15 @@ export default function DeadProportion(props:DeadProportionProps) {
         <YAxis unit="%" domain={[0, (zoom ? 'dataMax' : 100)]} />
         <Tooltip content={<CustomTooltip active={false} payload={null} label={null} />} />
         <Legend />
-        <Line type="linear" dataKey="percentage" name="Dead / Positive" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line 
+             type="linear" 
+             dataKey="percentage" 
+             name="Dead / Positive" 
+             stroke="#8884d8" 
+             activeDot={{ r: 8 }}
+             dot={{ stroke: "#8884d8",  r: 0.5 }}
+             strokeWidth={1.5}              
+             />
         <ReferenceLine x="2020-03-09" stroke="#EE5555">
             <Label>  LockDown </Label>
         </ReferenceLine>
@@ -130,7 +138,7 @@ export default function DeadProportion(props:DeadProportionProps) {
         <ReferenceLine x="2020-06-15" stroke="#EE5555">
             <Label>  Fase 3 </Label>
         </ReferenceLine>
-        <Brush height={20} dataKey={'day'} />
+        <Brush height={20} dataKey={'day'} startIndex={60}/>
       </LineChart>
     </ResponsiveContainer>
     </GraphContainer>

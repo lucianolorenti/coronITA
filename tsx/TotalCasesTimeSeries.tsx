@@ -1,7 +1,9 @@
 import { Checkbox, FormControl, FormControlLabel, FormLabel, Input, InputLabel, ListItemText, MenuItem, Radio, RadioGroup, Select, Slider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
-import { Brush, CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip as RechartsTooltip, XAxis, YAxis } from 'recharts';
+import { Brush, CartesianGrid, Label, Legend, Line, 
+         LineChart, ReferenceLine, ResponsiveContainer, 
+         Tooltip as RechartsTooltip, XAxis, YAxis } from 'recharts';
 import GraphContainer from './GraphContainer';
 import IsMobileContext from './IsMobileContext';
 import names from './Names';
@@ -12,7 +14,7 @@ import './styles.css'
 
 declare var regions: any;
 const colors = [
-  '#ff0000', '#733f1d', '#ffaa00', '#234010', '#60bfac', '#3385cc', '#5a5673',
+  '#ff0000', '#733f1d', '#CC5500', '#234010', '#60bfac', '#3385cc', '#5a5673',
   '#d580ff', '#ff408c', '#330000', '#ffb380', '#736039', '#44ff00', '#264d45',
   '#accbe6', '#3600cc', '#392040', '#b38698', '#594343', '#bfa38f', '#b2982d',
   '#497339', '#00eeff', '#335ccc', '#bbace6', '#cc00a3', '#ff0044', '#ff9180', '#a65800',
@@ -75,6 +77,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
     if (!props.showFittedLine) {
       return null;
     }
+    
     return (<Line isAnimationActive={false}
       type="linear"
       dataKey={elem}
@@ -93,9 +96,11 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
         dataKey={elem}
         name={name}
         stroke={colors[idx]}
-        strokeWidth={2}
+       
         key={elem}
-        activeDot={{ r: 2 }} />
+        dot={{ stroke: colors[idx],  r: 1.1 }}
+        strokeWidth={1.5}
+        activeDot={{ r: 0.1 }} />
     )
 
   }
@@ -171,9 +176,9 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
                   region = region.slice(7)
                 }
                 if (region == 'All ') {
-                  region = 'Country '
+                  region = 'Italy '
                 }
-                let what = (isFitted ? 'Fitted ' : '') + names[parts[1]]
+                let what = (isFitted ? 'Moving average ' : '') + names[parts[1]]
 
                 const name = region + what
 
@@ -185,7 +190,11 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
                 strokeWidth={2}
                 stroke="green" />
               : null}
-            <Brush height={20} dataKey={'day'} />
+            <Brush 
+                   height={20} 
+                   dataKey={'day'}
+                   startIndex={60}
+                    />
             <RechartsTooltip />
           </LineChart>
 
@@ -203,15 +212,14 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   const classes = useStyles();
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
-  const [currentFields, setCurrentFields] = useState<string[]>(['totale_casi'])
-  const fitteableFields = ['totale_casi']
+  const [currentFields, setCurrentFields] = useState<string[]>(['nuovi_positivi'])
+  const fitteableFields = [ 'totale_casi', 'nuovi_positivi', 'totale_positivi']
   const hasFittedFields = (fitteableFields.filter(field => currentFields.includes(field))).length > 0
   const [showFittedLine, setShowFittedLine] = useState(hasFittedFields);
   const [predictedDays, setPredictedDay] = useState(0)
 
   const [dataTransformation, setDataTransformation] = useState('raw')
   const showFittedCurves = hasFittedFields && showFittedLine
-
 
   const handleFieldsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setCurrentFields(event.target.value as string[]);
@@ -293,6 +301,10 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     )
 
   }
+          /*
+          <FormControlLabel value="gr" control={<Radio />} label="Quotient" />
+          <FormControlLabel value="diff" control={<Radio />} label="Difference" />
+*/
   const TransformationMethodSelector = () => {
     return (
       <FormControl component="fieldset" className={classes.formControl}>
@@ -305,9 +317,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
           onChange={handleDataTransformationChange}>
           <FormControlLabel value="raw" control={<Radio />} label="Raw data" />
           <FormControlLabel value="log" control={<Radio />} label="Logarithm" />
-          <FormControlLabel value="gr" control={<Radio />} label="Quotient" />
-          <FormControlLabel value="diff" control={<Radio />} label="Difference" />
-
+  
         </RadioGroup>
       </FormControl>
     )
@@ -323,7 +333,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
               checked={showFittedCurves}
               onChange={handleChangeShowFittedLine} />
           }
-          label="Show fitted line"
+          label="Show Moving average"
         />
       </FormControl>)
   }
@@ -356,7 +366,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     < RegionSelector key={5} />,
     <FieldSelector key={6} />,
     <ShowFittedLineControl />,
-    <FutureDaySelector />,
+    //<FutureDaySelector />,
     <TransformationMethodSelector />
   ]
 
