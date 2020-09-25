@@ -8,5 +8,6 @@ const names = {
     'deceduti': 'Died',
     'totale_casi': 'Total cases',
     'tamponi': 'Tamponi',
+    'nuovi_positivi': 'New positives'
 }
 export default names;

@@ -135,6 +135,7 @@ def last_data():
 def province_cases():
     normalized = request.args.get('normalized', default='', type=str)
     region = request.args.get('region', default='Veneto', type=str)
+
     return json.dumps(
         {
             'data':
