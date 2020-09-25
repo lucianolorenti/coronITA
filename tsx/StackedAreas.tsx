@@ -75,7 +75,7 @@ const TrendsAreaChart = (props: TrendsAreaChartProps) => {
         <Element type="monotone" name="Intensive therapy" dataKey="terapia_intensiva" stackId="1" stroke="#ea2b1f" fill="#ea2b1f" />
         <Element type="monotone" name="Dead" dataKey="deceduti" stackId="1" stroke="#474747" fill="#474747" />
         <Legend />
-        <Brush height={20} dataKey={'day'} startIndex={90}/>
+        <Brush height={20} dataKey={'day'} startIndex={60}/>
     </PlotChart>)
 }
 

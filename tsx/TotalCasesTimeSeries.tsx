@@ -193,7 +193,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <Brush 
                    height={20} 
                    dataKey={'day'}
-                   startIndex={90}
+                   startIndex={60}
                     />
             <RechartsTooltip />
           </LineChart>
