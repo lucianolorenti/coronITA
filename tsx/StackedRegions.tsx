@@ -210,7 +210,7 @@ export default function StackedRegions(props: StackedRegionsProps) {
 
 
             <Legend />
-            <Brush height={20} dataKey={'day'}  startIndex={60} />
+            <Brush height={20} dataKey={'day'}   />
         </PlotChart>)
     }
 

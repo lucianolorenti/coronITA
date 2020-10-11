@@ -193,7 +193,7 @@ function TotalCasesTimeSeries(props: TotalCasesTimeSeriesProps) {
             <Brush 
                    height={20} 
                    dataKey={'day'}
-                   startIndex={60}
+              
                     />
             <RechartsTooltip />
           </LineChart>
@@ -213,7 +213,7 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
   var regionsAll = ['All'].concat(regions)
   const [selectedRegions, setSelectedRegions] = React.useState<string[]>(['All']);
   const [currentFields, setCurrentFields] = useState<string[]>(['nuovi_positivi'])
-  const fitteableFields = [ 'totale_casi', 'nuovi_positivi', 'totale_positivi']
+  const fitteableFields = [ 'totale_casi', 'nuovi_positivi', 'totale_positivi', 'nuovi_deceduti']
   const hasFittedFields = (fitteableFields.filter(field => currentFields.includes(field))).length > 0
   const [showFittedLine, setShowFittedLine] = useState(hasFittedFields);
   const [predictedDays, setPredictedDay] = useState(0)
@@ -248,14 +248,15 @@ export default function TotalCasesTimesSeriesCompoent(props: TotalCasesTimesSeri
     const fields = [
       { name: 'Total cases', value: 'totale_casi' },
       { name: 'Tamponi', value: 'tamponi' },
-      { name: 'Dead', value: 'deceduti' },
+      { name: 'Deceased', value: 'deceduti' },
       { name: 'Recovered', value: 'dimessi_guariti' },
       { name: 'Current positive', value: 'totale_positivi' },
       { name: 'Hospitalised', value: 'ricoverati_con_sintomi' },
       { name: 'Intensive Care', value: 'terapia_intensiva' },
       { name: 'Total hospitalised', value: 'totale_ospedalizzati' },
       { name: 'Home confinement', value: 'isolamento_domiciliare' },
-      { name: 'New positives', value: 'nuovi_positivi'}
+      { name: 'New positives', value: 'nuovi_positivi'},
+      { name: 'New Deceased', value: 'nuovi_deceduti' }
     ]
     return (<FormControl className={classes.formControl}>
       <InputLabel id="demo-mutiple-name-label">Name</InputLabel>

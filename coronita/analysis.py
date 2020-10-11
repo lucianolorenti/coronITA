@@ -68,7 +68,7 @@ def data_andamento_nazionale(ttl_hash=None):
     d = pd.read_csv(FILE_PATH)
     d['data'] = pd.to_datetime(d['data'])
     d['day'] = d['data'].dt.date
-
+    d['nuovi_deceduti'] = d['deceduti'].diff().fillna(0)
     d.set_index('day', inplace=True)
     return d
 
@@ -96,6 +96,10 @@ def data_regioni(ttl_hash=None):
                   (d['day'] == day),
                   f] += s[f].values[0] if len(s[f].values) > 0 else 0
     d.drop(d[d['denominazione_regione'] == 'Trento'].index, inplace=True)
+    for region in d['denominazione_regione'].unique():
+        mask = d['denominazione_regione'] == region
+        df_region = d[mask]
+        d.loc[mask, 'nuovi_deceduti'] = df_region['deceduti'].diff().fillna(0)
     return d
 
 
@@ -211,13 +215,6 @@ def provinces_data(ttl_hash=None):
     d['Population'] = pd.to_numeric(d['Population'])
     d.set_index('Province', inplace=True)
     return d.to_dict(orient='index')
-
-
-@functools.lru_cache(maxsize=32)
-def provinces_list(region, ttl_hash=None):
-    data = data_province(ttl_hash=ttl_hash)
-    data = data[data['denominazione_regione'] == region]
-    return data['denominazione_provincia'].unique().values
 
 
 @functools.lru_cache(maxsize=32)
@@ -371,7 +368,7 @@ def extend_df(df, additional_days=0):
 
 
 def is_fitteable(field):
-    return field in ['totale_casi', 'totale_positivi', 'nuovi_positivi']
+    return field in ['totale_casi', 'totale_positivi', 'nuovi_positivi', 'nuovi_deceduti']
 
 def transform_df(df, transformation):
     if transformation != 'raw':
@@ -412,9 +409,7 @@ def total_time_series_data(regions, fields, transformation='raw', additional_day
         for field in fitteable_fields:
             field_name = f'All@{field}'
             fitted_columns[f'fitted_{field_name}'] = moving_average(
-                df, field_name, additional_days=additional_days)
-            print(f'fitted_{field_name}')
-            print(fitted_columns[f'fitted_{field_name}'])
+                df, field_name, additional_days=additional_days)            
         df = extend_df(df, additional_days=additional_days)
         df = pd.concat([df, pd.DataFrame(fitted_columns)], axis=1)
         df = transform_df(df, transformation)

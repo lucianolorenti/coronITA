@@ -5,9 +5,10 @@ const names = {
     'isolamento_domiciliare': 'Home isolation',
     'totale_positivi': 'Total currently positive',
     'dimessi_guariti': 'Discharged healed',
-    'deceduti': 'Died',
+    'deceduti': 'Deceased',
     'totale_casi': 'Total cases',
     'tamponi': 'Tamponi',
-    'nuovi_positivi': 'New positives'
+    'nuovi_positivi': 'New positives',
+    'nuovi_deceduti': 'New Deceased'
 }
 export default names;

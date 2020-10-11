@@ -135,7 +135,7 @@ export default function TamponiInfectedRatioSeries(props: TamponiInfectedRatioSe
         <ReferenceLine x="2020-06-15" stroke="#EE5555">
             <Label>  Fase 3 </Label>
         </ReferenceLine>
-        <Brush height={20} dataKey={'day'} startIndex={60} />
+        <Brush height={20} dataKey={'day'}  />
       </LineChart>
     </ResponsiveContainer>
   </GraphContainer>)

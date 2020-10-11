@@ -125,7 +125,7 @@ export default function ProvinceTimeSeriesPlot(props: ProvinceTimeSeriesPlotProp
                             />
                     })}
                     <Legend verticalAlign="bottom" />
-                    <Brush height={20} dataKey={'day'}  startIndex={60}/>
+                    <Brush height={20} dataKey={'day'}  />
                 </LineChart>
             </ResponsiveContainer>
         </GraphContainer>
